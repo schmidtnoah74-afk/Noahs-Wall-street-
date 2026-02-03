@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v9 - FINAL</title>
+    <title>Noah PRO v10 - GOLD</title>
     
+    <!-- PWA / App Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#000000">
@@ -45,9 +46,13 @@
         }
         .header-left { display: flex; align-items: center; gap: 15px; }
         .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); letter-spacing: 1px; }
-        .bell-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; position: relative; }
-        .bell-badge { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: red; border-radius: 50%; display: none; }
         
+        /* GLOCKE */
+        .bell-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; position: relative; transition: transform 0.2s; }
+        .bell-btn:active { transform: scale(0.9); color: var(--primary); }
+        .bell-badge { position: absolute; top: -2px; right: -3px; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 5px var(--primary); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% {box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.7);} 70% {box-shadow: 0 0 0 10px rgba(0, 242, 255, 0);} 100% {box-shadow: 0 0 0 0 rgba(0, 242, 255, 0);} }
+
         .clock-container { text-align: right; }
         .live-time { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #fff; line-height: 1; }
         .live-date { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
@@ -77,17 +82,17 @@
             padding-right: 5px; margin-bottom: 10px;
         }
         .msg {
-            max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4;
+            max-width: 85%; padding: 12px 16px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4;
             animation: popIn 0.3s ease;
         }
-        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary); color: #ddd; }
-        .msg-user { align-self: flex-end; background: var(--primary); color: black; font-weight: 600; }
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary); color: #ddd; border-bottom-left-radius: 2px; }
+        .msg-user { align-self: flex-end; background: var(--primary); color: black; font-weight: 700; border-bottom-right-radius: 2px; box-shadow: 0 2px 10px rgba(0, 242, 255, 0.2); }
         
         @keyframes popIn { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
 
         .chat-input-row { display: flex; gap: 10px; }
         .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: none; background: rgba(255,255,255,0.1); color: white; }
-        .chat-send { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--primary); color: black; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .chat-send { width: 45px; height: 45px; border-radius: 50%; border: none; background: var(--primary); color: black; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; }
 
         /* --- TASKS --- */
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
@@ -99,6 +104,7 @@
             animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.1);
         }
+        /* Deine Farben */
         .task-finanzen { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); color: black; }
         .task-schule   { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
         .task-sport    { background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); }
@@ -131,9 +137,17 @@
 
         .news-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0; font-size: 0.9rem; }
         .news-time { font-size: 0.7rem; color: var(--primary); font-weight: bold; margin-bottom: 2px; }
+        
+        #notify {
+            position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
+            background: var(--primary); color: #000; padding: 12px 30px; border-radius: 30px;
+            font-weight: 900; display: none; z-index: 2000; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
+
+    <div id="notify">Benachrichtigung</div>
 
     <header>
         <div class="header-left">
@@ -141,7 +155,7 @@
                 <i class="fas fa-bell"></i>
                 <div class="bell-badge" id="badge"></div>
             </button>
-            <div class="logo">NOAH<span style="color:white">PRO</span> v9</div>
+            <div class="logo">NOAH<span style="color:white">PRO</span> v10</div>
         </div>
         <div class="clock-container">
             <div id="clock" class="live-time">--:--:--</div>
@@ -159,7 +173,7 @@
                 </h2>
                 
                 <div id="chat-history" class="chat-container">
-                    <div class="msg msg-ai">Hey Noah! 👋 Alles bereit, um heute Geschichte zu schreiben? Was steht an?</div>
+                    <div class="msg msg-ai">Hey Noah! 👋 Alles im Griff? Erzähl mir von deinen Plänen.</div>
                 </div>
 
                 <div class="chat-input-row">
@@ -209,7 +223,7 @@
             </div>
         </div>
 
-        <!-- SEITE 3: FINANZEN (ACWI) -->
+        <!-- SEITE 3: FINANZEN (ACWI USD) -->
         <div class="page">
              <div class="card" style="padding:0; height:50px; overflow:hidden; border:none;">
                 <div class="tradingview-widget-container">
@@ -220,7 +234,7 @@
                         {"proName":"INDEX:DEU40","title":"DAX 40"},
                         {"proName":"OANDA:XAUUSD","title":"Gold"},
                         {"proName":"OANDA:XAGUSD","title":"Silber"},
-                        {"proName":"NASDAQ:ACWI","title":"MSCI ACWI"},
+                        {"proName":"NASDAQ:ACWI","title":"MSCI ACWI USD"},
                         {"proName":"BITSTAMP:BTCUSD","title":"Bitcoin"}
                     ], "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "de_DE" }
                     </script>
@@ -235,7 +249,7 @@
                     { "colorTheme": "dark", "dateRange": "12M", "showChart": true, "locale": "de_DE", "width": "100%", "height": "400", "isTransparent": true, 
                       "tabs": [
                         {"title": "Indizes", "symbols": [{"s": "INDEX:DEU40", "d": "DAX"}, {"s": "FOREXCOM:SPXUSD", "d": "S&P 500"}]},
-                        {"title": "Global", "symbols": [{"s": "NASDAQ:ACWI", "d": "MSCI ACWI"}, {"s": "OANDA:XAUUSD", "d": "Gold"}]},
+                        {"title": "Global & Gold", "symbols": [{"s": "NASDAQ:ACWI", "d": "MSCI ACWI USD"}, {"s": "OANDA:XAUUSD", "d": "Gold"}]},
                         {"title": "Krypto", "symbols": [{"s": "BITSTAMP:BTCUSD"}, {"s": "BITSTAMP:ETHUSD"}]}
                       ] }
                     </script>
@@ -256,8 +270,14 @@
             updateClock(); setInterval(updateClock, 1000);
             render();
             updateActiveNav(0);
-            updateNews(); setInterval(updateNews, 120000); // News alle 2 Min
-            checkTasksLoop(); // Start Push Check Loop
+            updateNews(); setInterval(updateNews, 120000);
+            
+            // Push Berechtigung Check
+            if ("Notification" in window && Notification.permission !== "granted") {
+                document.getElementById('badge').style.display = 'block';
+            }
+            
+            checkTasksLoop();
         });
 
         function updateClock() {
@@ -269,196 +289,27 @@
         // --- PUSH NOTIFICATIONS ---
         function requestPush() {
             if (!("Notification" in window)) {
-                alert("Dieser Browser unterstützt keine Push-Nachrichten.");
-                return;
+                return showNotify("Dein Browser kann keine Push-Nachrichten.");
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    new Notification("Noah PRO", { body: "Push aktiviert! Du wirst benachrichtigt.", icon: "https://img.icons8.com/color/96/bullish.png" });
+                    new Notification("Noah PRO", { body: "Benachrichtigungen aktiviert!", icon: "https://img.icons8.com/color/96/bullish.png" });
                     document.getElementById('badge').style.display = 'none';
                 }
             });
         }
 
         function checkTasksLoop() {
+            // Check alle 60 Sekunden
             setInterval(() => {
+                if (Notification.permission !== "granted") return;
+
                 const now = new Date();
+                // Format HH:MM
                 const timeStr = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
                 const key = getDateKey(now);
                 
                 const dayTasks = tasks[key] || [];
                 dayTasks.forEach(t => {
-                    // Simpler Check: Wenn Zeit gleich und noch nicht "done" (würde man in echt speichern, ob schon benachrichtigt)
-                    if(t.time === timeStr && !t.done) {
-                         if (Notification.permission === "granted") {
-                            new Notification("Aufgabe fällig!", { body: t.title + " (" + t.cat + ")", icon: "https://img.icons8.com/color/96/bullish.png" });
-                         }
-                    }
-                });
-            }, 60000); // Jede Minute prüfen
-        }
-
-        // --- CHAT LOGIC ---
-        const aiResponses = [
-            "Stark! Bleib dran. 🚀",
-            "Lass dich nicht ablenken. Fokus ist alles.",
-            "Das klingt nach einem Plan. Wie setzt du das um?",
-            "Vergiss nicht: Deine Konkurrenz schläft nicht.",
-            "Ich hab es notiert. Mach weiter so!",
-            "Gibt es ein Problem dabei? Wenn ja, löse es jetzt.",
-            "Denk groß. Größer als das."
-        ];
-
-        function sendMsg() {
-            const input = document.getElementById('chatInput');
-            const txt = input.value.trim();
-            if(!txt) return;
-
-            addBubble(txt, 'user');
-            input.value = '';
-
-            // AI Antwort simulieren
-            setTimeout(() => {
-                const rnd = Math.floor(Math.random() * aiResponses.length);
-                let reply = aiResponses[rnd];
-                
-                // Kleine Intelligenz
-                if(txt.toLowerCase().includes("aktie") || txt.toLowerCase().includes("markt")) reply = "Behalte die Charts im Auge. Volatilität ist Chance.";
-                if(txt.toLowerCase().includes("schule") || txt.toLowerCase().includes("lernen")) reply = "Wissen ist der Zinseszins des Lebens. Lern weiter.";
-                
-                addBubble(reply, 'ai');
-            }, 1000);
-        }
-
-        function addBubble(txt, type) {
-            const div = document.createElement('div');
-            div.className = `msg msg-${type}`;
-            div.innerText = txt;
-            const con = document.getElementById('chat-history');
-            con.appendChild(div);
-            con.scrollTop = con.scrollHeight;
-        }
-
-        function handleEnter(e) { if(e.key === 'Enter') sendMsg(); }
-
-
-        // --- TASK & PLANNER ---
-        let viewDate = new Date();
-        let tasks = JSON.parse(localStorage.getItem('noahTasksV9')) || {};
-        function getDateKey(d) { return d.toISOString().split('T')[0]; }
-
-        function render() {
-            const key = getDateKey(viewDate);
-            const list = document.getElementById('taskList');
-            
-            document.getElementById('datePickerInput').value = key;
-            const today = getDateKey(new Date());
-            document.getElementById('currentDayDisplay').innerText = (key === today) ? "HEUTE" : viewDate.toLocaleDateString('de-DE', {weekday:'long'});
-            document.getElementById('currentDateSmall').innerText = viewDate.toLocaleDateString('de-DE');
-
-            list.innerHTML = '';
-            const dayTasks = tasks[key] || [];
-            dayTasks.sort((a,b) => a.time.localeCompare(b.time));
-
-            if(dayTasks.length === 0) {
-                list.innerHTML = `<div style="text-align:center; opacity:0.4; padding:30px;">"Disziplin ist Freiheit."</div>`;
-                return;
-            }
-
-            dayTasks.forEach((t, i) => {
-                let icon = 'fa-check';
-                if(t.cat === 'finanzen') icon = 'fa-sack-dollar';
-                if(t.cat === 'schule') icon = 'fa-graduation-cap';
-                if(t.cat === 'sport') icon = 'fa-dumbbell';
-                if(t.cat === 'haus') icon = 'fa-house';
-
-                list.innerHTML += `
-                <div class="task-item task-${t.cat}" style="${t.done ? 'opacity:0.5; filter:grayscale(1);' : ''}" onclick="toggle(${i})">
-                    <div class="task-icon-circle"><i class="fas ${icon}"></i></div>
-                    <div class="task-info">
-                        <div style="font-size:0.7rem; opacity:0.8; text-transform:uppercase;">${t.cat}</div>
-                        <div style="font-weight:bold; font-size:1rem;">${t.title}</div>
-                    </div>
-                    <div class="task-time">${t.time}</div>
-                    <i class="fas fa-trash" onclick="del(event, ${i})" style="margin-left:10px; opacity:0.6;"></i>
-                </div>`;
-            });
-        }
-
-        function addTask() {
-            const title = document.getElementById('tTitle').value;
-            const time = document.getElementById('tTime').value;
-            const cat = document.getElementById('tCat').value;
-            
-            if(!title || !time) return alert("Fehlt was!");
-
-            const key = getDateKey(viewDate);
-            if(!tasks[key]) tasks[key] = [];
-            tasks[key].push({title, time, cat, done:false});
-            
-            localStorage.setItem('noahTasksV9', JSON.stringify(tasks));
-            document.getElementById('tTitle').value = '';
-            render();
-        }
-
-        function toggle(i) {
-            const key = getDateKey(viewDate);
-            tasks[key][i].done = !tasks[key][i].done;
-            localStorage.setItem('noahTasksV9', JSON.stringify(tasks));
-            render();
-        }
-
-        function del(e, i) {
-            e.stopPropagation();
-            if(confirm("Löschen?")) {
-                const key = getDateKey(viewDate);
-                tasks[key].splice(i, 1);
-                localStorage.setItem('noahTasksV9', JSON.stringify(tasks));
-                render();
-            }
-        }
-
-        function addDays(n) { viewDate.setDate(viewDate.getDate() + n); render(); }
-        function pickDate(val) { if(val) { viewDate = new Date(val); render(); } }
-
-        // --- NEWS ---
-        const newsHeadlines = [
-            {t: "Markt-Update", m: "MSCI ACWI zeigt Stärke in volatilen Zeiten."},
-            {t: "EZB Zinsen", m: "Entscheidung erwartet: Auswirkungen auf Sparer."},
-            {t: "Tech-Sektor", m: "KI-Rallye geht weiter, Analysten optimistisch."},
-            {t: "Krypto", m: "Bitcoin testet wichtige Widerstandszonen."},
-            {t: "Rohstoffe", m: "Gold als sicherer Hafen wieder gefragt."}
-        ];
-
-        function updateNews() {
-            const container = document.getElementById('news-feed');
-            const now = new Date();
-            const timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-            document.getElementById('news-update-time').innerText = "Stand: " + timeString;
-
-            let html = "";
-            const rnd = Math.floor(Math.random() * 3);
-            html += `<div class="news-item"><div class="news-time">${timeString}</div>${newsHeadlines[rnd].t}: ${newsHeadlines[rnd].m}</div>`;
-            html += `<div class="news-item"><div class="news-time">Vor 2 Std</div>${newsHeadlines[rnd+1].t}: ${newsHeadlines[rnd+1].m}</div>`;
-            container.innerHTML = html;
-        }
-
-        // --- NAV ---
-        const swiper = document.getElementById('swiper');
-        const navItems = document.querySelectorAll('.nav-item');
-        function goto(idx) {
-            swiper.scrollTo({left: idx * swiper.clientWidth, behavior:'smooth'});
-            updateActiveNav(idx);
-        }
-        swiper.addEventListener('scroll', () => {
-            const idx = Math.round(swiper.scrollLeft / swiper.clientWidth);
-            updateActiveNav(idx);
-        });
-        function updateActiveNav(idx) {
-            navItems.forEach(n => n.classList.remove('active'));
-            if(navItems[idx]) navItems[idx].classList.add('active');
-        }
-
-    </script>
-</body>
-</html>
+                    // Wenn Zeit passt und noch nicht erledigt
+                    if(t.time === timeStr && !t.don
