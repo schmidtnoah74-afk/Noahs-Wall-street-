@@ -3,301 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah's Daily Wall Street</title>
+    <title>Noah Wall Street PRO</title>
+    
+    <!-- PWA Settings -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0f0c29">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/color/480/bullish.png">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-main: #f1f5f9;
-            --accent: #3b82f6;
-            --news-bg: #991b1b;
-            
-            /* Kategorien */
-            --col-school: #3b82f6;
-            --col-finance: #eab308;
-            --col-home: #f97316;
-            --col-fun: #8b5cf6;
-            --col-sport: #22c55e;
+            --primary: #00f2ff;
+            --accent: #7000ff;
+            --success: #00ff88;
+            --danger: #ff0055;
+            --bg-dark: #0f0c29;
+            --bg-panel: rgba(255, 255, 255, 0.05);
+            --glass: rgba(255, 255, 255, 0.1);
+            --border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
             margin: 0;
-            padding: 0;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        /* HEADER */
+        header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: var(--border);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            min-height: 100vh;
-            padding-bottom: 40px;
         }
 
-        /* --- Tickers --- */
-        .finance-ticker { width: 100%; height: 44px; background: #000; border-bottom: 1px solid #333; }
-        .news-ticker-container { width: 100%; background: var(--card-bg); color: #fff; font-size: 14px; white-space: nowrap; overflow: hidden; border-bottom: 1px solid #333; display: flex; align-items: center; height: 35px; position: relative; }
-        .news-label { background: var(--news-bg); padding: 0 12px; height: 100%; display: flex; align-items: center; font-weight: bold; font-size: 11px; text-transform: uppercase; z-index: 2; box-shadow: 2px 0 10px rgba(0,0,0,0.5); letter-spacing: 1px; }
-        .scrolling-news { display: inline-block; padding-left: 100%; animation: scroll-text 50s linear infinite; }
-        .scrolling-news span { margin-right: 60px; opacity: 0.9; }
-        .scrolling-news span::before { content: "+++"; color: var(--news-bg); margin-right: 8px; font-weight: bold; }
-        @keyframes scroll-text { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        /* --- Notificaton Button --- */
-        #notifyBtn {
-            background: transparent; border: 1px solid #475569; color: #94a3b8; padding: 8px 15px; border-radius: 20px; font-size: 12px; margin-top: 15px; cursor: pointer; transition: all 0.3s;
+        .logo { 
+            font-weight: 900; 
+            font-size: 1.2rem; 
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-        #notifyBtn.active { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.1); }
 
-        /* --- UI --- */
-        .date-nav { margin-top: 20px; display: flex; align-items: center; gap: 20px; background: var(--card-bg); padding: 12px 25px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 25px; border: 1px solid #334155; }
-        .date-nav button { background: none; border: none; color: var(--accent); font-size: 24px; cursor: pointer; padding: 0 5px; }
-        #currentDateDisplay { font-size: 18px; font-weight: bold; min-width: 140px; text-align: center; color: #fff; }
+        .date-display { font-size: 0.8rem; opacity: 0.7; }
 
-        .input-group { background: var(--card-bg); padding: 20px; border-radius: 20px; width: 88%; max-width: 450px; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-bottom: 25px; }
-        .row-top { display: flex; gap: 10px; }
-        input, select { background: #334155; border: 1px solid #475569; padding: 14px; border-radius: 10px; color: white; font-size: 16px; outline: none; transition: border 0.2s; }
-        select { flex-grow: 1; }
-        button#addBtn { background: linear-gradient(135deg, #3b82f6, #2563eb); border: none; color: white; padding: 14px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 5px; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3); }
+        /* SWIPE CONTAINER */
+        .swiper-container {
+            flex: 1;
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
 
-        ul { list-style: none; padding: 0; width: 88%; max-width: 450px; }
-        li { background: var(--card-bg); margin-bottom: 12px; padding: 15px; border-radius: 14px; display: flex; align-items: center; animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); border-left: 5px solid #555; transition: all 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .page {
+            min-width: 100vw;
+            height: 100%;
+            scroll-snap-align: start;
+            overflow-y: auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
 
-        /* Colors */
-        li.cat-finanzen { border-left-color: var(--col-finance); background: linear-gradient(to right, #1e293b, #262315); }
-        li.cat-schule { border-left-color: var(--col-school); }
-        li.cat-haus { border-left-color: var(--col-home); }
-        li.cat-freizeit { border-left-color: var(--col-fun); }
-        li.cat-sport { border-left-color: var(--col-sport); }
-        .cat-badge { font-size: 10px; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; margin-right: 10px; color: #000; font-weight: 800; letter-spacing: 0.5px; }
-        .cat-finanzen .cat-badge { background: var(--col-finance); }
-        .cat-schule .cat-badge { background: var(--col-school); }
-        .cat-haus .cat-badge { background: var(--col-home); }
-        .cat-freizeit .cat-badge { background: var(--col-fun); }
-        .cat-sport .cat-badge { background: var(--col-sport); }
+        /* PAGE INDICATOR */
+        .page-indicator {
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            gap: 10px;
+            background: rgba(0,0,0,0.2);
+        }
+        .dot {
+            width: 8px; height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transition: 0.3s;
+        }
+        .dot.active { background: var(--primary); width: 20px; border-radius: 4px; }
 
-        .check-container { margin-right: 15px; cursor: pointer; position: relative; }
-        .custom-checkbox { width: 24px; height: 24px; border: 2px solid #64748b; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;}
-        li.done .custom-checkbox { background: var(--accent); border-color: var(--accent); transform: scale(1.1); }
-        li.done .custom-checkbox::after { content: '✓'; color: white; font-size: 16px; font-weight: bold; }
-        li.done { opacity: 0.5; transform: scale(0.98); }
-        li.done .task-text { text-decoration: line-through; color: #94a3b8; }
-        .task-content { flex-grow: 1; }
-        .task-meta { font-size: 12px; color: #94a3b8; display: flex; align-items: center; margin-bottom: 4px;}
-        .task-text { font-size: 17px; line-height: 1.4; }
-        .delete-btn { background: none; border: none; color: #ef4444; font-size: 20px; padding: 10px; cursor: pointer; opacity: 0.7; }
+        /* CARDS & PANELS */
+        .card {
+            background: var(--bg-panel);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: var(--border);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        h2 { margin-top: 0; font-size: 1.1rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        
+        /* NEWS FEED */
+        .news-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            animation: fadeIn 0.5s ease;
+        }
+        .news-source { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; font-weight: bold; }
+        .news-title { font-size: 0.95rem; line-height: 1.4; margin: 5px 0; }
+        .news-time { font-size: 0.7rem; opacity: 0.5; }
+
+        /* AI COACH */
+        .ai-coach-box {
+            background: linear-gradient(135deg, rgba(112, 0, 255, 0.1), rgba(0, 242, 255, 0.1));
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .ai-avatar {
+            width: 40px; height: 40px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            box-shadow: 0 0 15px var(--primary);
+        }
+        .typing { font-size: 0.8rem; opacity: 0.7; font-style: italic; }
+
+        /* CALENDAR ZOOM */
+        .calendar-year-view {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            font-size: 0.5rem;
+        }
+        .mini-month { background: rgba(255,255,255,0.05); padding: 5px; border-radius: 5px; text-align: center; }
+        .mini-day { display: inline-block; width: 4px; height: 4px; background: rgba(255,255,255,0.2); margin: 1px; border-radius: 50%; }
+        .mini-day.active { background: var(--success); }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(0, 242, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 242, 255, 0); } }
+
+        /* BOTTOM NAV */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(15, 12, 41, 0.9);
+            backdrop-filter: blur(20px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0 30px; /* Extra padding for iPhone home bar */
+            border-top: var(--border);
+            z-index: 200;
+        }
+        .nav-btn {
+            background: none; border: none; color: rgba(255,255,255,0.5);
+            font-size: 1.2rem; cursor: pointer; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+        }
+        .nav-btn span { font-size: 0.6rem; }
+        .nav-btn.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        /* TRADINGVIEW WIDGET FIX */
+        .tradingview-widget-container { height: 300px !important; width: 100% !important; border-radius: 15px; overflow: hidden; }
+
     </style>
 </head>
 <body>
 
-    <!-- Widget -->
-    <div class="finance-ticker">
-        <div class="tradingview-widget-container">
-            <div class="tradingview-widget-container__widget"></div>
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-            { "symbols": [ {"proName": "FOREXCOM:SPXUSD", "title": "S&P 500"}, {"proName": "AMEX:NGD", "title": "New Gold Inc."}, {"proName": "TVC:SILVER", "title": "Silber"}, {"proName": "TVC:GOLD", "title": "Gold"}, {"proName": "XETR:IUSQ", "title": "MSCI ACWI ETF"}, {"proName": "BITSTAMP:BTCUSD", "title": "Bitcoin"} ], "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": false, "displayMode": "adaptive", "locale": "de_DE" }
-            </script>
+    <!-- HEADER -->
+    <header>
+        <div class="logo"><i class="fas fa-bullseye"></i> NOAH PRO</div>
+        <div class="date-display" id="currentDate">Di, 03.02.</div>
+    </header>
+
+    <!-- MAIN CONTENT SWIPER -->
+    <div class="swiper-container" id="swiper">
+        
+        <!-- PAGE 1: NEWS & AI -->
+        <div class="page" id="page-news">
+            
+            <!-- AI COACH -->
+            <div class="card ai-coach-box">
+                <div class="ai-avatar"><i class="fas fa-robot"></i></div>
+                <h2>Tages-Coach</h2>
+                <div id="ai-message" class="typing">Analysiere deinen Tag...</div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button onclick="rateDay(5)" style="flex:1; padding: 10px; background: var(--success); border:none; border-radius:8px; color:#000; font-weight:bold;">Top 🚀</button>
+                    <button onclick="rateDay(3)" style="flex:1; padding: 10px; background: orange; border:none; border-radius:8px; color:#000; font-weight:bold;">Okay 😐</button>
+                    <button onclick="rateDay(1)" style="flex:1; padding: 10px; background: var(--danger); border:none; border-radius:8px; color:white; font-weight:bold;">Mies 📉</button>
+                </div>
+            </div>
+
+            <!-- NEWS FEED -->
+            <div class="card">
+                <h2><i class="fas fa-globe"></i> World News</h2>
+                <div id="news-feed">
+                    <div class="news-item">
+                        <div class="news-source">Reuters • 10m</div>
+                        <div class="news-title">Global Markets: Stocks rally as tech sector surges ahead of earnings.</div>
+                    </div>
+                    <!-- JS fills this -->
+                </div>
+            </div>
+
+            <!-- CALENDAR MINI -->
+            <div class="card">
+                <h2><i class="fas fa-calendar-alt"></i> Year Overview (Zoom)</h2>
+                <div class="calendar-year-view" id="year-view">
+                    <!-- JS fills months -->
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- News -->
-    <div class="news-ticker-container">
-        <div class="news-label">FINANZ & WELT</div>
-        <div class="scrolling-news" id="newsTicker"><span>Lade Nachrichten...</span></div>
-    </div>
+        <!-- PAGE 2: FINANZEN -->
+        <div class="page" id="page-finance">
+            
+            <!-- TRADINGVIEW TICKER TAPE -->
+            <div class="card" style="padding:0; overflow:hidden; height: 50px;">
+                <div class="tradingview-widget-container">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                    {
+                    "symbols": [
+                        { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
+                        { "proName": "FOREXCOM:NSXUSD", "title": "US 100" },
+                        { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" },
+                        { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
+                        { "proName": "BITSTAMP:ETHUSD", "title": "Ethereum" }
+                    ],
+                    "showSymbolLogo": true,
+                    "colorTheme": "dark",
+                    "isTransparent": true,
+                    "displayMode": "adaptive",
+                    "locale": "de_DE"
+                    }
+                    </script>
+                </div>
+            </div>
 
-    <!-- Notification Toggle -->
-    <button id="notifyBtn" onclick="requestPermission()">🔔 Benachrichtigungen aktivieren</button>
+            <!-- LIVE CHART -->
+            <div class="card">
+                <h2><i class="fas fa-chart-line"></i> Markt Übersicht</h2>
+                <div class="tradingview-widget-container" style="height: 400px;">
+                    <div class="tradingview-widget-container__widget"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                    {
+                    "colorTheme": "dark",
+                    "dateRange": "12M",
+                    "showChart": true,
+                    "locale": "de_DE",
+                    "largeChartUrl": "",
+                    "isTransparent": true,
+                    "showSymbolLogo": true,
+                    "showFloatingTooltip": false,
+                    "width": "100%",
+                    "height": "400",
+                    "tabs": [
+                        {
+                        "title": "Indizes",
+                        "symbols": [
+                            { "s": "FOREXCOM:SPXUSD", "d": "S&P 500" },
+                            { "s": "FOREXCOM:NSXUSD", "d": "US 100" },
+                            { "s": "FOREXCOM:DJI", "d": "Dow 30" },
+                            { "s": "INDEX:NKY", "d": "Nikkei 225" },
+                            { "s": "INDEX:DEU40", "d": "DAX 40" }
+                        ]
+                        },
+                        {
+                        "title": "Rohstoffe",
+                        "symbols": [
+                            { "s": "CME_MINI:ES1!", "d": "S&P 500" },
+                            { "s": "COMEX:GC1!", "d": "Gold" },
+                            { "s": "NYMEX:CL1!", "d": "Öl" },
+                            { "s": "NYMEX:NG1!", "d": "Gas" }
+                        ]
+                        }
+                    ]
+                    }
+                    </script>
+                </div>
+            </div>
 
-    <!-- Date Nav -->
-    <div class="date-nav">
-        <button onclick="changeDate(-1)">❮</button>
-        <span id="currentDateDisplay">Heute</span>
-        <button onclick="changeDate(1)">❯</button>
-    </div>
+            <!-- PORTFOLIO SNIPPET -->
+            <div class="card">
+                <h2><i class="fas fa-wallet"></i> Mein Fokus</h2>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span>Trade Republic (Cash)</span>
+                    <span style="color:var(--success)">+1.2%</span>
+                </div>
+                <div style="height:4px; background:rgba(255,255,255,0.1); border-radius:2px;">
+                    <div style="width:65%; height:100%; background:var(--primary); border-radius:2px;"></div>
+                </div>
+            </div>
 
-    <!-- Input -->
-    <div class="input-group">
-        <div class="row-top">
-            <input type="time" id="timeInput">
-            <select id="catInput">
-                <option value="finanzen">💰 Finanzen</option>
-                <option value="schule">🏫 Schule</option>
-                <option value="haus">🏠 Haus</option>
-                <option value="freizeit">🎮 Freizeit</option>
-                <option value="sport">⚽ Sport</option>
-            </select>
         </div>
-        <input type="text" id="taskInput" placeholder="Neuer Eintrag...">
-        <button id="addBtn">Hinzufügen</button>
+
     </div>
 
-    <ul id="taskList"></ul>
+    <!-- INDICATORS -->
+    <div class="page-indicator">
+        <div class="dot active" id="dot1"></div>
+        <div class="dot" id="dot2"></div>
+    </div>
+
+    <!-- NAV BAR -->
+    <nav class="nav-bar">
+        <button class="nav-btn active" onclick="scrollToPage(0)">
+            <i class="fas fa-newspaper"></i>
+            <span>News</span>
+        </button>
+        <button class="nav-btn" style="position:relative; top:-20px; background:var(--primary); width:50px; height:50px; border-radius:50%; color:#000; box-shadow:0 0 20px var(--primary);" onclick="askCoach()">
+            <i class="fas fa-microphone"></i>
+        </button>
+        <button class="nav-btn" onclick="scrollToPage(1)">
+            <i class="fas fa-chart-pie"></i>
+            <span>Finanzen</span>
+        </button>
+    </nav>
 
     <script>
-        // --- Notification Logic ---
-        const notifyBtn = document.getElementById('notifyBtn');
+        // 1. SWIPE LOGIC
+        const swiper = document.getElementById('swiper');
+        const dots = [document.getElementById('dot1'), document.getElementById('dot2')];
+        const navBtns = document.querySelectorAll('.nav-btn');
 
-        function requestPermission() {
-            if (!("Notification" in window)) {
-                alert("Dein Browser unterstützt keine Benachrichtigungen.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    notifyBtn.innerText = "🔔 Benachrichtigungen sind AN";
-                    notifyBtn.classList.add('active');
-                    new Notification("Tagesplaner", { body: "Benachrichtigungen aktiviert!" });
-                }
-            });
-        }
-
-        // Check Loop (Every 30 seconds)
-        setInterval(() => {
-            if (Notification.permission !== "granted") return;
-            
-            const now = new Date();
-            const currentHours = String(now.getHours()).padStart(2, '0');
-            const currentMinutes = String(now.getMinutes()).padStart(2, '0');
-            const currentTime = `${currentHours}:${currentMinutes}`;
-            
-            // Get today's tasks
-            const tasks = getTasks(); // Function defined below
-            
-            // Check if user is looking at "Today" (don't notify for past/future days logic strictly, or just notify anyway if it matches today)
-            // Simplified: We notify if a task for "Today's Date" matches Current Time
-            
-            // Check only if selectedDate is actually today
-            const todayKey = new Date().toISOString().split('T')[0];
-            const allData = JSON.parse(localStorage.getItem('privateBankerPlaner')) || {};
-            const todaysTasks = allData[todayKey] || [];
-
-            todaysTasks.forEach(task => {
-                if (!task.done && task.time === currentTime && !task.notified) {
-                    // Send Notification
-                    new Notification("Zeit für: " + task.category, {
-                        body: task.text,
-                        icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png"
-                    });
-                    
-                    // Mark as notified to avoid spam
-                    task.notified = true;
-                    saveTasksRaw(allData); // Save the "notified" flag
-                }
-            });
-        }, 30000); // Check every 30s
-
-        // --- News Logic ---
-        const newsTicker = document.getElementById('newsTicker');
-        async function fetchNews() {
-            try {
-                const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/xml/rss2');
-                const data = await res.json();
-                const financeHeadlines = ["DAX schließt im Plus", "Goldpreis stabilisiert sich", "EZB beobachtet Inflation", "Tech-Aktien erholen sich"];
-                if(data.items) {
-                    let newsHtml = '';
-                    data.items.slice(0, 5).forEach(item => { newsHtml += `<span>${item.title}</span>`; });
-                    financeHeadlines.forEach(item => { newsHtml += `<span>${item}</span>`; });
-                    newsTicker.innerHTML = newsHtml;
-                }
-            } catch (e) { newsTicker.innerHTML = "<span>+++ News-Update läuft... +++</span>"; }
-        }
-        fetchNews(); setInterval(fetchNews, 600000);
-
-        // --- Planner Logic ---
-        let selectedDate = new Date();
-        const dateDisplay = document.getElementById('currentDateDisplay');
-        const taskList = document.getElementById('taskList');
-        const timeInput = document.getElementById('timeInput');
-        const catInput = document.getElementById('catInput');
-        const taskInput = document.getElementById('taskInput');
-        const addBtn = document.getElementById('addBtn');
-
-        updateDateDisplay(); renderTasks();
-
-        function changeDate(days) { selectedDate.setDate(selectedDate.getDate() + days); updateDateDisplay(); renderTasks(); }
-        
-        function updateDateDisplay() {
-            const options = { weekday: 'short', day: '2-digit', month: '2-digit' };
-            const today = new Date();
-            if (selectedDate.toDateString() === today.toDateString()) dateDisplay.innerText = "Heute";
-            else dateDisplay.innerText = selectedDate.toLocaleDateString('de-DE', options);
-        }
-
-        function getDateKey() { return selectedDate.toISOString().split('T')[0]; }
-
-        function getTasks() {
-            const allData = JSON.parse(localStorage.getItem('privateBankerPlaner')) || {};
-            return allData[getDateKey()] || [];
-        }
-        
-        function saveTasksRaw(allData) {
-            localStorage.setItem('privateBankerPlaner', JSON.stringify(allData));
-        }
-
-        function saveTasks(tasks) {
-            const allData = JSON.parse(localStorage.getItem('privateBankerPlaner')) || {};
-            allData[getDateKey()] = tasks;
-            saveTasksRaw(allData);
-        }
-
-        addBtn.addEventListener('click', () => {
-            if (taskInput.value === '') return;
-            const tasks = getTasks();
-            tasks.push({
-                id: Date.now(),
-                time: timeInput.value || '--:--',
-                text: taskInput.value,
-                category: catInput.value,
-                done: false,
-                notified: false // New flag
-            });
-            tasks.sort((a, b) => a.time.localeCompare(b.time));
-            saveTasks(tasks);
-            renderTasks();
-            taskInput.value = '';
+        swiper.addEventListener('scroll', () => {
+            const pageIndex = Math.round(swiper.scrollLeft / window.innerWidth);
+            updateActive(pageIndex);
         });
 
-        function renderTasks() {
-            const tasks = getTasks();
-            taskList.innerHTML = '';
-            tasks.forEach(task => {
-                const li = document.createElement('li');
-                li.className = `cat-${task.category} ${task.done ? 'done' : ''}`;
-                li.innerHTML = `
-                    <div class="check-container" onclick="toggleTask(${task.id})">
-                        <div class="custom-checkbox"></div>
-                    </div>
-                    <div class="task-content">
-                        <div class="task-meta"><span class="cat-badge">${task.category}</span><span>${task.time} Uhr</span></div>
-                        <div class="task-text">${task.text}</div>
-                    </div>
-                    <button class="delete-btn" onclick="deleteTask(${task.id})">✖</button>
-                `;
-                taskList.appendChild(li);
+        function scrollToPage(index) {
+            swiper.scrollTo({ left: index * window.innerWidth, behavior: 'smooth' });
+            updateActive(index);
+        }
+
+        function updateActive(index) {
+            dots.forEach((d, i) => d.classList.toggle('active', i === index));
+            navBtns[0].classList.toggle('active', index === 0);
+            navBtns[2].classList.toggle('active', index === 1);
+        }
+
+        // 2. NEWS SIMULATION (4h Update)
+        const newsData = [
+            { src: "Bloomberg", time: "12m", title: "ECB signals rate cut could come sooner than expected." },
+            { src: "TechCrunch", time: "1h", title: "Apple Vision Pro sales exceed analyst expectations in Q1." },
+            { src: "Wall Street Journal", time: "3h", title: "Oil prices stabilize amid geopolitical tensions in Middle East." },
+            { src: "CoinDesk", time: "4h", title: "Bitcoin reclaims $95k level as ETF inflows surge." }
+        ];
+
+        function loadNews() {
+            const container = document.getElementById('news-feed');
+            let html = '';
+            newsData.forEach(n => {
+                html += `
+                <div class="news-item">
+                    <div class="news-source" style="color:${Math.random() > 0.5 ? 'var(--success)' : 'var(--primary)'}">${n.src} • ${n.time}</div>
+                    <div class="news-title">${n.title}</div>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        // 3. AI COACH LOGIC
+        function rateDay(rating) {
+            const msgs = {
+                5: "Stark! 🔥 Halte dieses Momentum. Morgen greifen wir wieder an!",
+                3: "Solide. 🧘‍♂️ Analysiere kurz: Was hat gefehlt? Morgen 1% besser.",
+                1: "Kopf hoch. 📉 Trading ist Psychologie. Schlaf gut, morgen ist neuer Markt."
+            };
+            const msgBox = document.getElementById('ai-message');
+            msgBox.innerHTML = msgs[rating];
+            msgBox.style.color = "white";
+            localStorage.setItem('lastRating', rating);
+        }
+
+        function askCoach() {
+            alert("🎤 Coach hört zu... (Feature kommt im nächsten Update)");
+        }
+
+        // 4. CALENDAR GENERATOR
+        function initCalendar() {
+            const yearView = document.getElementById('year-view');
+            const months = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
+            
+            months.forEach(m => {
+                let monthHtml = `<div class="mini-month" style="font-weight:bold; margin-bottom:2px;">${m}</div>`;
+                // Dots for days
+                for(let i=0; i<12; i++) { 
+                    let active = Math.random() > 0.7 ? 'active' : '';
+                    monthHtml += `<span class="mini-day ${active}"></span>`;
+                }
+                yearView.innerHTML += `<div>${monthHtml}</div>`;
             });
         }
 
-        window.toggleTask = function(id) {
-            let tasks = getTasks();
-            tasks = tasks.map(t => t.id === id ? {...t, done: !t.done} : t);
-            tasks.sort((a, b) => { if (a.done === b.done) return a.time.localeCompare(b.time); return a.done ? 1 : -1; });
-            saveTasks(tasks);
-            renderTasks();
-        }
+        // INIT
+        loadNews();
+        initCalendar();
+        
+        // Date
+        const d = new Date();
+        document.getElementById('currentDate').innerText = d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
 
-        window.deleteTask = function(id) {
-            if(confirm('Löschen?')) {
-                let tasks = getTasks();
-                tasks = tasks.filter(t => t.id !== id);
-                saveTasks(tasks);
-                renderTasks();
-            }
-        }
     </script>
 </body>
 </html>
-<!DOCTYPE html>
-<html lang="de">
-<head
-
