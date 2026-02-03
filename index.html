@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah Wall Street PRO v4</title>
+    <title>Noah Wall Street PRO v5</title>
     
     <!-- PWA Settings -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -51,6 +51,8 @@
             align-items: center;
         }
         .logo { font-weight: 900; font-size: 1.1rem; text-transform: uppercase; color: var(--primary); }
+        .live-clock { font-family: monospace; font-size: 0.9rem; color: var(--success); text-align: right; }
+        .live-date { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
 
         /* SWIPE CONTAINER */
         .swiper-container {
@@ -66,42 +68,84 @@
         .card {
             background: var(--bg-panel); border-radius: 16px; padding: 20px;
             margin-bottom: 20px; border: var(--border); backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
         }
         h2 { margin-top: 0; font-size: 1rem; color: var(--primary); display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
 
         /* --- KALENDER NAV --- */
         .calendar-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .cal-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
-        .current-week { font-weight: bold; font-size: 0.9rem; }
+        .cal-btn { background: rgba(255,255,255,0.1); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; transition: 0.2s; }
+        .cal-btn:active { transform: scale(0.9); background: var(--primary); color: black; }
+        
+        .date-picker-trigger { 
+            font-weight: bold; font-size: 1rem; border-bottom: 2px solid var(--primary); 
+            padding-bottom: 2px; cursor: pointer;
+        }
+        /* Hidden Input for Date Picking */
+        #nativeDatePicker { position: absolute; opacity: 0; pointer-events: none; }
 
         /* --- TASK ITEM STYLED --- */
         .task-item {
-            background: rgba(255,255,255,0.03);
             padding: 15px;
             border-radius: 12px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             display: flex; align-items: center; gap: 15px;
-            border-left: 4px solid #fff;
+            border-left: 5px solid #fff;
             position: relative;
+            transition: transform 0.2s;
+            background: rgba(255,255,255,0.03); /* Fallback */
         }
-        .task-time { font-size: 1.1rem; font-weight: bold; min-width: 50px; }
+        .task-item:active { transform: scale(0.98); }
+
+        .task-time { font-size: 1.1rem; font-weight: 900; min-width: 50px; font-variant-numeric: tabular-nums; }
         .task-content { flex: 1; }
         .task-title { font-weight: 600; font-size: 1rem; }
-        .task-cat { font-size: 0.7rem; text-transform: uppercase; opacity: 0.7; letter-spacing: 1px; }
+        .task-cat { font-size: 0.65rem; text-transform: uppercase; opacity: 0.9; letter-spacing: 1px; font-weight: bold; margin-bottom: 2px; display: inline-block; padding: 2px 6px; border-radius: 4px; background: rgba(0,0,0,0.3); }
         
-        /* CATEGORY COLORS */
-        .cat-finanzen { border-left-color: #f1c40f !important; color: #f1c40f; }
-        .cat-sport { border-left-color: #e74c3c !important; color: #e74c3c; }
-        .cat-schule { border-left-color: #3498db !important; color: #3498db; }
-        .cat-haus { border-left-color: #2ecc71 !important; color: #2ecc71; }
+        /* --- FARBEN & GLOW FÜR KATEGORIEN --- */
+        /* Finanzen: Gold/Gelb */
+        .cat-finanzen { 
+            border-left-color: #ffd700 !important; 
+            background: linear-gradient(90deg, rgba(255, 215, 0, 0.15) 0%, rgba(255,255,255,0.02) 100%);
+        }
+        .cat-finanzen .task-time { color: #ffd700; }
         
-        .task-item.done { opacity: 0.4; filter: grayscale(1); }
+        /* Schule: Blau/Cyan */
+        .cat-schule { 
+            border-left-color: #00d2ff !important; 
+            background: linear-gradient(90deg, rgba(0, 210, 255, 0.15) 0%, rgba(255,255,255,0.02) 100%);
+        }
+        .cat-schule .task-time { color: #00d2ff; }
+
+        /* Haus: Grün */
+        .cat-haus { 
+            border-left-color: #2ecc71 !important; 
+            background: linear-gradient(90deg, rgba(46, 204, 113, 0.15) 0%, rgba(255,255,255,0.02) 100%);
+        }
+        .cat-haus .task-time { color: #2ecc71; }
+
+        /* Sport & Freizeit: Orange/Rot */
+        .cat-sport { 
+            border-left-color: #ff6b6b !important; 
+            background: linear-gradient(90deg, rgba(255, 107, 107, 0.15) 0%, rgba(255,255,255,0.02) 100%);
+        }
+        .cat-sport .task-time { color: #ff6b6b; }
+        
+        .task-item.done { opacity: 0.5; filter: grayscale(0.8); text-decoration: line-through; }
 
         /* ADD FORM */
         .add-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .input-dark { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 10px; border-radius: 8px; width: 100%; }
+        .input-dark { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); color: white; padding: 12px; border-radius: 8px; width: 100%; font-family: inherit; }
+        .input-dark:focus { border-color: var(--primary); outline: none; }
         .full-width { grid-column: span 2; }
-        .btn-primary { background: var(--primary); border: none; padding: 12px; border-radius: 8px; color: #000; font-weight: bold; grid-column: span 2; }
+        .btn-primary { background: var(--primary); border: none; padding: 12px; border-radius: 8px; color: #000; font-weight: bold; grid-column: span 2; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 0 15px rgba(0, 242, 255, 0.3); }
+
+        /* AI CHAT AREA */
+        .ai-chat-bubble {
+            background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px;
+            border-left: 3px solid var(--primary); font-style: italic; min-height: 40px;
+        }
+        .ai-input-group { display: flex; gap: 5px; margin-top: 10px; display: none; /* Hidden by default */ }
 
         /* NAV BAR */
         .nav-bar {
@@ -110,8 +154,8 @@
             display: flex; justify-content: space-around; padding: 15px 0 30px;
             border-top: var(--border); z-index: 200;
         }
-        .nav-btn { background: none; border: none; color: #666; font-size: 1.4rem; display: flex; flex-direction: column; align-items: center; }
-        .nav-btn.active { color: var(--primary); text-shadow: 0 0 15px var(--primary); }
+        .nav-btn { background: none; border: none; color: #666; font-size: 1.4rem; display: flex; flex-direction: column; align-items: center; transition: 0.3s; }
+        .nav-btn.active { color: var(--primary); transform: translateY(-5px); text-shadow: 0 0 15px var(--primary); }
         .nav-label { font-size: 0.6rem; margin-top: 4px; }
         
         .tradingview-widget-container { height: 350px !important; width: 100% !important; border-radius: 12px; overflow: hidden; }
@@ -119,65 +163,82 @@
         /* NOTIFICATION */
         .notification {
             position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 242, 255, 0.9); color: black; padding: 10px 20px;
+            background: var(--success); color: #000; padding: 10px 25px;
             border-radius: 20px; font-weight: bold; z-index: 999;
-            display: none; animation: slideDown 0.5s ease;
+            display: none; box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+            animation: slideDown 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         @keyframes slideDown { from {top: -50px;} to {top: 20px;} }
     </style>
 </head>
 <body>
 
-    <div class="notification" id="notif">✅ Gespeichert!</div>
+    <div class="notification" id="notif"><i class="fas fa-check"></i> Gespeichert!</div>
 
     <header>
-        <div class="logo"><i class="fas fa-layer-group"></i> NOAH PRO v4</div>
-        <div id="dateDisplay" style="font-size:0.8rem; opacity:0.7;"></div>
+        <div class="logo"><i class="fas fa-layer-group"></i> NOAH PRO v5</div>
+        <div style="text-align: right;">
+            <div id="clockDisplay" class="live-clock">00:00:00</div>
+            <div id="dateDisplayHeader" class="live-date">...</div>
+        </div>
     </header>
 
     <div class="swiper-container" id="swiper">
         
         <!-- PAGE 1: DASHBOARD -->
         <div class="page">
-            <div class="card" style="background: linear-gradient(135deg, rgba(112, 0, 255, 0.2), rgba(0, 242, 255, 0.1));">
-                <h2><i class="fas fa-brain"></i> KI Tages-Check</h2>
-                <p id="ai-text">"Na Noah, wie war der Tag? Ehrlich sein."</p>
-                <div style="display:flex; gap:10px; margin-top:10px;">
-                    <button onclick="rate(5)" style="flex:1; padding:10px; background:var(--success); border:0; border-radius:8px;">🚀 Top</button>
-                    <button onclick="rate(3)" style="flex:1; padding:10px; background:orange; border:0; border-radius:8px;">😐 Okay</button>
-                    <button onclick="rate(1)" style="flex:1; padding:10px; background:var(--danger); border:0; border-radius:8px; color:white;">📉 Mies</button>
+            <div class="card" style="background: linear-gradient(135deg, rgba(112, 0, 255, 0.2), rgba(0, 242, 255, 0.1)); border: 1px solid rgba(0,242,255,0.3);">
+                <h2><i class="fas fa-brain"></i> KI Tages-Reflexion</h2>
+                <div id="ai-text" class="ai-chat-bubble">"Na Noah, wie läuft dein Tag bis jetzt? Sei ehrlich."</div>
+                
+                <!-- Initial Buttons -->
+                <div id="ai-buttons" style="display:flex; gap:10px;">
+                    <button onclick="aiInteraction(1)" style="flex:1; padding:12px; background:var(--success); border:0; border-radius:8px; font-weight:bold;">🚀 Top</button>
+                    <button onclick="aiInteraction(2)" style="flex:1; padding:12px; background:#f39c12; border:0; border-radius:8px; font-weight:bold;">😐 Geht</button>
+                    <button onclick="aiInteraction(3)" style="flex:1; padding:12px; background:var(--danger); border:0; border-radius:8px; color:white; font-weight:bold;">📉 Stress</button>
+                </div>
+
+                <!-- Follow Up Input (Hidden initially) -->
+                <div id="ai-followup" class="ai-input-group">
+                    <input type="text" id="aiResponseInput" class="input-dark" placeholder="Antworte der KI...">
+                    <button onclick="finishAi()" class="btn-primary" style="width: auto; grid-column: auto;"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
 
             <div class="card">
-                <h2><i class="fas fa-globe"></i> News Feed</h2>
-                <div id="news-container" style="font-size:0.9rem;"></div>
+                <h2><i class="fas fa-globe"></i> Market Briefing</h2>
+                <div id="news-container" style="font-size:0.9rem; line-height: 1.6;"></div>
             </div>
         </div>
 
         <!-- PAGE 2: PLANNER (MAIN) -->
         <div class="page">
             <div class="card">
-                <h2><i class="far fa-calendar-alt"></i> Zeitmaschine</h2>
+                <h2><i class="far fa-calendar-alt"></i> Zeit-Steuerung</h2>
                 <div class="calendar-nav">
-                    <button class="cal-btn" onclick="changeWeek(-1)"><i class="fas fa-chevron-left"></i></button>
-                    <span class="current-week" id="weekDisplay">Diese Woche</span>
-                    <button class="cal-btn" onclick="changeWeek(1)"><i class="fas fa-chevron-right"></i></button>
-                </div>
-                <div style="text-align:center; font-size:0.7rem; opacity:0.5; margin-bottom:10px;">
-                    Du siehst Aufgaben für: <span id="selectedDateDisplay" style="color:var(--primary); font-weight:bold;">Heute</span>
+                    <!-- Buttons springen 1 Tag -->
+                    <button class="cal-btn" onclick="changeDay(-1)"><i class="fas fa-chevron-left"></i></button>
+                    
+                    <!-- Klick auf Text öffnet Kalender für weite Sprünge -->
+                    <div style="text-align:center;">
+                        <span class="date-picker-trigger" onclick="openDatePicker()" id="selectedDateDisplay">Heute</span>
+                        <input type="date" id="nativeDatePicker" onchange="jumpToDate(this.value)">
+                        <div style="font-size:0.7rem; opacity:0.6; margin-top:4px;" id="weekDisplay">KW ..</div>
+                    </div>
+                    
+                    <button class="cal-btn" onclick="changeDay(1)"><i class="fas fa-chevron-right"></i></button>
                 </div>
             </div>
 
             <div class="card">
                 <h2><i class="fas fa-plus-circle"></i> Neuer Eintrag</h2>
                 <div class="add-form">
-                    <input type="text" id="taskTitle" class="input-dark full-width" placeholder="Was steht an?">
+                    <input type="text" id="taskTitle" class="input-dark full-width" placeholder="Aufgabe oder Termin...">
                     <input type="time" id="taskTime" class="input-dark">
                     <select id="taskCat" class="input-dark">
                         <option value="schule">📚 Schule</option>
                         <option value="finanzen">💰 Finanzen</option>
-                        <option value="sport">💪 Sport</option>
+                        <option value="sport">💪 Sport & Freizeit</option>
                         <option value="haus">🏠 Haus</option>
                     </select>
                     <button class="btn-primary" onclick="addTask()">Eintragen</button>
@@ -185,7 +246,7 @@
             </div>
 
             <div id="taskList">
-                <!-- TASKS HIER -->
+                <!-- TASKS WERDEN HIER EINGEFÜGT -->
             </div>
         </div>
 
@@ -201,7 +262,7 @@
                 </div>
             </div>
             <div class="card">
-                <h2><i class="fas fa-chart-line"></i> Markt Live</h2>
+                <h2><i class="fas fa-chart-line"></i> Markt Übersicht</h2>
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -220,42 +281,54 @@
     </nav>
 
     <script>
-        // --- 1. DATUM & STATE ---
+        // --- 1. DATUM & UHRZEIT ENGINE ---
         let currentDate = new Date();
-        let selectedDateStr = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        let selectedDateStr = currentDate.toISOString().split('T')[0];
+
+        // Live Uhr
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clockDisplay').innerText = now.toLocaleTimeString('de-DE');
+            document.getElementById('dateDisplayHeader').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'long' });
+        }, 1000);
         
         // --- 2. STORAGE ---
-        // Struktur: { "2024-02-03": [ {title, time, cat, done} ] }
         let allTasks = JSON.parse(localStorage.getItem('noahProTasks')) || {};
 
         function save() {
             localStorage.setItem('noahProTasks', JSON.stringify(allTasks));
         }
 
-        // --- 3. LOGIC ---
+        // --- 3. PLANNER LOGIC ---
         function renderTasks() {
             const list = document.getElementById('taskList');
             list.innerHTML = '';
             
             const tasksForDay = allTasks[selectedDateStr] || [];
-            
-            // Sort by time
             tasksForDay.sort((a,b) => a.time.localeCompare(b.time));
 
             if(tasksForDay.length === 0) {
-                list.innerHTML = '<div style="text-align:center; opacity:0.5; margin-top:20px;">Keine Aufgaben für diesen Tag.</div>';
+                list.innerHTML = `
+                <div style="text-align:center; opacity:0.4; margin-top:30px; display:flex; flex-direction:column; align-items:center;">
+                    <i class="fas fa-coffee" style="font-size:2rem; margin-bottom:10px;"></i>
+                    Frei! Nichts geplant für ${selectedDateStr === new Date().toISOString().split('T')[0] ? 'heute' : 'diesen Tag'}.
+                </div>`;
                 return;
             }
 
             tasksForDay.forEach((t, i) => {
+                // Category Label Beautify
+                let catLabel = t.cat;
+                if(t.cat === 'sport') catLabel = 'Sport & Freizeit';
+                
                 list.innerHTML += `
                 <div class="task-item cat-${t.cat} ${t.done ? 'done' : ''}" onclick="toggleTask(${i})">
                     <div class="task-time">${t.time}</div>
                     <div class="task-content">
-                        <div class="task-cat">${t.cat}</div>
+                        <div class="task-cat">${catLabel}</div>
                         <div class="task-title">${t.title}</div>
                     </div>
-                    <button onclick="deleteTask(event, ${i})" style="background:none; border:none; color:#666;"><i class="fas fa-trash"></i></button>
+                    <button onclick="deleteTask(event, ${i})" style="background:none; border:none; color:white; opacity:0.5; padding:10px;"><i class="fas fa-trash"></i></button>
                 </div>`;
             });
         }
@@ -273,9 +346,8 @@
             save();
             renderTasks();
             
-            // Reset & Notify
             document.getElementById('taskTitle').value = '';
-            showNotif();
+            showNotif("Eintrag hinzugefügt!");
         }
 
         function toggleTask(i) {
@@ -284,27 +356,46 @@
         }
 
         function deleteTask(e, i) {
-            e.stopPropagation(); // Verhindert Toggle beim Löschen
-            if(confirm("Löschen?")) {
+            e.stopPropagation();
+            if(confirm("Diesen Eintrag wirklich löschen?")) {
                 allTasks[selectedDateStr].splice(i, 1);
                 save(); renderTasks();
             }
         }
 
-        // --- 4. CALENDAR NAV ---
+        // --- 4. ADVANCED CALENDAR NAVIGATION ---
         function updateDateDisplay() {
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
-            document.getElementById('dateDisplay').innerText = currentDate.toLocaleDateString('de-DE', options);
-            document.getElementById('selectedDateDisplay').innerText = currentDate.toLocaleDateString('de-DE');
+            const todayStr = new Date().toISOString().split('T')[0];
+            
+            let displayLabel = currentDate.toLocaleDateString('de-DE', options);
+            if(selectedDateStr === todayStr) displayLabel = "Heute (" + currentDate.getDate() + "." + (currentDate.getMonth()+1) + ")";
+
+            document.getElementById('selectedDateDisplay').innerText = displayLabel;
             document.getElementById('weekDisplay').innerText = "KW " + getWeekNumber(currentDate);
             
-            selectedDateStr = currentDate.toISOString().split('T')[0];
+            // Sync Hidden Input
+            document.getElementById('nativeDatePicker').value = selectedDateStr;
+            
             renderTasks();
         }
 
-        function changeWeek(direction) {
-            // Springt 7 Tage
-            currentDate.setDate(currentDate.getDate() + (direction * 7));
+        function changeDay(diff) {
+            currentDate.setDate(currentDate.getDate() + diff);
+            selectedDateStr = currentDate.toISOString().split('T')[0];
+            updateDateDisplay();
+        }
+
+        function openDatePicker() {
+            document.getElementById('nativeDatePicker').showPicker(); // Modern browsers
+            // Fallback click if showPicker not supported
+            document.getElementById('nativeDatePicker').focus();
+        }
+
+        function jumpToDate(val) {
+            if(!val) return;
+            currentDate = new Date(val);
+            selectedDateStr = val;
             updateDateDisplay();
         }
 
@@ -315,34 +406,12 @@
             return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
         }
 
-        // --- 5. UI HELPERS ---
-        function showNotif() {
-            const n = document.getElementById('notif');
-            n.style.display = 'block';
-            setTimeout(() => n.style.display = 'none', 2000);
-        }
+        // --- 5. INTELLIGENTE KI LOGIK ---
+        let aiStage = 0; // 0 = start, 1 = question asked
+        
+        function aiInteraction(mood) {
+            const aiText = document.getElementById('ai-text');
+            const btns = document.getElementById('ai-buttons');
+            const followUp = document.getElementById('ai-followup');
 
-        function rate(s) {
-            document.getElementById('ai-text').innerText = "Gespeichert! Morgen wieder 100%.";
-            document.getElementById('ai-text').style.color = "#00ff88";
-        }
-
-        const swiper = document.getElementById('swiper');
-        const btns = document.querySelectorAll('.nav-btn');
-        function scrollToPage(idx) { swiper.scrollTo({ left: idx * window.innerWidth, behavior: 'smooth' }); }
-        swiper.addEventListener('scroll', () => {
-            const i = Math.round(swiper.scrollLeft / window.innerWidth);
-            btns.forEach((b, idx) => b.classList.toggle('active', idx === i));
-        });
-
-        // News Fake
-        document.getElementById('news-container').innerHTML = `
-        <div style="border-bottom:1px solid #333; padding:10px 0;">DAX +0.5% • Tech-Rally hält an</div>
-        <div style="border-bottom:1px solid #333; padding:10px 0;">Gold bei 2030$ • Stabilisierung</div>`;
-
-        // INIT
-        updateDateDisplay();
-
-    </script>
-</body>
-</html>
+            let ques
