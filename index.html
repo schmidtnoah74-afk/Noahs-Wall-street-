@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v15 - ULTIMATE</title>
+    <title>Noah PRO v16 - CRITIC</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -31,7 +31,7 @@
         .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
         h2 { font-size: 0.9rem; text-transform: uppercase; color: #888; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 
-        /* TASKS (Glass Design v14/12) */
+        /* TASKS */
         @keyframes slideIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
         .task-item { padding: 15px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; color: white; border: 1px solid rgba(255,255,255,0.1); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); animation: slideIn 0.4s ease-out; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
         
@@ -88,7 +88,7 @@
                 <i class="fas fa-bell"></i>
                 <div class="bell-badge" id="badge"></div>
             </button>
-            <div class="logo">NOAH<span style="color:white">PRO</span> v15</div>
+            <div class="logo">NOAH<span style="color:white">PRO</span> v16</div>
         </div>
         <div style="text-align:right;">
             <div id="clock" class="live-time">00:00:00</div>
@@ -101,9 +101,9 @@
         <!-- PAGE 1: SMART COACH -->
         <div class="page">
             <div class="card" style="background: linear-gradient(135deg, #1e3c72, #2a5298); min-height:500px;">
-                <h2 style="color:white;"><i class="fas fa-robot"></i> Smart Coach</h2>
+                <h2 style="color:white;"><i class="fas fa-robot"></i> Smart Coach (Critical)</h2>
                 <div id="chatHistory" class="chat-box">
-                    <div class="msg msg-ai">Hi Noah! 👋 Ich bin dein Assistent. Ich überwache deinen Zeitplan und beantworte deine Fragen. Leg los!</div>
+                    <div class="msg msg-ai">Hi Noah! ⚠️ Ich nehme deinen Zeitplan jetzt genau unter die Lupe. Keine Ausreden. Trag deine Aufgaben ein!</div>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="chatIn" class="chat-input" placeholder="Frage oder Plan..." onkeypress="if(event.key==='Enter') sendMsg()">
@@ -116,9 +116,7 @@
                     <h2><i class="fas fa-globe"></i> Welt News</h2>
                     <span style="font-size:0.6rem; border:1px solid #555; padding:2px 5px; border-radius:4px;" id="news-status">LIVE</span>
                 </div>
-                <div id="news-feed-container">
-                    Lade aktuelle Nachrichten...
-                </div>
+                <div id="news-feed-container">Lade aktuelle Nachrichten...</div>
             </div>
         </div>
 
@@ -199,7 +197,7 @@
 
         // --- DATA & TASKS ---
         let viewDate = new Date();
-        let tasks = JSON.parse(localStorage.getItem('noahProV15')) || {};
+        let tasks = JSON.parse(localStorage.getItem('noahProV16')) || {};
         function getKey(d) { return d.toISOString().split('T')[0]; }
 
         function render() {
@@ -245,34 +243,69 @@
             analyzeDay(key);
         }
 
+        // --- DIE NEUE, KRITISCHE KI (V16) ---
         function analyzeDay(key) {
-            const dayTasks = tasks[key] || [];
-            dayTasks.sort((a,b) => a.time.localeCompare(b.time));
-            if(dayTasks.length < 2) return;
+            const list = tasks[key] || [];
+            list.sort((a,b) => a.time.localeCompare(b.time));
+
+            if(list.length === 0) return;
 
             setTimeout(() => {
-                let advice = "";
-                const lastTask = dayTasks[dayTasks.length - 1];
-                const lastHour = parseInt(lastTask.time.split(':')[0]);
-
-                if(lastTask.cat === 'schule' && lastHour >= 21) {
-                    advice = `⚠️ Lernen nach 21 Uhr? Das Gehirn speichert da schlechter. Mach lieber morgen früh weiter!`;
-                } else if(dayTasks.length >= 2) {
-                    const prevTask = dayTasks[dayTasks.length - 2];
-                    const diff = lastHour - parseInt(prevTask.time.split(':')[0]);
-                    if(diff >= 4) advice = `💡 Du hast zwischen ${prevTask.time} und ${lastTask.time} eine große Lücke. Zeit für Sport oder ein Buch?`;
+                let suggestions = [];
+                
+                // Regel 1: Nachtschicht (Prüft ob DIESE Aufgabe spät ist)
+                const lateTasks = list.filter(t => t.cat === 'schule' && parseInt(t.time) >= 21);
+                if(lateTasks.length > 0) {
+                    suggestions.push(`⚠️ Lernen nach 21 Uhr (${lateTasks[0].title})? Das ist ineffektiv. Schlaf ist wichtiger für das Gedächtnis!`);
                 }
-                if(advice) { addBubble(advice, 'ai'); showNotify("KI Vorschlag im Chat!"); }
-            }, 1000);
+
+                // Regel 2: Riesige Lücken
+                for(let i=0; i < list.length - 1; i++) {
+                    const t1 = parseInt(list[i].time);
+                    const t2 = parseInt(list[i+1].time);
+                    if(t2 - t1 >= 3) {
+                        suggestions.push(`🕒 Du hast zwischen ${list[i].time} und ${list[i+1].time} eine Lücke von über 3 Stunden. Zeitverschwendung! Nutz das für Sport oder Vokabeln.`);
+                    }
+                }
+
+                // Regel 3: Zu später Start
+                if(parseInt(list[0].time) >= 11) {
+                    suggestions.push(`🌅 Dein Tag startet erst um ${list[0].time}? Erfolgreiche Menschen stehen früher auf. Morgen um 08:00?`);
+                }
+
+                // Regel 4: Kein Sport (Balance)
+                const hasSport = list.some(t => t.cat === 'sport');
+                if(list.length > 2 && !hasSport) {
+                    suggestions.push(`💪 Du hast viel vor, aber keinen Sport eingeplant. Dein Gehirn braucht Sauerstoff! Geh laufen oder ins Gym.`);
+                }
+
+                // Regel 5: Nur Schule/Arbeit (Burnout)
+                const schoolCount = list.filter(t => t.cat === 'schule' || t.cat === 'finanzen').length;
+                if(schoolCount >= 4 && !hasSport) {
+                    suggestions.push(`🤯 Übertreib es nicht. 4+ produktive Blöcke ohne Ausgleich machen dich kaputt. Mach eine Pause!`);
+                }
+
+                // ENTSCHEIDUNG: Was sagen wir?
+                if(suggestions.length > 0) {
+                    // Wähle zufällig EINEN der Kritikpunkte aus, damit es nicht immer derselbe ist
+                    const msg = suggestions[Math.floor(Math.random() * suggestions.length)];
+                    addBubble(msg, 'ai');
+                    showNotify("KI: Optimierung gefunden!");
+                } else {
+                    // Wenn wirklich gar nichts zu meckern ist:
+                    addBubble("✅ Dein Plan sieht ausnahmsweise sehr effizient aus. Wehe du ziehst das nicht durch!", 'ai');
+                }
+
+            }, 800);
         }
 
         function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; save(); render(); }
         function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); save(); render(); } }
-        function save() { localStorage.setItem('noahProV15', JSON.stringify(tasks)); }
+        function save() { localStorage.setItem('noahProV16', JSON.stringify(tasks)); }
         function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
         function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
 
-        // --- ULTIMATE AI CHAT ---
+        // --- CHAT SYSTEM ---
         const aiKnowledge = {
             "aktien": "Investiere langfristig. Zeit im Markt schlägt Timing des Marktes.",
             "reich": "Reichtum kommt durch Mehrwert, den du anderen bietest. Löse Probleme!",
@@ -302,18 +335,7 @@
 
             setTimeout(() => {
                 let reply = "Das ist ein spannender Punkt. Erzähl mir mehr oder trag es in den Planer ein.";
-                
-                // Keyword Search
-                for(let key in aiKnowledge) {
-                    if(txt.includes(key)) {
-                        reply = aiKnowledge[key];
-                        break;
-                    }
-                }
-                
-                // Fallback Smart Search
-                if(reply.startsWith("Das ist") && txt.includes("?")) reply = "Gute Frage. Die Antwort liegt oft in der Disziplin.";
-
+                for(let key in aiKnowledge) { if(txt.includes(key)) { reply = aiKnowledge[key]; break; } }
                 addBubble(reply, 'ai');
             }, 600);
         }
@@ -327,44 +349,24 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        // --- LIVE WELT-NEWS (RSS Fetcher) ---
+        // --- RSS NEWS ---
         async function fetchNews() {
             const container = document.getElementById('news-feed-container');
             const status = document.getElementById('news-status');
-            
             try {
-                // Nutzung eines öffentlichen RSS-to-JSON Proxies (tagesschau)
                 const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/xml/rss2');
                 const data = await res.json();
-                
                 if(data.status === 'ok') {
                     let html = '';
-                    // Zeige die ersten 5 News
                     data.items.slice(0, 5).forEach(item => {
                         const time = new Date(item.pubDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        html += `
-                        <div class="news-item">
-                            <div class="news-title" onclick="window.open('${item.link}')">${item.title}</div>
-                            <div class="news-meta"><i class="far fa-clock"></i> ${time} • Tagesschau</div>
-                        </div>`;
+                        html += `<div class="news-item"><div class="news-title" onclick="window.open('${item.link}')">${item.title}</div><div class="news-meta"><i class="far fa-clock"></i> ${time} • Tagesschau</div></div>`;
                     });
                     container.innerHTML = html;
                     status.style.color = "#00ff88"; status.style.borderColor = "#00ff88"; status.innerText = "LIVE";
-                } else {
-                    throw new Error("Feed Error");
                 }
             } catch(e) {
-                // Fallback Offline News
-                console.log(e);
                 status.style.color = "orange"; status.innerText = "OFFLINE";
-                const fallbacks = [
-                    "Weltwirtschaft stabilisiert sich langsam",
-                    "Technologie-Sektor: KI-Entwicklung schreitet voran",
-                    "Sport: Champions League Ergebnisse",
-                    "Klima: Neue Ziele gesetzt",
-                    "Märkte: DAX und S&P 500 im Fokus"
-                ];
-                container.innerHTML = fallbacks.map(t => `<div class="news-item"><div class="news-title">${t}</div><div class="news-meta">Backup Feed</div></div>`).join('');
             }
         }
 
@@ -380,12 +382,10 @@
             (tasks[getKey(now)]||[]).forEach(t => { if(t.time===time && !t.done) new Notification(t.title); });
         }, 60000);
 
-        function showNotify(m) { const n=document.getElementById('notify'); n.innerText=m; n.style.display='block'; setTimeout(()=>n.style.display='none', 2000); }
-
         // INIT
         render();
         fetchNews();
-        setInterval(fetchNews, 600000); // Alle 10 Min News Update
+        setInterval(fetchNews, 600000);
         if(Notification.permission !== 'granted') document.getElementById('badge').style.display='block';
 
     </script>
