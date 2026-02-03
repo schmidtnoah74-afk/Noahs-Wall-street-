@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v8 - ULTIMATE</title>
+    <title>Noah PRO v9 - FINAL</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -43,7 +43,11 @@
             z-index: 100;
             height: 70px;
         }
+        .header-left { display: flex; align-items: center; gap: 15px; }
         .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); letter-spacing: 1px; }
+        .bell-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; position: relative; }
+        .bell-badge { position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background: red; border-radius: 50%; display: none; }
+        
         .clock-container { text-align: right; }
         .live-time { font-family: monospace; font-size: 1.3rem; font-weight: bold; color: #fff; line-height: 1; }
         .live-date { font-size: 0.75rem; color: var(--text-dim); margin-top: 4px; }
@@ -67,90 +71,78 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* --- TASKS STYLING & ANIMATION --- */
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px) scale(0.9); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+        /* --- CHAT STYLES --- */
+        .chat-container {
+            height: 300px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+            padding-right: 5px; margin-bottom: 10px;
         }
+        .msg {
+            max-width: 80%; padding: 10px 15px; border-radius: 12px; font-size: 0.95rem; line-height: 1.4;
+            animation: popIn 0.3s ease;
+        }
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary); color: #ddd; }
+        .msg-user { align-self: flex-end; background: var(--primary); color: black; font-weight: 600; }
+        
+        @keyframes popIn { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
+
+        .chat-input-row { display: flex; gap: 10px; }
+        .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: none; background: rgba(255,255,255,0.1); color: white; }
+        .chat-send { width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--primary); color: black; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* --- TASKS --- */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         .task-item {
             padding: 15px; border-radius: 12px; margin-bottom: 12px;
             display: flex; align-items: center; gap: 15px;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Die Animation */
+            color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            animation: slideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             border: 1px solid rgba(255,255,255,0.1);
         }
-        
-        /* Premium Gradients */
-        .task-finanzen { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); color: black; text-shadow: none; }
+        .task-finanzen { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); color: black; }
         .task-schule   { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
         .task-sport    { background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); }
-        .task-haus     { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: black; text-shadow: none; }
+        .task-haus     { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: black; }
 
         .task-icon-circle {
             width: 40px; height: 40px; background: rgba(255,255,255,0.2);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             font-size: 1.2rem; backdrop-filter: blur(5px);
         }
-
         .task-time { font-weight: 800; font-size: 1.1rem; opacity: 0.9; }
         .task-info { flex: 1; }
-        .task-title { font-weight: 700; font-size: 1.05rem; }
-        .task-cat-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.8; letter-spacing: 1px;}
 
-        /* --- KI & FORMULARE --- */
-        .ai-box { background: linear-gradient(135deg, #3a1c71, #d76d77, #ffaf7b); color: white; }
-        .chat-bubble { background: rgba(255,255,255,0.15); padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #fff; font-size: 1.05rem; line-height: 1.5; }
-        
-        .mood-btn { flex: 1; padding: 15px; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: transform 0.1s; }
-        .mood-btn:active { transform: scale(0.95); }
-
-        .date-input-styled {
-            background: var(--primary); color: black; border: none; padding: 10px;
-            border-radius: 8px; font-weight: bold; font-family: inherit; text-align: center;
-            width: 100%; display: block; margin-top: 10px; font-size: 1rem;
-        }
-
-        input, select {
-            width: 100%; padding: 12px; margin-bottom: 10px;
-            background: rgba(0,0,0,0.3); border: 1px solid #444; color: white; border-radius: 8px;
-            font-size: 1rem;
-        }
+        /* --- FORMULARE --- */
+        .date-input-styled { background: var(--primary); color: black; border: none; padding: 10px; border-radius: 8px; width: 100%; text-align: center; font-weight: bold; margin-top: 10px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(0,0,0,0.3); border: 1px solid #444; color: white; border-radius: 8px; font-size: 1rem; }
         .add-btn { width: 100%; background: var(--primary); padding: 15px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; color: #000; text-transform: uppercase; cursor: pointer; box-shadow: 0 0 15px rgba(0,242,255,0.2); }
 
         /* --- NAV BAR --- */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
             background: var(--nav-bg); border-top: 1px solid #333;
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 200;
+            display: flex; justify-content: space-around; align-items: center; z-index: 200;
         }
         .nav-item { color: #555; font-size: 1.5rem; background: none; border: none; display: flex; flex-direction: column; align-items: center; cursor: pointer; transition: 0.3s; }
         .nav-item.active { color: var(--primary); transform: translateY(-5px); text-shadow: 0 0 10px var(--primary); }
         .nav-text { font-size: 0.6rem; margin-top: 5px; }
 
-        /* Notification */
-        .notify {
-            position: fixed; top: 10px; left: 50%; transform: translateX(-50%);
-            background: var(--primary); color: #000; padding: 12px 30px; border-radius: 30px;
-            font-weight: 900; display: none; z-index: 1000; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        
         .tradingview-widget-container { height: 350px !important; width: 100% !important; border-radius: 12px; overflow: hidden; }
 
-        /* NEWS FEED STYLE */
         .news-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 12px 0; font-size: 0.9rem; }
         .news-time { font-size: 0.7rem; color: var(--primary); font-weight: bold; margin-bottom: 2px; }
     </style>
 </head>
 <body>
 
-    <div id="notify" class="notify">Gespeichert!</div>
-
     <header>
-        <div class="logo">NOAH<span style="color:white">PRO</span> v8</div>
+        <div class="header-left">
+            <button class="bell-btn" onclick="requestPush()">
+                <i class="fas fa-bell"></i>
+                <div class="bell-badge" id="badge"></div>
+            </button>
+            <div class="logo">NOAH<span style="color:white">PRO</span> v9</div>
+        </div>
         <div class="clock-container">
             <div id="clock" class="live-time">--:--:--</div>
             <div id="headerDate" class="live-date">Lade...</div>
@@ -159,25 +151,20 @@
 
     <div class="swiper-container" id="swiper">
         
-        <!-- SEITE 1: KI & COACHING -->
+        <!-- SEITE 1: KI CHAT -->
         <div class="page">
-            <div class="card ai-box">
-                <h2><i class="fas fa-brain"></i> Mindset Coach</h2>
-                <div id="ai-question" class="chat-bubble">"Hey Noah! Hand aufs Herz: Gibst du heute wirklich 100% für deine Ziele?"</div>
+            <div class="card ai-box" style="background: linear-gradient(135deg, #1e3c72, #2a5298); height: 500px; display:flex; flex-direction:column;">
+                <h2 style="color:white; border-bottom:1px solid rgba(255,255,255,0.2); padding-bottom:10px;">
+                    <i class="fas fa-robot"></i> Mental Coach
+                </h2>
                 
-                <div id="ai-options" style="display:flex; gap:10px;">
-                    <button onclick="aiNext('yes')" class="mood-btn" style="background:#2ecc71; color:black;">Ja, Vollgas! 🚀</button>
-                    <button onclick="aiNext('no')" class="mood-btn" style="background:#e74c3c; color:white;">Nein, nicht ganz... 📉</button>
+                <div id="chat-history" class="chat-container">
+                    <div class="msg msg-ai">Hey Noah! 👋 Alles bereit, um heute Geschichte zu schreiben? Was steht an?</div>
                 </div>
 
-                <div id="ai-input-area" style="display:none; margin-top:10px;">
-                    <input type="text" id="ai-text-input" placeholder="Warum? Deine Ehrlichkeit ist der Schlüssel..." style="background:rgba(255,255,255,0.2); border:none; color:white; font-style:italic;">
-                    <button onclick="aiFinal()" style="width:100%; padding:10px; background:white; color:black; border:none; border-radius:8px; font-weight:bold; margin-top:5px;">Absenden <i class="fas fa-paper-plane"></i></button>
-                </div>
-
-                <div id="ai-motivation" style="display:none; margin-top:15px; padding:15px; background:rgba(0,0,0,0.3); border-radius:8px; border-left:3px solid var(--primary);">
-                    <div style="font-size:0.8rem; text-transform:uppercase; color:var(--primary); font-weight:bold;">Dein Quote des Tages:</div>
-                    <div id="quote-text" style="font-style:italic; margin-top:5px;">"Success is not final, failure is not fatal."</div>
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Schreib etwas..." onkeypress="handleEnter(event)">
+                    <button class="chat-send" onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
 
@@ -186,16 +173,14 @@
                     <h2><i class="fas fa-bolt"></i> Live News</h2>
                     <span id="news-update-time" style="font-size:0.6rem; color:var(--primary); border:1px solid var(--primary); padding:2px 5px; border-radius:4px;">LIVE</span>
                 </div>
-                <div id="news-feed">
-                    <!-- Wird per JS gefüllt -->
-                </div>
+                <div id="news-feed"></div>
             </div>
         </div>
 
         <!-- SEITE 2: PLANNER -->
         <div class="page">
             <div class="card">
-                <div class="cal-controls" style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px; border-radius:12px;">
+                <div style="display:flex; justify-content:space-between; background:rgba(255,255,255,0.05); padding:10px; border-radius:12px;">
                     <button onclick="addDays(-1)" style="background:none; border:none; color:white; font-size:1.2rem;"><i class="fas fa-chevron-left"></i></button>
                     <div style="text-align:center;">
                         <div id="currentDayDisplay" style="font-weight:900; font-size:1.1rem;">Heute</div>
@@ -210,7 +195,7 @@
 
             <div class="card">
                 <h2><i class="fas fa-plus"></i> Neuer Eintrag</h2>
-                <input type="text" id="tTitle" placeholder="Was steht an?">
+                <input type="text" id="tTitle" placeholder="Titel...">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                     <input type="time" id="tTime">
                     <select id="tCat">
@@ -224,10 +209,9 @@
             </div>
         </div>
 
-        <!-- SEITE 3: FINANZEN (UPDATED) -->
+        <!-- SEITE 3: FINANZEN (ACWI) -->
         <div class="page">
              <div class="card" style="padding:0; height:50px; overflow:hidden; border:none;">
-                <!-- TICKER TAPE -->
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
@@ -236,7 +220,7 @@
                         {"proName":"INDEX:DEU40","title":"DAX 40"},
                         {"proName":"OANDA:XAUUSD","title":"Gold"},
                         {"proName":"OANDA:XAGUSD","title":"Silber"},
-                        {"proName":"AMEX:URTH","title":"MSCI World"},
+                        {"proName":"NASDAQ:ACWI","title":"MSCI ACWI"},
                         {"proName":"BITSTAMP:BTCUSD","title":"Bitcoin"}
                     ], "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "de_DE" }
                     </script>
@@ -251,7 +235,7 @@
                     { "colorTheme": "dark", "dateRange": "12M", "showChart": true, "locale": "de_DE", "width": "100%", "height": "400", "isTransparent": true, 
                       "tabs": [
                         {"title": "Indizes", "symbols": [{"s": "INDEX:DEU40", "d": "DAX"}, {"s": "FOREXCOM:SPXUSD", "d": "S&P 500"}]},
-                        {"title": "ETFs & Gold", "symbols": [{"s": "AMEX:URTH", "d": "MSCI World"}, {"s": "NASDAQ:ACWI", "d": "ACWI ETF"}, {"s": "OANDA:XAUUSD", "d": "Gold"}]},
+                        {"title": "Global", "symbols": [{"s": "NASDAQ:ACWI", "d": "MSCI ACWI"}, {"s": "OANDA:XAUUSD", "d": "Gold"}]},
                         {"title": "Krypto", "symbols": [{"s": "BITSTAMP:BTCUSD"}, {"s": "BITSTAMP:ETHUSD"}]}
                       ] }
                     </script>
@@ -261,56 +245,106 @@
     </div>
 
     <nav class="nav-bar">
-        <button class="nav-item active" onclick="goto(0)"><i class="fas fa-brain"></i><span class="nav-text">Mindset</span></button>
+        <button class="nav-item active" onclick="goto(0)"><i class="fas fa-comments"></i><span class="nav-text">Coach</span></button>
         <button class="nav-item" onclick="goto(1)"><i class="fas fa-list-check"></i><span class="nav-text">Planer</span></button>
         <button class="nav-item" onclick="goto(2)"><i class="fas fa-chart-line"></i><span class="nav-text">Märkte</span></button>
     </nav>
 
     <script>
-        // --- 1. SETUP ---
+        // --- SETUP ---
         window.addEventListener('load', () => {
             updateClock(); setInterval(updateClock, 1000);
             render();
             updateActiveNav(0);
-            updateNews();
-            setInterval(updateNews, 60000); // Check News every minute (simuliert)
+            updateNews(); setInterval(updateNews, 120000); // News alle 2 Min
+            checkTasksLoop(); // Start Push Check Loop
         });
 
-        // --- 2. CLOCK & DATE ---
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE');
             document.getElementById('headerDate').innerText = now.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: 'long' });
         }
 
-        // --- 3. NEWS FEED ENGINE (SIMULATED LIVE) ---
-        const newsHeadlines = [
-            {t: "DAX Update", m: "DAX nähert sich Rekordhoch – Tech-Werte treiben an."},
-            {t: "Gold Analyse", m: "Goldpreis stabilisiert sich über 2000$ Marke."},
-            {t: "US Märkte", m: "Fed-Entscheidung steht an: Anleger bleiben vorsichtig."},
-            {t: "Krypto News", m: "Bitcoin ETF Zuflüsse erreichen neuen Höchststand."},
-            {t: "Wirtschaft DE", m: "Inflation sinkt schneller als erwartet."}
-        ];
-
-        function updateNews() {
-            const container = document.getElementById('news-feed');
-            const now = new Date();
-            const timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
-            document.getElementById('news-update-time').innerText = "Update: " + timeString;
-
-            // Pick 2 random news + static one
-            let html = "";
-            const rnd = Math.floor(Math.random() * 3);
-            
-            html += `<div class="news-item"><div class="news-time">${timeString}</div>${newsHeadlines[rnd].t}: ${newsHeadlines[rnd].m}</div>`;
-            html += `<div class="news-item"><div class="news-time">${now.getHours()-1}:30</div>${newsHeadlines[rnd+1].t}: ${newsHeadlines[rnd+1].m}</div>`;
-            
-            container.innerHTML = html;
+        // --- PUSH NOTIFICATIONS ---
+        function requestPush() {
+            if (!("Notification" in window)) {
+                alert("Dieser Browser unterstützt keine Push-Nachrichten.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    new Notification("Noah PRO", { body: "Push aktiviert! Du wirst benachrichtigt.", icon: "https://img.icons8.com/color/96/bullish.png" });
+                    document.getElementById('badge').style.display = 'none';
+                }
+            });
         }
 
-        // --- 4. TASK LOGIC ---
+        function checkTasksLoop() {
+            setInterval(() => {
+                const now = new Date();
+                const timeStr = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
+                const key = getDateKey(now);
+                
+                const dayTasks = tasks[key] || [];
+                dayTasks.forEach(t => {
+                    // Simpler Check: Wenn Zeit gleich und noch nicht "done" (würde man in echt speichern, ob schon benachrichtigt)
+                    if(t.time === timeStr && !t.done) {
+                         if (Notification.permission === "granted") {
+                            new Notification("Aufgabe fällig!", { body: t.title + " (" + t.cat + ")", icon: "https://img.icons8.com/color/96/bullish.png" });
+                         }
+                    }
+                });
+            }, 60000); // Jede Minute prüfen
+        }
+
+        // --- CHAT LOGIC ---
+        const aiResponses = [
+            "Stark! Bleib dran. 🚀",
+            "Lass dich nicht ablenken. Fokus ist alles.",
+            "Das klingt nach einem Plan. Wie setzt du das um?",
+            "Vergiss nicht: Deine Konkurrenz schläft nicht.",
+            "Ich hab es notiert. Mach weiter so!",
+            "Gibt es ein Problem dabei? Wenn ja, löse es jetzt.",
+            "Denk groß. Größer als das."
+        ];
+
+        function sendMsg() {
+            const input = document.getElementById('chatInput');
+            const txt = input.value.trim();
+            if(!txt) return;
+
+            addBubble(txt, 'user');
+            input.value = '';
+
+            // AI Antwort simulieren
+            setTimeout(() => {
+                const rnd = Math.floor(Math.random() * aiResponses.length);
+                let reply = aiResponses[rnd];
+                
+                // Kleine Intelligenz
+                if(txt.toLowerCase().includes("aktie") || txt.toLowerCase().includes("markt")) reply = "Behalte die Charts im Auge. Volatilität ist Chance.";
+                if(txt.toLowerCase().includes("schule") || txt.toLowerCase().includes("lernen")) reply = "Wissen ist der Zinseszins des Lebens. Lern weiter.";
+                
+                addBubble(reply, 'ai');
+            }, 1000);
+        }
+
+        function addBubble(txt, type) {
+            const div = document.createElement('div');
+            div.className = `msg msg-${type}`;
+            div.innerText = txt;
+            const con = document.getElementById('chat-history');
+            con.appendChild(div);
+            con.scrollTop = con.scrollHeight;
+        }
+
+        function handleEnter(e) { if(e.key === 'Enter') sendMsg(); }
+
+
+        // --- TASK & PLANNER ---
         let viewDate = new Date();
-        let tasks = JSON.parse(localStorage.getItem('noahTasksV8')) || {};
+        let tasks = JSON.parse(localStorage.getItem('noahTasksV9')) || {};
         function getDateKey(d) { return d.toISOString().split('T')[0]; }
 
         function render() {
@@ -327,12 +361,11 @@
             dayTasks.sort((a,b) => a.time.localeCompare(b.time));
 
             if(dayTasks.length === 0) {
-                list.innerHTML = `<div style="text-align:center; opacity:0.4; padding:30px; font-style:italic;">"Zeit ist Geld. Plane deinen Erfolg."</div>`;
+                list.innerHTML = `<div style="text-align:center; opacity:0.4; padding:30px;">"Disziplin ist Freiheit."</div>`;
                 return;
             }
 
             dayTasks.forEach((t, i) => {
-                // Icon Mapping
                 let icon = 'fa-check';
                 if(t.cat === 'finanzen') icon = 'fa-sack-dollar';
                 if(t.cat === 'schule') icon = 'fa-graduation-cap';
@@ -343,8 +376,8 @@
                 <div class="task-item task-${t.cat}" style="${t.done ? 'opacity:0.5; filter:grayscale(1);' : ''}" onclick="toggle(${i})">
                     <div class="task-icon-circle"><i class="fas ${icon}"></i></div>
                     <div class="task-info">
-                        <div class="task-cat-label">${t.cat}</div>
-                        <div class="task-title">${t.title}</div>
+                        <div style="font-size:0.7rem; opacity:0.8; text-transform:uppercase;">${t.cat}</div>
+                        <div style="font-weight:bold; font-size:1rem;">${t.title}</div>
                     </div>
                     <div class="task-time">${t.time}</div>
                     <i class="fas fa-trash" onclick="del(event, ${i})" style="margin-left:10px; opacity:0.6;"></i>
@@ -357,31 +390,30 @@
             const time = document.getElementById('tTime').value;
             const cat = document.getElementById('tCat').value;
             
-            if(!title || !time) return showNotify("Bitte Titel & Zeit ausfüllen!");
+            if(!title || !time) return alert("Fehlt was!");
 
             const key = getDateKey(viewDate);
             if(!tasks[key]) tasks[key] = [];
             tasks[key].push({title, time, cat, done:false});
             
-            localStorage.setItem('noahTasksV8', JSON.stringify(tasks));
+            localStorage.setItem('noahTasksV9', JSON.stringify(tasks));
             document.getElementById('tTitle').value = '';
             render();
-            showNotify("Erfolgreich eingetragen!");
         }
 
         function toggle(i) {
             const key = getDateKey(viewDate);
             tasks[key][i].done = !tasks[key][i].done;
-            localStorage.setItem('noahTasksV8', JSON.stringify(tasks));
+            localStorage.setItem('noahTasksV9', JSON.stringify(tasks));
             render();
         }
 
         function del(e, i) {
             e.stopPropagation();
-            if(confirm("Wirklich löschen?")) {
+            if(confirm("Löschen?")) {
                 const key = getDateKey(viewDate);
                 tasks[key].splice(i, 1);
-                localStorage.setItem('noahTasksV8', JSON.stringify(tasks));
+                localStorage.setItem('noahTasksV9', JSON.stringify(tasks));
                 render();
             }
         }
@@ -389,71 +421,42 @@
         function addDays(n) { viewDate.setDate(viewDate.getDate() + n); render(); }
         function pickDate(val) { if(val) { viewDate = new Date(val); render(); } }
 
-        // --- 5. AI COACH (HARD MODE) ---
-        const quotes = [
-            "Mach es, bevor es ein anderer tut.",
-            "Der einzige Weg, großartige Arbeit zu leisten, ist zu lieben, was man tut.",
-            "Risiko entsteht dann, wenn man nicht weiß, was man tut.",
-            "Reich wird man nicht durch das, was man verdient, sondern durch das, was man behält."
+        // --- NEWS ---
+        const newsHeadlines = [
+            {t: "Markt-Update", m: "MSCI ACWI zeigt Stärke in volatilen Zeiten."},
+            {t: "EZB Zinsen", m: "Entscheidung erwartet: Auswirkungen auf Sparer."},
+            {t: "Tech-Sektor", m: "KI-Rallye geht weiter, Analysten optimistisch."},
+            {t: "Krypto", m: "Bitcoin testet wichtige Widerstandszonen."},
+            {t: "Rohstoffe", m: "Gold als sicherer Hafen wieder gefragt."}
         ];
 
-        function aiNext(type) {
-            document.getElementById('ai-options').style.display = 'none';
-            document.getElementById('ai-input-area').style.display = 'block';
-            const q = document.getElementById('ai-question');
-            const inp = document.getElementById('ai-text-input');
+        function updateNews() {
+            const container = document.getElementById('news-feed');
+            const now = new Date();
+            const timeString = now.getHours() + ":" + (now.getMinutes()<10?'0':'') + now.getMinutes();
+            document.getElementById('news-update-time').innerText = "Stand: " + timeString;
 
-            if(type === 'yes') {
-                q.innerText = "Das sagst du so einfach. Beweise es mir: Was war heute dein größter Sieg?";
-                inp.placeholder = "Sei konkret...";
-            } else {
-                q.innerText = "Ehrlichkeit ist der erste Schritt zum Erfolg. Woran hat es gelegen?";
-                inp.placeholder = "Keine Ausreden...";
-            }
-            inp.focus();
+            let html = "";
+            const rnd = Math.floor(Math.random() * 3);
+            html += `<div class="news-item"><div class="news-time">${timeString}</div>${newsHeadlines[rnd].t}: ${newsHeadlines[rnd].m}</div>`;
+            html += `<div class="news-item"><div class="news-time">Vor 2 Std</div>${newsHeadlines[rnd+1].t}: ${newsHeadlines[rnd+1].m}</div>`;
+            container.innerHTML = html;
         }
 
-        function aiFinal() {
-            const txt = document.getElementById('ai-text-input').value;
-            if(!txt) return showNotify("Die KI wartet auf eine Antwort...");
-
-            document.getElementById('ai-input-area').style.display = 'none';
-            document.getElementById('ai-question').innerText = "Okay, ich habe das notiert. Denk daran:";
-            
-            // Random Quote
-            const rndQ = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('quote-text').innerText = `"${rndQ}"`;
-            document.getElementById('ai-motivation').style.display = 'block';
-            
-            showNotify("Journal gespeichert");
-        }
-
-        // --- 6. NAV & HELPERS ---
+        // --- NAV ---
         const swiper = document.getElementById('swiper');
         const navItems = document.querySelectorAll('.nav-item');
-
         function goto(idx) {
-            const w = swiper.clientWidth;
-            swiper.scrollTo({left: idx * w, behavior:'smooth'});
+            swiper.scrollTo({left: idx * swiper.clientWidth, behavior:'smooth'});
             updateActiveNav(idx);
         }
-        
         swiper.addEventListener('scroll', () => {
-            const w = swiper.clientWidth; if(w===0) return;
-            const idx = Math.round(swiper.scrollLeft / w);
+            const idx = Math.round(swiper.scrollLeft / swiper.clientWidth);
             updateActiveNav(idx);
         });
-
         function updateActiveNav(idx) {
             navItems.forEach(n => n.classList.remove('active'));
             if(navItems[idx]) navItems[idx].classList.add('active');
-        }
-
-        function showNotify(msg) {
-            const n = document.getElementById('notify');
-            if(msg) n.innerText = msg;
-            n.style.display = 'block';
-            setTimeout(() => n.style.display='none', 2000);
         }
 
     </script>
