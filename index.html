@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v20 - SYNC FIX</title>
+    <title>Noah PRO v21 - SAFETY</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,6 +24,7 @@
         .icon-btn { background: none; border: none; color: white; font-size: 1.2rem; position: relative; cursor: pointer; }
         .bell-badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: red; border-radius: 50%; display: none; }
         
+        /* CLOUD STATUS */
         #cloudStatus { font-size: 0.5rem; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; color: var(--primary); display:none; }
 
         /* SWIPER */
@@ -85,21 +86,22 @@
 
     <div id="notify">Gespeichert!</div>
     
+    <!-- CLOUD MODAL -->
     <div id="cloudModal">
         <div class="modal-card">
             <h2 style="color:var(--primary); text-align:center;">Cloud Setup</h2>
             <p style="font-size:0.8rem; text-align:center; opacity:0.8; margin-bottom:20px;">
-                Verbinde JSONBin.io um zu synchronisieren.
+                Gib deine JSONBin.io Daten ein.
             </p>
-            <input type="text" id="binId" placeholder="Bin ID">
-            <input type="password" id="apiKey" placeholder="Master Key">
+            <input type="text" id="binId" placeholder="Bin ID (z.B. 65b7...)">
+            <input type="password" id="apiKey" placeholder="Master Key ($2a$10...)">
             <button class="add-btn" onclick="saveCloudSettings()">Verbinden</button>
             <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%; padding:10px; margin-top:10px; background:none; border:none; color:white;">Abbrechen</button>
         </div>
     </div>
 
     <header>
-        <div class="logo">NOAH<span style="color:white">PRO</span> v20</div>
+        <div class="logo">NOAH<span style="color:white">PRO</span> v21</div>
         <div class="header-icons">
             <button class="icon-btn" onclick="toggleCloudMenu()">
                 <i class="fas fa-cloud" id="cloudIcon"></i>
@@ -126,6 +128,10 @@
                         <i class="fas fa-download"></i> Download
                     </button>
                 </div>
+                <!-- NEUER RESET BUTTON -->
+                <button onclick="resetCloud()" style="width:100%; margin-top:10px; padding:8px; border:1px solid red; background:transparent; color:red; border-radius:5px;">
+                    <i class="fas fa-plug"></i> Trennen / Neu verbinden
+                </button>
                 <div id="syncMsg" style="text-align:center; font-size:0.7rem; margin-top:10px; opacity:0.6; min-height:15px;">Bereit</div>
             </div>
 
@@ -138,7 +144,7 @@
                 </div>
 
                 <div id="chatHistory" class="chat-box" style="margin-top:15px;">
-                    <div class="msg msg-ai">Moin Noah! v20 ist stabil. Probier den neuen Sync-Button aus!</div>
+                    <div class="msg msg-ai">Moin! Alles neu, alles sauber. Verbinde dich jetzt mit der Cloud! ☁️</div>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="chatIn" class="chat-input" placeholder="Nachricht..." onkeypress="if(event.key==='Enter') sendMsg()">
@@ -228,17 +234,16 @@
     </nav>
 
     <script>
-        // --- CONFIG ---
+        // --- CONFIG (v21 - FRESH START) ---
         let viewDate = new Date();
-        // Neuer Speichername für v20 (sauberer Start)
-        let tasks = JSON.parse(localStorage.getItem('noahProV20_Tasks')) || {};
-        let diary = JSON.parse(localStorage.getItem('noahProV20_Diary')) || {};
-        let stressData = JSON.parse(localStorage.getItem('noahProV20_Stress')) || {};
-        let cloudConfig = JSON.parse(localStorage.getItem('noahProV20_Cloud')) || { binId: '', apiKey: '' };
+        let tasks = JSON.parse(localStorage.getItem('noahProV21_Tasks')) || {};
+        let diary = JSON.parse(localStorage.getItem('noahProV21_Diary')) || {};
+        let stressData = JSON.parse(localStorage.getItem('noahProV21_Stress')) || {};
+        let cloudConfig = JSON.parse(localStorage.getItem('noahProV21_Cloud')) || { binId: '', apiKey: '' };
 
         function getKey(d) { return d.toISOString().split('T')[0]; }
 
-        // --- CLOUD LOGIC (FIXED) ---
+        // --- CLOUD LOGIC ---
         function toggleCloudMenu() {
             if(!cloudConfig.binId || !cloudConfig.apiKey) {
                 document.getElementById('cloudModal').style.display = 'flex';
@@ -253,10 +258,19 @@
             const key = document.getElementById('apiKey').value.trim();
             if(!bin || !key) return alert("Fehlt was!");
             cloudConfig = { binId: bin, apiKey: key };
-            localStorage.setItem('noahProV20_Cloud', JSON.stringify(cloudConfig));
+            localStorage.setItem('noahProV21_Cloud', JSON.stringify(cloudConfig));
             document.getElementById('cloudModal').style.display = 'none';
             showNotify("Cloud verbunden!");
             document.getElementById('cloudStatus').style.display = 'block';
+            document.getElementById('cloudControls').style.display = 'block'; // Direkt Menü zeigen
+        }
+
+        // --- NEUER RESET FUNCTION ---
+        function resetCloud() {
+            if(confirm("Cloud-Verbindung wirklich löschen?")) {
+                localStorage.removeItem('noahProV21_Cloud');
+                location.reload(); // Seite neu laden
+            }
         }
 
         function setSyncState(loading, msg) {
@@ -306,23 +320,19 @@
                 if(!res.ok) throw new Error("Netzwerkfehler");
                 
                 const data = await res.json();
-                
-                // FORCE UPDATE
                 if(data) {
                     tasks = data.tasks || {};
                     diary = data.diary || {};
                     stressData = data.stressData || {};
-                    
-                    localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks));
-                    localStorage.setItem('noahProV20_Diary', JSON.stringify(diary));
-                    localStorage.setItem('noahProV20_Stress', JSON.stringify(stressData));
-                    
-                    render(); // Sofortige Aktualisierung der Anzeige!
+                    localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks));
+                    localStorage.setItem('noahProV21_Diary', JSON.stringify(diary));
+                    localStorage.setItem('noahProV21_Stress', JSON.stringify(stressData));
+                    render(); 
                     setSyncState(false, "✅ Daten empfangen!");
                 }
             } catch(e) {
                 console.log(e);
-                setSyncState(false, "❌ Download Fehler");
+                setSyncState(false, "❌ Download Fehler (ID falsch?)");
             }
             btn.disabled = false;
         }
@@ -372,13 +382,13 @@
 
         function saveStress(val) {
             stressData[getKey(viewDate)] = val;
-            localStorage.setItem('noahProV20_Stress', JSON.stringify(stressData));
+            localStorage.setItem('noahProV21_Stress', JSON.stringify(stressData));
             showNotify("Stresslevel aktualisiert");
         }
 
         function saveDiary() {
             diary[getKey(viewDate)] = document.getElementById('diaryInput').value;
-            localStorage.setItem('noahProV20_Diary', JSON.stringify(diary));
+            localStorage.setItem('noahProV21_Diary', JSON.stringify(diary));
             showNotify("Tagebuch gespeichert");
         }
 
@@ -390,7 +400,7 @@
             const key = getKey(viewDate);
             if(!tasks[key]) tasks[key] = [];
             tasks[key].push({title, time, cat, done:false});
-            localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks));
+            localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks));
             render();
             document.getElementById('tTitle').value = '';
             showNotify("Gespeichert");
@@ -419,8 +429,8 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks)); render(); }
-        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks)); render(); } }
+        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks)); render(); }
+        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks)); render(); } }
         function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
         function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
 
