@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v16 - CRITIC</title>
+    <title>Noah PRO v19 - CLOUD</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,10 +20,12 @@
         /* HEADER */
         header { padding: 15px 20px; background: rgba(20, 20, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; height: 70px; flex-shrink: 0; z-index: 100; }
         .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); }
-        .bell-btn { background: none; border: none; color: white; font-size: 1.2rem; position: relative; }
-        .bell-badge { position: absolute; top: 0; right: 0; width: 8px; height: 8px; background: red; border-radius: 50%; display: none; }
-        .live-time { font-family: monospace; font-size: 1.2rem; font-weight: bold; }
-        .live-date { font-size: 0.7rem; opacity: 0.7; text-align: right; }
+        .header-icons { display: flex; gap: 20px; align-items: center; }
+        .icon-btn { background: none; border: none; color: white; font-size: 1.2rem; position: relative; cursor: pointer; }
+        .bell-badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: red; border-radius: 50%; display: none; }
+        
+        /* CLOUD STATUS */
+        #cloudStatus { font-size: 0.5rem; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; color: var(--primary); display:none; }
 
         /* SWIPER */
         .swiper-container { flex: 1; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
@@ -34,14 +36,12 @@
         /* TASKS */
         @keyframes slideIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
         .task-item { padding: 15px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; color: white; border: 1px solid rgba(255,255,255,0.1); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); animation: slideIn 0.4s ease-out; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        
         .task-finanzen { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: black; }
         .task-schule   { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
         .task-sport    { background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); }
         .task-haus     { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color:black; }
-
+        .task-freizeit { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color:black; }
         .task-item.done { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); transform: scale(0.98); box-shadow: none; }
-        
         .check-box { width: 26px; height: 26px; min-width: 26px; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.1); }
         .check-box i { display: none; font-size: 0.9rem; color: white; }
         .task-item.done .check-box { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 10px #00ff88; }
@@ -52,65 +52,99 @@
         .task-cat { font-size: 0.65rem; text-transform: uppercase; font-weight: bold; opacity: 0.8; letter-spacing: 1px; }
         .task-title { font-size: 1.05rem; font-weight: 600; }
 
-        /* CHAT */
-        .chat-box { height: 350px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+        /* STRESS & CHAT */
+        .stress-container { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; }
+        .stress-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
+        input[type=range] { -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px; background: #333; outline: none; padding: 0; border: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .chat-box { height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
         .msg { padding: 10px 14px; border-radius: 10px; max-width: 85%; font-size: 0.9rem; animation: pop 0.3s ease; line-height: 1.4; }
-        @keyframes pop { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
         .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary); }
         .msg-user { align-self: flex-end; background: var(--primary); color: black; font-weight: bold; }
         .chat-input-area { display: flex; gap: 8px; }
         .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: none; background: rgba(255,255,255,0.1); color: white; }
 
-        /* NEWS FEED */
-        .news-item { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 10px 0; font-size: 0.85rem; }
-        .news-title { font-weight: bold; margin-bottom: 4px; color: white; }
-        .news-meta { font-size: 0.7rem; color: var(--primary); }
-
-        /* NAV */
+        /* NAV & MISC */
         .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav-bg); border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 200; }
         .nav-btn { background: none; border: none; color: #666; font-size: 1.4rem; display: flex; flex-direction: column; align-items: center; }
         .nav-btn.active { color: var(--primary); transform: translateY(-3px); }
         .nav-label { font-size: 0.6rem; margin-top: 4px; }
-
+        .diary-area { width: 100%; height: 300px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 15px; font-family: 'Inter', sans-serif; font-size: 1rem; resize: none; line-height: 1.5; }
         input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; color: white; border-radius: 8px; }
         .add-btn { width: 100%; background: var(--primary); padding: 15px; border: none; border-radius: 8px; font-weight: bold; color: black; text-transform: uppercase; }
         .tradingview-widget-container { height: 350px !important; width: 100% !important; border-radius: 12px; overflow: hidden; }
         #notify { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--primary); color: black; padding: 10px 20px; border-radius: 20px; font-weight: bold; display: none; z-index: 999; }
+        
+        /* CLOUD MODAL */
+        #cloudModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-card { background: var(--card-bg); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--primary); }
     </style>
 </head>
 <body>
 
     <div id="notify">Gespeichert!</div>
+    
+    <!-- CLOUD SETUP MODAL -->
+    <div id="cloudModal">
+        <div class="modal-card">
+            <h2 style="color:var(--primary); text-align:center;">Cloud Setup</h2>
+            <p style="font-size:0.8rem; text-align:center; opacity:0.8; margin-bottom:20px;">
+                Erstelle kostenlos einen Account auf <b>JSONBin.io</b> um zu synchronisieren.
+            </p>
+            <input type="text" id="binId" placeholder="Bin ID (z.B. 65b7...)">
+            <input type="password" id="apiKey" placeholder="Master Key ($2a$10...)">
+            <button class="add-btn" onclick="saveCloudSettings()">Verbinden</button>
+            <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%; padding:10px; margin-top:10px; background:none; border:none; color:white;">Abbrechen</button>
+        </div>
+    </div>
 
     <header>
-        <div style="display:flex; align-items:center; gap:15px;">
-            <button class="bell-btn" onclick="requestPush()">
+        <div class="logo">NOAH<span style="color:white">PRO</span> v19</div>
+        <div class="header-icons">
+            <!-- CLOUD BUTTON -->
+            <button class="icon-btn" onclick="toggleCloudMenu()">
+                <i class="fas fa-cloud"></i>
+                <div id="cloudStatus">SYNC</div>
+            </button>
+            <!-- BELL -->
+            <button class="icon-btn" onclick="requestPush()">
                 <i class="fas fa-bell"></i>
                 <div class="bell-badge" id="badge"></div>
             </button>
-            <div class="logo">NOAH<span style="color:white">PRO</span> v16</div>
-        </div>
-        <div style="text-align:right;">
-            <div id="clock" class="live-time">00:00:00</div>
-            <div id="headerDate" class="live-date">...</div>
         </div>
     </header>
 
     <div class="swiper-container" id="swiper">
         
-        <!-- PAGE 1: SMART COACH -->
+        <!-- PAGE 1: COACH -->
         <div class="page">
-            <div class="card" style="background: linear-gradient(135deg, #1e3c72, #2a5298); min-height:500px;">
-                <h2 style="color:white;"><i class="fas fa-robot"></i> Smart Coach (Critical)</h2>
-                <div id="chatHistory" class="chat-box">
-                    <div class="msg msg-ai">Hi Noah! ⚠️ Ich nehme deinen Zeitplan jetzt genau unter die Lupe. Keine Ausreden. Trag deine Aufgaben ein!</div>
+            <!-- Cloud Controls -->
+            <div id="cloudControls" class="card" style="display:none; background: #112; border:1px solid var(--primary);">
+                <h2 style="color:var(--primary);">☁️ Cloud Synchronisation</h2>
+                <div style="display:flex; gap:10px;">
+                    <button class="add-btn" style="background:#444; color:white;" onclick="uploadData()"><i class="fas fa-upload"></i> Upload</button>
+                    <button class="add-btn" onclick="downloadData()"><i class="fas fa-download"></i> Download</button>
+                </div>
+                <div style="text-align:center; font-size:0.7rem; margin-top:10px; opacity:0.6;">Upload = iPad Senden | Download = Handy Empfangen</div>
+            </div>
+
+            <div class="card" style="background: linear-gradient(135deg, #1e3c72, #2a5298); min-height:550px;">
+                <h2 style="color:white;"><i class="fas fa-robot"></i> Smart Coach & Stress-Level</h2>
+                
+                <div class="stress-container">
+                    <div class="stress-label"><span>Stress-Level</span><span id="stressValue">50%</span></div>
+                    <input type="range" min="0" max="100" value="50" id="stressInput" oninput="updateStressDisplay(this.value)" onchange="saveStress(this.value)">
+                </div>
+
+                <div id="chatHistory" class="chat-box" style="margin-top:15px;">
+                    <div class="msg msg-ai">Moin Noah! Cloud ist ready. Nutze den Cloud-Button oben, um Daten zu tauschen. Wie ist die Lage?</div>
                 </div>
                 <div class="chat-input-area">
-                    <input type="text" id="chatIn" class="chat-input" placeholder="Frage oder Plan..." onkeypress="if(event.key==='Enter') sendMsg()">
+                    <input type="text" id="chatIn" class="chat-input" placeholder="Nachricht..." onkeypress="if(event.key==='Enter') sendMsg()">
                     <button onclick="sendMsg()" style="width:40px; height:40px; border-radius:50%; border:none; background:var(--primary);"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
-
+            
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                     <h2><i class="fas fa-globe"></i> Welt News</h2>
@@ -146,13 +180,24 @@
                         <option value="finanzen">Finanzen</option>
                         <option value="sport">Sport</option>
                         <option value="haus">Haus</option>
+                        <option value="freizeit">Freizeit</option>
                     </select>
                 </div>
-                <button class="add-btn" onclick="add()">Speichern & Prüfen</button>
+                <button class="add-btn" onclick="add()">Speichern & Optimieren</button>
             </div>
         </div>
 
-        <!-- PAGE 3: MARKETS -->
+        <!-- PAGE 3: TAGEBUCH -->
+        <div class="page">
+            <div class="card">
+                <h2><i class="fas fa-book"></i> Mein Tagebuch</h2>
+                <p style="font-size:0.8rem; opacity:0.7; margin-bottom:10px;">Eintrag für: <span id="journalDateDisplay">...</span></p>
+                <textarea id="diaryInput" class="diary-area" placeholder="Hier ist Platz für deine Gedanken..."></textarea>
+                <button class="add-btn" style="margin-top:10px; background:#a18cd1;" onclick="saveDiary()">Speichern</button>
+            </div>
+        </div>
+
+        <!-- PAGE 4: MARKETS -->
         <div class="page">
             <div class="card" style="padding:0; height:50px; overflow:hidden; border:none;">
                 <div class="tradingview-widget-container">
@@ -177,35 +222,90 @@
     <nav class="nav-bar">
         <button class="nav-btn active" onclick="goto(0)"><i class="fas fa-brain"></i><span class="nav-label">Coach</span></button>
         <button class="nav-btn" onclick="goto(1)"><i class="fas fa-list-check"></i><span class="nav-label">Planer</span></button>
-        <button class="nav-btn" onclick="goto(2)"><i class="fas fa-chart-pie"></i><span class="nav-label">Märkte</span></button>
+        <button class="nav-btn" onclick="goto(2)"><i class="fas fa-book"></i><span class="nav-label">Tagebuch</span></button>
+        <button class="nav-btn" onclick="goto(3)"><i class="fas fa-chart-pie"></i><span class="nav-label">Märkte</span></button>
     </nav>
 
     <script>
-        // --- CORE ---
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE');
-            document.getElementById('headerDate').innerText = now.toLocaleDateString('de-DE', {weekday:'short', day:'numeric', month:'short'});
-        }, 1000);
-
-        // --- NAV ---
-        const swiper = document.getElementById('swiper');
-        const navBtns = document.querySelectorAll('.nav-btn');
-        function goto(idx) { swiper.scrollTo({left: idx * swiper.offsetWidth, behavior:'smooth'}); updateNav(idx); }
-        swiper.addEventListener('scroll', () => { if(swiper.offsetWidth>0) updateNav(Math.round(swiper.scrollLeft / swiper.offsetWidth)); });
-        function updateNav(idx) { navBtns.forEach(b => b.classList.remove('active')); if(navBtns[idx]) navBtns[idx].classList.add('active'); }
-
-        // --- DATA & TASKS ---
+        // --- DATA INIT ---
         let viewDate = new Date();
-        let tasks = JSON.parse(localStorage.getItem('noahProV16')) || {};
+        let tasks = JSON.parse(localStorage.getItem('noahProV19_Tasks')) || {};
+        let diary = JSON.parse(localStorage.getItem('noahProV19_Diary')) || {};
+        let stressData = JSON.parse(localStorage.getItem('noahProV19_Stress')) || {};
+        let cloudConfig = JSON.parse(localStorage.getItem('noahProV19_Cloud')) || { binId: '', apiKey: '' };
+
         function getKey(d) { return d.toISOString().split('T')[0]; }
 
+        // --- CLOUD LOGIC (JSONBIN.IO) ---
+        function toggleCloudMenu() {
+            if(!cloudConfig.binId || !cloudConfig.apiKey) {
+                document.getElementById('cloudModal').style.display = 'flex';
+            } else {
+                const el = document.getElementById('cloudControls');
+                el.style.display = el.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        function saveCloudSettings() {
+            const bin = document.getElementById('binId').value.trim();
+            const key = document.getElementById('apiKey').value.trim();
+            if(!bin || !key) return alert("Bitte beide Felder ausfüllen!");
+            cloudConfig = { binId: bin, apiKey: key };
+            localStorage.setItem('noahProV19_Cloud', JSON.stringify(cloudConfig));
+            document.getElementById('cloudModal').style.display = 'none';
+            showNotify("Cloud verbunden!");
+        }
+
+        async function uploadData() {
+            showNotify("Lade hoch...");
+            const payload = { tasks, diary, stressData, updated: new Date().toISOString() };
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': cloudConfig.apiKey },
+                    body: JSON.stringify(payload)
+                });
+                if(res.ok) showNotify("✅ Upload erfolgreich!");
+                else throw new Error("Fehler");
+            } catch(e) { alert("Upload Fehler! Prüfe Internet und Keys."); }
+        }
+
+        async function downloadData() {
+            showNotify("Empfange Daten...");
+            try {
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}/latest`, {
+                    headers: { 'X-Master-Key': cloudConfig.apiKey }
+                });
+                const data = await res.json();
+                if(data.record) {
+                    tasks = data.record.tasks || {};
+                    diary = data.record.diary || {};
+                    stressData = data.record.stressData || {};
+                    // Save locally
+                    localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks));
+                    localStorage.setItem('noahProV19_Diary', JSON.stringify(diary));
+                    localStorage.setItem('noahProV19_Stress', JSON.stringify(stressData));
+                    render();
+                    showNotify("✅ Daten synchronisiert!");
+                }
+            } catch(e) { alert("Download Fehler!"); }
+        }
+
+        // --- RENDER & LOGIC ---
         function render() {
             const key = getKey(viewDate);
             const list = document.getElementById('taskList');
+            
             document.getElementById('dayDisplay').innerText = (key === getKey(new Date())) ? "HEUTE" : viewDate.toLocaleDateString('de-DE', {weekday:'long'});
             document.getElementById('dateDisplay').innerText = viewDate.toLocaleDateString('de-DE');
             document.getElementById('datePicker').value = key;
+            document.getElementById('journalDateDisplay').innerText = viewDate.toLocaleDateString('de-DE');
+            document.getElementById('diaryInput').value = diary[key] || "";
+
+            // Stress
+            const savedStress = stressData[key] || 50;
+            document.getElementById('stressInput').value = savedStress;
+            updateStressDisplay(savedStress);
 
             list.innerHTML = '';
             const dayTasks = tasks[key] || [];
@@ -226,116 +326,79 @@
             });
         }
 
-        // --- INTELLIGENTES HINZUFÜGEN & ANALYSIEREN ---
+        function updateStressDisplay(val) {
+            const el = document.getElementById('stressValue');
+            const slider = document.getElementById('stressInput');
+            el.innerText = val + "%";
+            let color = "#00ff88"; 
+            if(val > 40) color = "#f1c40f"; 
+            if(val > 75) color = "#e74c3c"; 
+            el.style.color = color;
+            slider.style.setProperty('--primary', color);
+        }
+
+        function saveStress(val) {
+            stressData[getKey(viewDate)] = val;
+            localStorage.setItem('noahProV19_Stress', JSON.stringify(stressData));
+            showNotify("Stresslevel aktualisiert");
+            setTimeout(() => {
+                if(val > 80) addBubble("⚠️ Dein Stress ist hoch! Ich rate zu weniger Aufgaben heute.", "ai");
+                else if(val < 30) addBubble("🚀 Entspannt? Dann lass uns produktiv werden!", "ai");
+            }, 1000);
+        }
+
+        function saveDiary() {
+            diary[getKey(viewDate)] = document.getElementById('diaryInput').value;
+            localStorage.setItem('noahProV19_Diary', JSON.stringify(diary));
+            showNotify("Tagebuch gespeichert");
+        }
+
         function add() {
             const title = document.getElementById('tTitle').value;
             const time = document.getElementById('tTime').value;
             const cat = document.getElementById('tCat').value;
             if(!title || !time) return alert("Fehlt was!");
-            
             const key = getKey(viewDate);
             if(!tasks[key]) tasks[key] = [];
             tasks[key].push({title, time, cat, done:false});
-            save(); render();
+            localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks));
+            render();
             document.getElementById('tTitle').value = '';
-            
-            showNotify("Gespeichert & Analysiert...");
+            showNotify("Gespeichert");
             analyzeDay(key);
         }
 
-        // --- DIE NEUE, KRITISCHE KI (V16) ---
         function analyzeDay(key) {
             const list = tasks[key] || [];
             list.sort((a,b) => a.time.localeCompare(b.time));
-
             if(list.length === 0) return;
+            const currentStress = stressData[key] || 50;
 
             setTimeout(() => {
-                let suggestions = [];
-                
-                // Regel 1: Nachtschicht (Prüft ob DIESE Aufgabe spät ist)
-                const lateTasks = list.filter(t => t.cat === 'schule' && parseInt(t.time) >= 21);
-                if(lateTasks.length > 0) {
-                    suggestions.push(`⚠️ Lernen nach 21 Uhr (${lateTasks[0].title})? Das ist ineffektiv. Schlaf ist wichtiger für das Gedächtnis!`);
+                let msg = "";
+                const workCount = list.filter(t => t.cat === 'schule' || t.cat === 'finanzen').length;
+                if(currentStress > 80 && workCount > 2) msg = `🛑 Dein Stresslevel ist zu hoch (${currentStress}%). Streich Aufgaben oder mach lange Pausen!`;
+                else if(currentStress < 30 && workCount < 3) msg = `🚀 Du hast Energie (${currentStress}% Stress). Nutz das für Deep Work!`;
+                else {
+                    const late = list.find(t => t.cat === 'schule' && parseInt(t.time) >= 21);
+                    if(late) msg = `🌙 Spätes Lernen um ${late.time}? Denk an deinen Schlaf!`;
                 }
-
-                // Regel 2: Riesige Lücken
-                for(let i=0; i < list.length - 1; i++) {
-                    const t1 = parseInt(list[i].time);
-                    const t2 = parseInt(list[i+1].time);
-                    if(t2 - t1 >= 3) {
-                        suggestions.push(`🕒 Du hast zwischen ${list[i].time} und ${list[i+1].time} eine Lücke von über 3 Stunden. Zeitverschwendung! Nutz das für Sport oder Vokabeln.`);
-                    }
-                }
-
-                // Regel 3: Zu später Start
-                if(parseInt(list[0].time) >= 11) {
-                    suggestions.push(`🌅 Dein Tag startet erst um ${list[0].time}? Erfolgreiche Menschen stehen früher auf. Morgen um 08:00?`);
-                }
-
-                // Regel 4: Kein Sport (Balance)
-                const hasSport = list.some(t => t.cat === 'sport');
-                if(list.length > 2 && !hasSport) {
-                    suggestions.push(`💪 Du hast viel vor, aber keinen Sport eingeplant. Dein Gehirn braucht Sauerstoff! Geh laufen oder ins Gym.`);
-                }
-
-                // Regel 5: Nur Schule/Arbeit (Burnout)
-                const schoolCount = list.filter(t => t.cat === 'schule' || t.cat === 'finanzen').length;
-                if(schoolCount >= 4 && !hasSport) {
-                    suggestions.push(`🤯 Übertreib es nicht. 4+ produktive Blöcke ohne Ausgleich machen dich kaputt. Mach eine Pause!`);
-                }
-
-                // ENTSCHEIDUNG: Was sagen wir?
-                if(suggestions.length > 0) {
-                    // Wähle zufällig EINEN der Kritikpunkte aus, damit es nicht immer derselbe ist
-                    const msg = suggestions[Math.floor(Math.random() * suggestions.length)];
-                    addBubble(msg, 'ai');
-                    showNotify("KI: Optimierung gefunden!");
-                } else {
-                    // Wenn wirklich gar nichts zu meckern ist:
-                    addBubble("✅ Dein Plan sieht ausnahmsweise sehr effizient aus. Wehe du ziehst das nicht durch!", 'ai');
-                }
-
+                if(msg) { addBubble(msg, 'ai'); showNotify("KI Optimizer"); }
             }, 800);
         }
-
-        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; save(); render(); }
-        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); save(); render(); } }
-        function save() { localStorage.setItem('noahProV16', JSON.stringify(tasks)); }
-        function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
-        function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
-
-        // --- CHAT SYSTEM ---
-        const aiKnowledge = {
-            "aktien": "Investiere langfristig. Zeit im Markt schlägt Timing des Marktes.",
-            "reich": "Reichtum kommt durch Mehrwert, den du anderen bietest. Löse Probleme!",
-            "geld": "Spare erst, gib den Rest aus. Nicht andersrum.",
-            "msci": "Der MSCI ACWI deckt die ganze Welt ab. Eine solide Basis.",
-            "müde": "Trink ein Glas Wasser und beweg dich 5 Minuten. Das weckt auf.",
-            "schlafen": "Schlaf ist der wichtigste Produktivitäts-Hack. 8 Stunden sind Pflicht.",
-            "sport": "Geh ans Limit. Wachstum passiert außerhalb der Komfortzone.",
-            "motivation": "Motivation ist ein Gefühl. Disziplin ist eine Entscheidung. Entscheide dich.",
-            "liebe": "Fokussiere dich auf dich selbst. Die richtige Person kommt, wenn du bereit bist.",
-            "stress": "Atme tief durch. Ist das Problem in 5 Jahren noch wichtig? Wenn nicht, stress dich nicht.",
-            "schule": "Schule ist dein Job. Mach ihn gut, damit du später Optionen hast.",
-            "mathe": "Mathe ist nur Logik. Übe die Grundlagen, dann klappt der Rest.",
-            "englisch": "Schau Filme auf Englisch. Das hilft mehr als Vokabeln büffeln.",
-            "physik": "Versuch die Welt zu verstehen, nicht nur die Formeln.",
-            "hallo": "Hey Noah! Bereit, den Tag zu gewinnen?",
-            "danke": "Immer gerne. Bleib dran!"
-        };
 
         function sendMsg() {
             const inp = document.getElementById('chatIn');
             const txt = inp.value.trim().toLowerCase();
             if(!txt) return;
-
             addBubble(inp.value, 'user');
             inp.value = '';
-
             setTimeout(() => {
-                let reply = "Das ist ein spannender Punkt. Erzähl mir mehr oder trag es in den Planer ein.";
-                for(let key in aiKnowledge) { if(txt.includes(key)) { reply = aiKnowledge[key]; break; } }
+                let reply = "Frag mich nach deinem Plan oder Stresslevel.";
+                if(txt.includes("stress")) reply = "Stell den Regler oben ein.";
+                else if(txt.includes("plan") || txt.includes("optimier")) { reply = "Sekunde..."; analyzeDay(getKey(viewDate)); }
+                else if(txt.includes("hallo")) reply = "Moin! Cloud ist bereit. Synchronisiere deine Geräte!";
+                else reply = "Notiert. Bleib dran.";
                 addBubble(reply, 'ai');
             }, 600);
         }
@@ -349,43 +412,40 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        // --- RSS NEWS ---
+        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks)); render(); }
+        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks)); render(); } }
+        function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
+        function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
+
+        // --- CORE ---
+        const swiper = document.getElementById('swiper');
+        const navBtns = document.querySelectorAll('.nav-btn');
+        function goto(idx) { swiper.scrollTo({left: idx * swiper.offsetWidth, behavior:'smooth'}); updateNav(idx); }
+        swiper.addEventListener('scroll', () => { if(swiper.offsetWidth>0) updateNav(Math.round(swiper.scrollLeft / swiper.offsetWidth)); });
+        function updateNav(idx) { navBtns.forEach(b => b.classList.remove('active')); if(navBtns[idx]) navBtns[idx].classList.add('active'); }
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE');
+            document.getElementById('headerDate').innerText = now.toLocaleDateString('de-DE', {weekday:'short', day:'numeric', month:'short'});
+        }, 1000);
+
+        // --- RSS & PUSH ---
         async function fetchNews() {
-            const container = document.getElementById('news-feed-container');
-            const status = document.getElementById('news-status');
             try {
                 const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/xml/rss2');
                 const data = await res.json();
                 if(data.status === 'ok') {
-                    let html = '';
-                    data.items.slice(0, 5).forEach(item => {
-                        const time = new Date(item.pubDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                        html += `<div class="news-item"><div class="news-title" onclick="window.open('${item.link}')">${item.title}</div><div class="news-meta"><i class="far fa-clock"></i> ${time} • Tagesschau</div></div>`;
-                    });
-                    container.innerHTML = html;
-                    status.style.color = "#00ff88"; status.style.borderColor = "#00ff88"; status.innerText = "LIVE";
+                    document.getElementById('news-feed-container').innerHTML = data.items.slice(0,5).map(i => `<div class="news-item"><div class="news-title" onclick="window.open('${i.link}')">${i.title}</div><div class="news-meta">Tagesschau • ${new Date(i.pubDate).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div>`).join('');
+                    document.getElementById('news-status').style.color="#00ff88"; document.getElementById('news-status').innerText="LIVE";
                 }
-            } catch(e) {
-                status.style.color = "orange"; status.innerText = "OFFLINE";
-            }
+            } catch(e) { document.getElementById('news-status').style.color="orange"; document.getElementById('news-status').innerText="OFFLINE"; }
         }
+        function requestPush() { if(!("Notification" in window)) return; Notification.requestPermission().then(p => { if(p==='granted') document.getElementById('badge').style.display='none'; }); }
+        
+        function showNotify(m) { const n=document.getElementById('notify'); n.innerText=m; n.style.display='block'; setTimeout(()=>n.style.display='none', 2000); }
 
-        // --- PUSH ---
-        function requestPush() {
-            if(!("Notification" in window)) return alert("Geht nicht auf diesem Gerät.");
-            Notification.requestPermission().then(p => { if(p==='granted'){ document.getElementById('badge').style.display='none'; showNotify("Aktiviert!"); }});
-        }
-        setInterval(() => {
-            if(Notification.permission!=='granted') return;
-            const now = new Date();
-            const time = now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0');
-            (tasks[getKey(now)]||[]).forEach(t => { if(t.time===time && !t.done) new Notification(t.title); });
-        }, 60000);
-
-        // INIT
         render();
         fetchNews();
-        setInterval(fetchNews, 600000);
         if(Notification.permission !== 'granted') document.getElementById('badge').style.display='block';
 
     </script>
