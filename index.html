@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v19 - CLOUD</title>
+    <title>Noah PRO v20 - SYNC FIX</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -24,7 +24,6 @@
         .icon-btn { background: none; border: none; color: white; font-size: 1.2rem; position: relative; cursor: pointer; }
         .bell-badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: red; border-radius: 50%; display: none; }
         
-        /* CLOUD STATUS */
         #cloudStatus { font-size: 0.5rem; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; color: var(--primary); display:none; }
 
         /* SWIPER */
@@ -75,38 +74,37 @@
         .tradingview-widget-container { height: 350px !important; width: 100% !important; border-radius: 12px; overflow: hidden; }
         #notify { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--primary); color: black; padding: 10px 20px; border-radius: 20px; font-weight: bold; display: none; z-index: 999; }
         
-        /* CLOUD MODAL */
+        /* CLOUD MODAL & CONTROLS */
         #cloudModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-card { background: var(--card-bg); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--primary); }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="notify">Gespeichert!</div>
     
-    <!-- CLOUD SETUP MODAL -->
     <div id="cloudModal">
         <div class="modal-card">
             <h2 style="color:var(--primary); text-align:center;">Cloud Setup</h2>
             <p style="font-size:0.8rem; text-align:center; opacity:0.8; margin-bottom:20px;">
-                Erstelle kostenlos einen Account auf <b>JSONBin.io</b> um zu synchronisieren.
+                Verbinde JSONBin.io um zu synchronisieren.
             </p>
-            <input type="text" id="binId" placeholder="Bin ID (z.B. 65b7...)">
-            <input type="password" id="apiKey" placeholder="Master Key ($2a$10...)">
+            <input type="text" id="binId" placeholder="Bin ID">
+            <input type="password" id="apiKey" placeholder="Master Key">
             <button class="add-btn" onclick="saveCloudSettings()">Verbinden</button>
             <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%; padding:10px; margin-top:10px; background:none; border:none; color:white;">Abbrechen</button>
         </div>
     </div>
 
     <header>
-        <div class="logo">NOAH<span style="color:white">PRO</span> v19</div>
+        <div class="logo">NOAH<span style="color:white">PRO</span> v20</div>
         <div class="header-icons">
-            <!-- CLOUD BUTTON -->
             <button class="icon-btn" onclick="toggleCloudMenu()">
-                <i class="fas fa-cloud"></i>
+                <i class="fas fa-cloud" id="cloudIcon"></i>
                 <div id="cloudStatus">SYNC</div>
             </button>
-            <!-- BELL -->
             <button class="icon-btn" onclick="requestPush()">
                 <i class="fas fa-bell"></i>
                 <div class="bell-badge" id="badge"></div>
@@ -118,14 +116,17 @@
         
         <!-- PAGE 1: COACH -->
         <div class="page">
-            <!-- Cloud Controls -->
             <div id="cloudControls" class="card" style="display:none; background: #112; border:1px solid var(--primary);">
-                <h2 style="color:var(--primary);">☁️ Cloud Synchronisation</h2>
+                <h2 style="color:var(--primary);">☁️ Sync Steuerung</h2>
                 <div style="display:flex; gap:10px;">
-                    <button class="add-btn" style="background:#444; color:white;" onclick="uploadData()"><i class="fas fa-upload"></i> Upload</button>
-                    <button class="add-btn" onclick="downloadData()"><i class="fas fa-download"></i> Download</button>
+                    <button id="btnUp" class="add-btn" style="background:#444; color:white;" onclick="uploadData()">
+                        <i class="fas fa-upload"></i> Upload
+                    </button>
+                    <button id="btnDown" class="add-btn" onclick="downloadData()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
                 </div>
-                <div style="text-align:center; font-size:0.7rem; margin-top:10px; opacity:0.6;">Upload = iPad Senden | Download = Handy Empfangen</div>
+                <div id="syncMsg" style="text-align:center; font-size:0.7rem; margin-top:10px; opacity:0.6; min-height:15px;">Bereit</div>
             </div>
 
             <div class="card" style="background: linear-gradient(135deg, #1e3c72, #2a5298); min-height:550px;">
@@ -137,7 +138,7 @@
                 </div>
 
                 <div id="chatHistory" class="chat-box" style="margin-top:15px;">
-                    <div class="msg msg-ai">Moin Noah! Cloud ist ready. Nutze den Cloud-Button oben, um Daten zu tauschen. Wie ist die Lage?</div>
+                    <div class="msg msg-ai">Moin Noah! v20 ist stabil. Probier den neuen Sync-Button aus!</div>
                 </div>
                 <div class="chat-input-area">
                     <input type="text" id="chatIn" class="chat-input" placeholder="Nachricht..." onkeypress="if(event.key==='Enter') sendMsg()">
@@ -150,7 +151,7 @@
                     <h2><i class="fas fa-globe"></i> Welt News</h2>
                     <span style="font-size:0.6rem; border:1px solid #555; padding:2px 5px; border-radius:4px;" id="news-status">LIVE</span>
                 </div>
-                <div id="news-feed-container">Lade aktuelle Nachrichten...</div>
+                <div id="news-feed-container">Lade Nachrichten...</div>
             </div>
         </div>
 
@@ -227,16 +228,17 @@
     </nav>
 
     <script>
-        // --- DATA INIT ---
+        // --- CONFIG ---
         let viewDate = new Date();
-        let tasks = JSON.parse(localStorage.getItem('noahProV19_Tasks')) || {};
-        let diary = JSON.parse(localStorage.getItem('noahProV19_Diary')) || {};
-        let stressData = JSON.parse(localStorage.getItem('noahProV19_Stress')) || {};
-        let cloudConfig = JSON.parse(localStorage.getItem('noahProV19_Cloud')) || { binId: '', apiKey: '' };
+        // Neuer Speichername für v20 (sauberer Start)
+        let tasks = JSON.parse(localStorage.getItem('noahProV20_Tasks')) || {};
+        let diary = JSON.parse(localStorage.getItem('noahProV20_Diary')) || {};
+        let stressData = JSON.parse(localStorage.getItem('noahProV20_Stress')) || {};
+        let cloudConfig = JSON.parse(localStorage.getItem('noahProV20_Cloud')) || { binId: '', apiKey: '' };
 
         function getKey(d) { return d.toISOString().split('T')[0]; }
 
-        // --- CLOUD LOGIC (JSONBIN.IO) ---
+        // --- CLOUD LOGIC (FIXED) ---
         function toggleCloudMenu() {
             if(!cloudConfig.binId || !cloudConfig.apiKey) {
                 document.getElementById('cloudModal').style.display = 'flex';
@@ -249,49 +251,83 @@
         function saveCloudSettings() {
             const bin = document.getElementById('binId').value.trim();
             const key = document.getElementById('apiKey').value.trim();
-            if(!bin || !key) return alert("Bitte beide Felder ausfüllen!");
+            if(!bin || !key) return alert("Fehlt was!");
             cloudConfig = { binId: bin, apiKey: key };
-            localStorage.setItem('noahProV19_Cloud', JSON.stringify(cloudConfig));
+            localStorage.setItem('noahProV20_Cloud', JSON.stringify(cloudConfig));
             document.getElementById('cloudModal').style.display = 'none';
             showNotify("Cloud verbunden!");
+            document.getElementById('cloudStatus').style.display = 'block';
+        }
+
+        function setSyncState(loading, msg) {
+            const txt = document.getElementById('syncMsg');
+            const icon = document.getElementById('cloudIcon');
+            txt.innerText = msg;
+            if(loading) icon.classList.add('spin'); else icon.classList.remove('spin');
         }
 
         async function uploadData() {
-            showNotify("Lade hoch...");
+            setSyncState(true, "Lade hoch...");
+            const btn = document.getElementById('btnUp');
+            btn.disabled = true; 
+
             const payload = { tasks, diary, stressData, updated: new Date().toISOString() };
+            
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': cloudConfig.apiKey },
                     body: JSON.stringify(payload)
                 });
-                if(res.ok) showNotify("✅ Upload erfolgreich!");
-                else throw new Error("Fehler");
-            } catch(e) { alert("Upload Fehler! Prüfe Internet und Keys."); }
+                
+                if(res.ok) {
+                    setSyncState(false, "✅ Upload fertig!");
+                    setTimeout(() => setSyncState(false, "Bereit"), 3000);
+                } else {
+                    throw new Error("Fehler");
+                }
+            } catch(e) { 
+                setSyncState(false, "❌ Fehler beim Upload");
+                alert("Upload fehlgeschlagen. Prüfe Bin ID / Key.");
+            }
+            btn.disabled = false;
         }
 
         async function downloadData() {
-            showNotify("Empfange Daten...");
+            setSyncState(true, "Lade herunter...");
+            const btn = document.getElementById('btnDown');
+            btn.disabled = true;
+
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}/latest`, {
-                    headers: { 'X-Master-Key': cloudConfig.apiKey }
+                    headers: { 'X-Master-Key': cloudConfig.apiKey, 'X-Bin-Meta': 'false' }
                 });
+                
+                if(!res.ok) throw new Error("Netzwerkfehler");
+                
                 const data = await res.json();
-                if(data.record) {
-                    tasks = data.record.tasks || {};
-                    diary = data.record.diary || {};
-                    stressData = data.record.stressData || {};
-                    // Save locally
-                    localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks));
-                    localStorage.setItem('noahProV19_Diary', JSON.stringify(diary));
-                    localStorage.setItem('noahProV19_Stress', JSON.stringify(stressData));
-                    render();
-                    showNotify("✅ Daten synchronisiert!");
+                
+                // FORCE UPDATE
+                if(data) {
+                    tasks = data.tasks || {};
+                    diary = data.diary || {};
+                    stressData = data.stressData || {};
+                    
+                    localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks));
+                    localStorage.setItem('noahProV20_Diary', JSON.stringify(diary));
+                    localStorage.setItem('noahProV20_Stress', JSON.stringify(stressData));
+                    
+                    render(); // Sofortige Aktualisierung der Anzeige!
+                    setSyncState(false, "✅ Daten empfangen!");
                 }
-            } catch(e) { alert("Download Fehler!"); }
+            } catch(e) {
+                console.log(e);
+                setSyncState(false, "❌ Download Fehler");
+            }
+            btn.disabled = false;
         }
 
-        // --- RENDER & LOGIC ---
+        // --- RENDER ---
         function render() {
             const key = getKey(viewDate);
             const list = document.getElementById('taskList');
@@ -302,7 +338,6 @@
             document.getElementById('journalDateDisplay').innerText = viewDate.toLocaleDateString('de-DE');
             document.getElementById('diaryInput').value = diary[key] || "";
 
-            // Stress
             const savedStress = stressData[key] || 50;
             document.getElementById('stressInput').value = savedStress;
             updateStressDisplay(savedStress);
@@ -330,26 +365,20 @@
             const el = document.getElementById('stressValue');
             const slider = document.getElementById('stressInput');
             el.innerText = val + "%";
-            let color = "#00ff88"; 
-            if(val > 40) color = "#f1c40f"; 
-            if(val > 75) color = "#e74c3c"; 
+            let color = "#00ff88"; if(val > 40) color = "#f1c40f"; if(val > 75) color = "#e74c3c"; 
             el.style.color = color;
             slider.style.setProperty('--primary', color);
         }
 
         function saveStress(val) {
             stressData[getKey(viewDate)] = val;
-            localStorage.setItem('noahProV19_Stress', JSON.stringify(stressData));
+            localStorage.setItem('noahProV20_Stress', JSON.stringify(stressData));
             showNotify("Stresslevel aktualisiert");
-            setTimeout(() => {
-                if(val > 80) addBubble("⚠️ Dein Stress ist hoch! Ich rate zu weniger Aufgaben heute.", "ai");
-                else if(val < 30) addBubble("🚀 Entspannt? Dann lass uns produktiv werden!", "ai");
-            }, 1000);
         }
 
         function saveDiary() {
             diary[getKey(viewDate)] = document.getElementById('diaryInput').value;
-            localStorage.setItem('noahProV19_Diary', JSON.stringify(diary));
+            localStorage.setItem('noahProV20_Diary', JSON.stringify(diary));
             showNotify("Tagebuch gespeichert");
         }
 
@@ -361,30 +390,10 @@
             const key = getKey(viewDate);
             if(!tasks[key]) tasks[key] = [];
             tasks[key].push({title, time, cat, done:false});
-            localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks));
+            localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks));
             render();
             document.getElementById('tTitle').value = '';
             showNotify("Gespeichert");
-            analyzeDay(key);
-        }
-
-        function analyzeDay(key) {
-            const list = tasks[key] || [];
-            list.sort((a,b) => a.time.localeCompare(b.time));
-            if(list.length === 0) return;
-            const currentStress = stressData[key] || 50;
-
-            setTimeout(() => {
-                let msg = "";
-                const workCount = list.filter(t => t.cat === 'schule' || t.cat === 'finanzen').length;
-                if(currentStress > 80 && workCount > 2) msg = `🛑 Dein Stresslevel ist zu hoch (${currentStress}%). Streich Aufgaben oder mach lange Pausen!`;
-                else if(currentStress < 30 && workCount < 3) msg = `🚀 Du hast Energie (${currentStress}% Stress). Nutz das für Deep Work!`;
-                else {
-                    const late = list.find(t => t.cat === 'schule' && parseInt(t.time) >= 21);
-                    if(late) msg = `🌙 Spätes Lernen um ${late.time}? Denk an deinen Schlaf!`;
-                }
-                if(msg) { addBubble(msg, 'ai'); showNotify("KI Optimizer"); }
-            }, 800);
         }
 
         function sendMsg() {
@@ -395,9 +404,7 @@
             inp.value = '';
             setTimeout(() => {
                 let reply = "Frag mich nach deinem Plan oder Stresslevel.";
-                if(txt.includes("stress")) reply = "Stell den Regler oben ein.";
-                else if(txt.includes("plan") || txt.includes("optimier")) { reply = "Sekunde..."; analyzeDay(getKey(viewDate)); }
-                else if(txt.includes("hallo")) reply = "Moin! Cloud ist bereit. Synchronisiere deine Geräte!";
+                if(txt.includes("hallo")) reply = "Moin! Cloud ist bereit. Synchronisiere deine Geräte!";
                 else reply = "Notiert. Bleib dran.";
                 addBubble(reply, 'ai');
             }, 600);
@@ -412,12 +419,12 @@
             c.scrollTop = c.scrollHeight;
         }
 
-        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks)); render(); }
-        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('noahProV19_Tasks', JSON.stringify(tasks)); render(); } }
+        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks)); render(); }
+        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('noahProV20_Tasks', JSON.stringify(tasks)); render(); } }
         function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
         function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
 
-        // --- CORE ---
+        // --- CORE & RSS ---
         const swiper = document.getElementById('swiper');
         const navBtns = document.querySelectorAll('.nav-btn');
         function goto(idx) { swiper.scrollTo({left: idx * swiper.offsetWidth, behavior:'smooth'}); updateNav(idx); }
@@ -429,7 +436,6 @@
             document.getElementById('headerDate').innerText = now.toLocaleDateString('de-DE', {weekday:'short', day:'numeric', month:'short'});
         }, 1000);
 
-        // --- RSS & PUSH ---
         async function fetchNews() {
             try {
                 const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/xml/rss2');
@@ -441,12 +447,12 @@
             } catch(e) { document.getElementById('news-status').style.color="orange"; document.getElementById('news-status').innerText="OFFLINE"; }
         }
         function requestPush() { if(!("Notification" in window)) return; Notification.requestPermission().then(p => { if(p==='granted') document.getElementById('badge').style.display='none'; }); }
-        
         function showNotify(m) { const n=document.getElementById('notify'); n.innerText=m; n.style.display='block'; setTimeout(()=>n.style.display='none', 2000); }
 
         render();
         fetchNews();
         if(Notification.permission !== 'granted') document.getElementById('badge').style.display='block';
+        if(cloudConfig.binId) document.getElementById('cloudStatus').style.display = 'block';
 
     </script>
 </body>
