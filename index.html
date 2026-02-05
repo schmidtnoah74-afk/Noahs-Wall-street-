@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS MAGNUS ULTIMATE</title>
+    <title>NEXUS MAGNUS FINAL</title>
     <style>
         /* 
          * =========================================
@@ -605,8 +605,8 @@
             <div class="cloud-container">
                 <h3 style="margin-top:0; color:#ffd700; margin-bottom: 20px;">Secure Sync Center</h3>
                 
-                <input type="password" id="cloud-api-key" class="styled-input" placeholder="X-Master-Key eingeben" style="margin-bottom:15px;">
-                <input type="text" id="cloud-bin-id" class="styled-input" placeholder="Bin-ID eingeben" style="margin-bottom:25px;">
+                <input type="password" id="cloud-api-key" class="styled-input" placeholder="X-Master-Key eingeben" style="margin-bottom:15px;" oninput="saveCloudCredentials()">
+                <input type="text" id="cloud-bin-id" class="styled-input" placeholder="Bin-ID eingeben" style="margin-bottom:25px;" oninput="saveCloudCredentials()">
                 
                 <button class="cloud-action-btn btn-upload" onclick="executeCloudUpload()">
                     ☁️ Upload Data to Cloud
@@ -617,7 +617,7 @@
             </div>
             
             <div style="text-align:center; margin-top:20px; font-size:12px; opacity:0.5; color: #888;">
-                Nexus Neural Engine v9.0 • End-to-End Encryption Ready
+                Nexus Neural Engine v9.0 • Credentials Auto-Save Enabled
             </div>
         </div>
 
@@ -673,16 +673,32 @@
                 }
             }
 
-            // 2. Perform Checks
+            // 2. Load Cloud Credentials (NEW FEATURE)
+            const savedKey = localStorage.getItem('nexus_saved_key');
+            const savedBin = localStorage.getItem('nexus_saved_bin');
+            if(savedKey) document.getElementById('cloud-api-key').value = savedKey;
+            if(savedBin) document.getElementById('cloud-bin-id').value = savedBin;
+
+            // 3. Perform Checks
             performDailyTaskReset();
             
-            // 3. Render UI Components
+            // 4. Render UI Components
             updateDateHeaderDisplay();
             fetchTagesschauNews();
 
-            // 4. Set Interval for News Updates (Every 10 minutes)
+            // 5. Set Interval for News Updates (Every 10 minutes)
             setInterval(fetchTagesschauNews, 600000);
         };
+
+        /**
+         * CREDENTIAL MANAGEMENT (NEW FEATURE)
+         */
+        function saveCloudCredentials() {
+            const key = document.getElementById('cloud-api-key').value;
+            const bin = document.getElementById('cloud-bin-id').value;
+            localStorage.setItem('nexus_saved_key', key);
+            localStorage.setItem('nexus_saved_bin', bin);
+        }
 
         /**
          * NAVIGATION FUNCTIONALITY
