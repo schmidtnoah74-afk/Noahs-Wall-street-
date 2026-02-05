@@ -3,370 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS ONE</title>
+    <title>NEXUS COMPLETE</title>
     <style>
         :root {
-            --bg: #0a0a0a;
-            --card: rgba(30, 30, 30, 0.7);
-            --card-border: 1px solid rgba(255, 255, 255, 0.1);
-            --glass: blur(12px);
+            --primary: #ffd700; /* Standard Gold */
+            --bg: #121212;
             --text: #ffffff;
-            --accent: #8a2be2;
+            --glass: rgba(30, 30, 30, 0.6);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --blur: blur(12px);
         }
 
         body {
             background-color: var(--bg);
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-            margin: 0; padding: 20px;
-            overflow-x: hidden;
-            padding-bottom: 50px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0;
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
         }
 
-        /* PERFORMANCE & LAYOUT */
-        .container { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        
-        /* HEADER & CONTROLS */
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        h1 { margin: 0; font-size: 24px; background: linear-gradient(90deg, #fff, #aaa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .controls { display: flex; gap: 10px; }
-        .btn-small { background: rgba(255,255,255,0.1); border: none; color: #fff; padding: 5px 10px; border-radius: 8px; cursor: pointer; font-size: 12px; }
-
-        /* GLASS CARD STYLE */
-        .card {
-            background: var(--card);
-            backdrop-filter: var(--glass);
-            -webkit-backdrop-filter: var(--glass);
-            border: var(--card-border);
-            border-radius: 16px;
+        /* --- HEADER --- */
+        .header {
             padding: 15px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-            transition: transform 0.2s;
+            background: rgba(20, 20, 20, 0.95);
+            border-bottom: 1px solid #333;
+            text-align: center;
+            font-size: 18px; font-weight: 800; letter-spacing: 1px;
+            z-index: 100;
         }
 
-        /* NEWS SECTION (LIVE) */
-        .news-header { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; }
-        .live-badge { background: red; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-        
-        .news-item { margin-bottom: 10px; font-size: 14px; line-height: 1.4; display: flex; flex-direction: column; }
-        .news-time { font-size: 11px; color: #aaa; margin-bottom: 2px; }
-        .news-headline { font-weight: 500; }
+        /* --- CONTENT --- */
+        .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FINANCE TICKER */
-        .ticker-wrap { overflow: hidden; white-space: nowrap; margin-bottom: 5px; }
-        .ticker { display: inline-block; animation: ticker 20s linear infinite; }
-        .tick { display: inline-block; margin-right: 20px; font-size: 13px; font-family: monospace; }
-        .up { color: #00ff88; } .down { color: #ff5555; }
-        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+        /* --- NEWS & KI VIEW --- */
+        .ticker-box {
+            background: #000; padding: 8px; border-radius: 8px; margin-bottom: 15px;
+            white-space: nowrap; overflow: hidden; border: 1px solid #333; font-family: monospace; font-size: 12px;
+        }
+        .ticker-text { display: inline-block; animation: scroll 25s linear infinite; }
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* INPUT AREA */
-        .input-group { display: flex; gap: 8px; flex-wrap: wrap; }
+        .news-card {
+            background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
+            border: var(--glass-border); border-radius: 12px; padding: 15px; margin-bottom: 15px;
+        }
+        .news-item { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .news-time { font-size: 10px; color: var(--primary); font-weight: bold; }
+        .news-title { font-size: 14px; margin-top: 2px; display: block; }
+
+        .chat-box {
+            background: var(--glass); border: var(--glass-border); border-radius: 12px;
+            height: 350px; display: flex; flex-direction: column; overflow: hidden;
+        }
+        .chat-history { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px; }
+        .msg.ai { background: rgba(255,255,255,0.1); align-self: flex-start; }
+        .msg.user { background: var(--primary); color: #000; align-self: flex-end; }
+        .chat-input { display: flex; border-top: 1px solid #333; }
+        .chat-input input { flex: 1; background: transparent; border: none; color: white; padding: 15px; outline: none; }
+        .chat-input button { background: transparent; border: none; color: var(--primary); padding: 0 15px; font-size: 20px; }
+
+        /* --- PLANER VIEW --- */
+        .cal-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--glass); padding: 15px; border-radius: 12px; margin-bottom: 20px;
+            font-weight: bold; font-size: 16px; border: var(--glass-border);
+        }
+        .cal-btn { background: none; border: none; color: var(--primary); font-size: 20px; cursor: pointer; padding: 0 10px; }
+
+        .add-box {
+            background: rgba(40,40,40,0.5); padding: 15px; border-radius: 12px; margin-bottom: 20px;
+            border: 1px solid #333;
+        }
+        .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
         input, select {
-            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white;
-            padding: 10px; border-radius: 8px; flex: 1; font-size: 14px; outline: none;
+            background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; flex: 1; outline: none;
         }
-        select { flex: 0.6; }
-        .btn-add {
-            background: linear-gradient(135deg, var(--accent), #555); color: white; border: none;
-            padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer;
-        }
-
-        /* TASKS */
-        .task-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        .daily-opt { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 8px; margin-top: 5px; }
         
-        .task-row {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 12px; border-radius: 12px;
-            background: rgba(40,40,40,0.6);
-            border: 1px solid rgba(255,255,255,0.05);
-            /* Glassy Checkbox Area */
-            position: relative; overflow: hidden;
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        .task-item {
+            display: flex; align-items: center; padding: 12px; border-radius: 10px;
+            background: rgba(50,50,50,0.4); backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;
+        }
+        /* Kategorie Farben (Leuchten) */
+        .c-finanzen { border-left: 3px solid #ffd700; box-shadow: inset 10px 0 20px -10px rgba(255,215,0,0.2); }
+        .c-schule { border-left: 3px solid #1e90ff; box-shadow: inset 10px 0 20px -10px rgba(30,144,255,0.2); }
+        .c-sport { border-left: 3px solid #ff1493; box-shadow: inset 10px 0 20px -10px rgba(255,20,147,0.2); }
+        .c-hausarbeit { border-left: 3px solid #ff4500; box-shadow: inset 10px 0 20px -10px rgba(255,69,0,0.2); }
+        .c-freizeit { border-left: 3px solid #32cd32; box-shadow: inset 10px 0 20px -10px rgba(50,205,50,0.2); }
+
+        .check-btn { width: 20px; height: 20px; border: 2px solid #777; border-radius: 50%; margin-right: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
+        .check-btn.checked { background: var(--primary); border-color: var(--primary); color: black; }
+        .t-info { flex: 1; }
+        .t-title { font-size: 15px; }
+        .t-meta { font-size: 11px; color: #888; margin-top: 2px; }
+
+        /* --- TAGEBUCH VIEW --- */
+        #diary-text {
+            width: 100%; height: 60vh; background: transparent; border: none; 
+            color: #ddd; font-size: 16px; line-height: 1.6; resize: none; outline: none;
         }
 
-        /* CATEGORY COLORS (GLOW & BORDER) */
-        .cat-finanzen { border-left: 3px solid #ffd700; box-shadow: inset 10px 0 20px -10px rgba(255, 215, 0, 0.2); }
-        .cat-schule { border-left: 3px solid #00bfff; box-shadow: inset 10px 0 20px -10px rgba(0, 191, 255, 0.2); }
-        .cat-sport { border-left: 3px solid #ff1493; box-shadow: inset 10px 0 20px -10px rgba(255, 20, 147, 0.2); }
-        .cat-hausarbeit { border-left: 3px solid #ff4500; box-shadow: inset 10px 0 20px -10px rgba(255, 69, 0, 0.2); }
-        .cat-freizeit { border-left: 3px solid #32cd32; box-shadow: inset 10px 0 20px -10px rgba(50, 205, 50, 0.2); }
-
-        .task-info { display: flex; flex-direction: column; flex: 1; margin-left: 10px; }
-        .task-title { font-size: 15px; }
-        .task-meta { font-size: 11px; color: #888; display: flex; gap: 5px; align-items: center; }
-        
-        /* GLASSY CHECKBOX */
-        .check-container {
-            position: relative; width: 24px; height: 24px;
-            background: rgba(255,255,255,0.1); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(4px);
+        /* --- CLOUD / SETTINGS VIEW --- */
+        .cloud-panel {
+            background: var(--glass); border: var(--glass-border); padding: 20px; border-radius: 12px; text-align: center;
         }
-        .check-container.checked { background: var(--accent); border-color: var(--accent); }
-        .checkmark { display: none; color: white; font-size: 14px; }
-        .check-container.checked .checkmark { display: block; }
+        .cloud-btn {
+            background: #333; color: white; border: 1px solid #555; padding: 15px; width: 100%;
+            margin-bottom: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .color-row { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+        .c-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; }
 
-        .daily-icon { font-size: 10px; background: rgba(255,255,255,0.2); padding: 2px 4px; border-radius: 4px; }
-
-        /* AI CHAT MINI */
-        .ai-mini { height: 150px; overflow-y: auto; font-size: 13px; color: #ccc; margin-bottom: 5px; }
-        .ai-msg { margin-bottom: 5px; padding: 5px 10px; background: rgba(0,0,0,0.3); border-radius: 8px; display: inline-block; }
-
-        /* TOGGLE ANIMATIONS CLASS */
-        .no-anim * { animation: none !important; transition: none !important; }
+        /* --- BOTTOM NAV --- */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: #0f0f0f; border-top: 1px solid #333;
+            display: flex; justify-content: space-around; padding: 10px 0 25px 0; z-index: 200;
+        }
+        .nav-item {
+            background: none; border: none; color: #666; font-size: 10px;
+            display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-icon { font-size: 20px; }
 
     </style>
 </head>
 <body>
 
-<div class="container">
-    
-    <!-- HEADLINE -->
-    <div class="header">
-        <h1>NEXUS ONE</h1>
-        <div class="controls">
-            <button class="btn-small" onclick="toggleAnim()">✨ Anim: An</button>
-            <button class="btn-small" onclick="manualSync()">☁️ Sync</button>
-        </div>
-    </div>
+    <div class="header">NEXUS</div>
 
-    <!-- 1. NEWS & FINANCE CARD -->
-    <div class="card">
-        <div class="ticker-wrap">
-            <div class="ticker">
-                <span class="tick">DAX <span class="up">+0.8%</span></span>
-                <span class="tick">GOLD <span class="up">$2,045</span></span>
-                <span class="tick">BTC <span class="down">$94,200</span></span>
-                <span class="tick">EUR/USD <span class="up">1.09</span></span>
-                <span class="tick">S&P 500 <span class="down">-0.2%</span></span>
+    <div class="content">
+        
+        <!-- 1. INFO (NEWS & KI) -->
+        <div id="view-info" class="view-section active">
+            <div class="ticker-box">
+                <div class="ticker-text">
+                    LIVE: DAX +0.5% • GOLD $2040 • SILBER $22.50 • BTC $95,000 • S&P500 +0.2% • EUR/USD 1.08 • PORSCHE CONSULTING NEWS •
+                </div>
             </div>
-        </div>
-        <div class="news-header">
-            <span style="font-weight:bold; font-size:14px;">Welt News (Tagesschau)</span>
-            <span class="live-badge">LIVE</span>
-        </div>
-        <div id="news-container">Lade Nachrichten...</div>
-    </div>
-
-    <!-- 2. KI ASSISTANT CARD -->
-    <div class="card">
-        <div class="ai-mini" id="ai-chat">
-            <div class="ai-msg">KI: Hi! Ich analysiere deine Aufgaben und News.</div>
-        </div>
-        <div class="input-group">
-            <input type="text" id="ai-input" placeholder="Frage an KI...">
-            <button class="btn-small" onclick="askAI()">Send</button>
-        </div>
-    </div>
-
-    <!-- 3. PLANNER INPUT -->
-    <div class="card">
-        <div class="input-group">
-            <input type="text" id="t-title" placeholder="Aufgabe..." style="flex:2;">
-            <input type="time" id="t-time" style="flex:1;">
-        </div>
-        <div class="input-group" style="margin-top:8px;">
-            <select id="t-cat">
-                <option value="finanzen">Finanzen 💰</option>
-                <option value="schule">Schule 📚</option>
-                <option value="hausarbeit">Hausarbeit 🏠</option>
-                <option value="freizeit">Freizeit 🎮</option>
-                <option value="sport">Sport 🏋️</option>
-            </select>
-            <div style="display:flex; align-items:center; gap:5px; color:#aaa; font-size:12px;">
-                <input type="checkbox" id="t-daily" style="width:16px; height:16px; flex:0;"> Täglich?
-            </div>
-            <button class="btn-add" onclick="addTask()">+ Add</button>
-        </div>
-    </div>
-
-    <!-- 4. TASK LIST -->
-    <div id="task-list" class="task-list">
-        <!-- Tasks render here -->
-    </div>
-
-</div>
-
-<script>
-    /* --- CONFIG --- */
-    let useAnim = true;
-    let tasks = [];
-    
-    // API KEYS (Optional)
-    let API_KEY = ""; 
-    let BIN_ID = "";
-
-    /* --- INIT --- */
-    window.onload = function() {
-        if(localStorage.getItem('nexus_tasks')) {
-            tasks = JSON.parse(localStorage.getItem('nexus_tasks'));
-            checkDailyReset(); // Prüft ob "Täglich" Aufgaben resetet werden müssen
-            renderTasks();
-        }
-        fetchNews();
-        setInterval(fetchNews, 600000); // 10 Min Refresh
-    };
-
-    /* --- NEWS LOGIC (REAL TAGESSCHAU) --- */
-    async function fetchNews() {
-        const container = document.getElementById('news-container');
-        // Wir nutzen einen RSS2JSON Service für den offiziellen Tagesschau Feed
-        const rssUrl = 'https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml';
-        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-
-        try {
-            const res = await fetch(apiUrl);
-            const data = await res.json();
             
-            let html = "";
-            // Nimm die ersten 3 News
-            data.items.slice(0, 3).forEach(item => {
-                const time = new Date(item.pubDate).toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
-                html += `
-                    <div class="news-item">
-                        <span class="news-time">${time} • Welt</span>
-                        <a href="${item.link}" target="_blank" style="color:white; text-decoration:none;" class="news-headline">${item.title}</a>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        } catch(e) {
-            container.innerHTML = "<div class='news-item'>Konnte News nicht laden (Offline?).</div>";
-        }
-    }
+            <h3 style="margin:0 0 10px 0; opacity:0.7; font-size:14px;">WELT NEWS (TAGESSCHAU)</h3>
+            <div class="news-card" id="news-feed">
+                <div style="padding:10px; text-align:center; color:#666;">Lade Nachrichten...</div>
+            </div>
 
-    /* --- TASK LOGIC --- */
-    function addTask() {
-        const title = document.getElementById('t-title').value;
-        const time = document.getElementById('t-time').value;
-        const cat = document.getElementById('t-cat').value;
-        const isDaily = document.getElementById('t-daily').checked;
+            <h3 style="margin:0 0 10px 0; opacity:0.7; font-size:14px;">KI ASSISTANT</h3>
+            <div class="chat-box">
+                <div class="chat-history" id="chat-hist">
+                    <div class="msg ai">Hallo! Wie kann ich dir heute helfen?</div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="ai-in" placeholder="Frage stellen...">
+                    <button onclick="askAI()">➤</button>
+                </div>
+            </div>
+        </div>
 
-        if(!title) return;
+        <!-- 2. PLANER (KALENDER + AUFGABEN) -->
+        <div id="view-planer" class="view-section">
+            <div class="cal-nav">
+                <button class="cal-btn" onclick="changeDate(-1)">◀</button>
+                <span id="date-display">Heute</span>
+                <button class="cal-btn" onclick="changeDate(1)">▶</button>
+            </div>
 
-        tasks.push({
-            id: Date.now(),
-            title, time, cat, isDaily,
-            done: false,
-            lastDone: null // Datum wann zuletzt erledigt
-        });
+            <div class="add-box">
+                <input type="text" id="t-title" placeholder="Aufgabe..." style="width:94%; margin-bottom:10px;">
+                <div class="input-row">
+                    <input type="time" id="t-time">
+                    <select id="t-cat">
+                        <option value="finanzen">Finanzen</option>
+                        <option value="schule">Schule</option>
+                        <option value="hausarbeit">Hausarbeit</option>
+                        <option value="freizeit">Freizeit</option>
+                        <option value="sport">Sport</option>
+                    </select>
+                </div>
+                <div class="daily-opt">
+                    <input type="checkbox" id="t-daily">
+                    <label for="t-daily">Täglich wiederholen ↻</label>
+                </div>
+                <button onclick="addTask()" style="width:100%; margin-top:10px; padding:10px; background:var(--primary); border:none; border-radius:8px; font-weight:bold;">Hinzufügen</button>
+            </div>
 
-        // Cleanup Input
-        document.getElementById('t-title').value = "";
-        save();
-        renderTasks();
-    }
+            <div class="task-list" id="task-list"></div>
+        </div>
 
-    function toggleTask(id) {
-        const t = tasks.find(x => x.id === id);
-        if(t) {
-            t.done = !t.done;
-            if(t.done && t.isDaily) t.lastDone = new Date().toDateString();
-            save();
-            renderTasks();
-        }
-    }
+        <!-- 3. TAGEBUCH -->
+        <div id="view-diary" class="view-section">
+            <h3 style="margin-top:0;">Tagebuch Eintrag</h3>
+            <textarea id="diary-text" placeholder="Wie war dein Tag?" oninput="saveAll()"></textarea>
+        </div>
 
-    function checkDailyReset() {
-        const today = new Date().toDateString();
-        let changed = false;
-        tasks.forEach(t => {
-            if(t.isDaily && t.lastDone !== today) {
-                t.done = false; // Reset daily task if new day
-                changed = true;
+        <!-- 4. CLOUD & SETTINGS -->
+        <div id="view-cloud" class="view-section">
+            <h3 style="margin-top:0;">Cloud Sync (Manuell)</h3>
+            <div class="cloud-panel">
+                <button class="cloud-btn" onclick="upload()">⬆ Upload to Cloud</button>
+                <button class="cloud-btn" onclick="download()">⬇ Download from Cloud</button>
+                
+                <h4 style="margin-top:30px;">Design Farbe</h4>
+                <div class="color-row">
+                    <div class="c-dot" style="background:#ffd700" onclick="setColor('#ffd700')"></div>
+                    <div class="c-dot" style="background:#00bfff" onclick="setColor('#00bfff')"></div>
+                    <div class="c-dot" style="background:#ff1493" onclick="setColor('#ff1493')"></div>
+                    <div class="c-dot" style="background:#32cd32" onclick="setColor('#32cd32')"></div>
+                    <div class="c-dot" style="background:#8a2be2" onclick="setColor('#8a2be2')"></div>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top:20px; color:#555; font-size:12px;">
+                Keine Keys im Code gespeichert. <br>Wird beim Sync abgefragt.
+            </div>
+        </div>
+
+    </div>
+
+    <!-- NAVIGATION BAR -->
+    <div class="nav-bar">
+        <button class="nav-item active" onclick="nav('info', this)">
+            <span class="nav-icon">📰</span> Info
+        </button>
+        <button class="nav-item" onclick="nav('planer', this)">
+            <span class="nav-icon">📅</span> Planer
+        </button>
+        <button class="nav-item" onclick="nav('diary', this)">
+            <span class="nav-icon">📖</span> Tagebuch
+        </button>
+        <button class="nav-item" onclick="nav('cloud', this)">
+            <span class="nav-icon">☁️</span> Cloud
+        </button>
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        let data = { tasks: [], diary: {}, theme: '#ffd700' };
+        let curDate = new Date();
+        
+        // KEYS (Optional hier fest eintragen)
+        let API_KEY = ""; 
+        let BIN_ID = "";
+
+        // --- INIT ---
+        window.onload = function() {
+            if(localStorage.getItem('nexus_final')) {
+                data = JSON.parse(localStorage.getItem('nexus_final'));
+                setColor(data.theme);
             }
-        });
-        if(changed) save();
-    }
+            checkDaily();
+            render();
+            loadNews();
+            setInterval(loadNews, 600000); // 10 Min
+        };
 
-    function deleteTask(id) {
-        if(confirm("Löschen?")) {
-            tasks = tasks.filter(t => t.id !== id);
-            save();
-            renderTasks();
+        // --- NAVIGATION ---
+        function nav(view, btn) {
+            document.querySelectorAll('.view-section').forEach(e => e.classList.remove('active'));
+            document.getElementById('view-'+view).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
+            btn.classList.add('active');
         }
-    }
 
-    function renderTasks() {
-        const list = document.getElementById('task-list');
-        list.innerHTML = "";
-        
-        // Sortieren: Zeit
-        tasks.sort((a,b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
+        // --- CORE FUNCTIONS ---
+        function getDateStr(d) { return d.toISOString().split('T')[0]; }
 
-        tasks.forEach(t => {
-            const div = document.createElement('div');
-            div.className = `task-row cat-${t.cat}`;
-            if(t.done) div.style.opacity = "0.5";
-
-            div.innerHTML = `
-                <div class="check-container ${t.done ? 'checked' : ''}" onclick="toggleTask(${t.id})">
-                    <span class="checkmark">✔</span>
-                </div>
-                <div class="task-info">
-                    <span class="task-title" style="text-decoration: ${t.done ? 'line-through' : 'none'}">${t.title}</span>
-                    <div class="task-meta">
-                        <span>${t.time || ''}</span>
-                        ${t.isDaily ? '<span class="daily-icon">↻ Täglich</span>' : ''}
-                        <span style="text-transform:capitalize">• ${t.cat}</span>
-                    </div>
-                </div>
-                <button onclick="deleteTask(${t.id})" style="background:none; border:none; color:#555; font-size:16px;">×</button>
-            `;
-            list.appendChild(div);
-        });
-    }
-
-    function save() {
-        localStorage.setItem('nexus_tasks', JSON.stringify(tasks));
-    }
-
-    /* --- AI LOGIC --- */
-    function askAI() {
-        const inp = document.getElementById('ai-input');
-        const box = document.getElementById('ai-chat');
-        const q = inp.value;
-        if(!q) return;
-
-        box.innerHTML += `<div class="ai-msg" style="color:var(--accent)">Du: ${q}</div>`;
-        inp.value = "";
-        
-        // Simuliere Antwort basierend auf Kontext
-        setTimeout(() => {
-            let a = "Ich habe das notiert.";
-            if(q.toLowerCase().includes("finanz")) a = "Der DAX sieht stabil aus. Gold ist eine sichere Bank gerade.";
-            if(q.toLowerCase().includes("aufgabe")) a = `Du hast noch ${tasks.filter(t=>!t.done).length} offene Aufgaben.`;
-            
-            box.innerHTML += `<div class="ai-msg">KI: ${a}</div>`;
-            box.scrollTop = box.scrollHeight;
-        }, 500);
-    }
-
-    /* --- SYSTEM --- */
-    function toggleAnim() {
-        useAnim = !useAnim;
-        document.body.classList.toggle('no-anim');
-        const btn = document.querySelector('.controls button');
-        btn.innerText = useAnim ? "✨ Anim: An" : "🚫 Anim: Aus";
-    }
-
-    async function manualSync() {
-        let key = API_KEY || prompt("Master Key:");
-        let bin = BIN_ID || prompt("Bin ID:");
-        if(!key || !bin) return;
-        
-        // Simple Upload Logic
-        try {
-            await fetch(`https://api.jsonbin.io/v3/b/${bin}`, {
-                method: 'PUT',
-                headers: {'Content-Type': 'application/json', 'X-Master-Key': key},
-                body: JSON.stringify({tasks: tasks})
+        function checkDaily() {
+            let today = getDateStr(new Date());
+            let changed = false;
+            data.tasks.forEach(t => {
+                if(t.daily && t.lastDone !== today) {
+                    t.done = false; // Reset daily tasks
+                    changed = true;
+                }
             });
-            alert("Gespeichert!");
-        } catch(e) { alert("Fehler!"); }
-    }
+            if(changed) saveAll();
+        }
 
-</script>
+        function render() {
+            // Date Display
+            document.getElementById('date-display').innerText = curDate.toLocaleDateString('de-DE', {weekday:'short', day:'numeric', month:'long'});
+            
+            // Render Tasks
+            const list = document.getElementById('task-list');
+            list.innerHTML = "";
+            const key = getDateStr(curDate);
+            
+            let showTasks = data.tasks.filter(t => t.date === key || t.daily);
+            showTasks.sort((a,b) => (a.time||"").localeCompare(b.time||""));
+
+            showTasks.forEach(t => {
+                const el = document.createElement('div');
+                el.className = `task-item c-${t.cat}`;
+                el.innerHTML = `
+                    <div class="check-btn ${t.done?'checked':''}" onclick="toggle(${t.id})">✔</div>
+                    <div class="t-info">
+                        <span class="t-title" style="text-decoration:${t.done?'line-through':'none'}">${t.title}</span>
+                        <div class="t-meta">${t.time||'--:--'} • ${t.cat.toUpperCase()} ${t.daily ? '• ↻ Täglich' : ''}</div>
+                    </div>
+                    <div onclick="del(${t.id})" style="padding:10px; color:#666;">✕</div>
+                `;
+                list.appendChild(el);
+            });
+
+            // Render Diary
+            document.getElementById('diary-text').value = data.diary[key] || "";
+        }
+
+        // --- ACTIONS ---
+        function addTask() {
+            let title = document.getElementById('t-title').value;
+            let time = document.getElementById('t-time').value;
+            let cat = document.getElementById('t-cat').value;
+            let daily = document.getElementById('t-daily').checked;
+
+            if(!title) return;
+
+            data.tasks.push({
+                id: Date.now(),
+                date: getDateStr(curDate),
+                title, time, cat, daily,
+                done: false, lastDone: null
+            });
+
+            document.getElementById('t-title').value = "";
+            saveAll(); render();
+        }
+
+        function toggle(id) {
+            let t = data.tasks.find(x => x.id === id);
+            if(t) {
+                t.done = !t.done;
+                if(t.daily && t.done) t.lastDone = getDateStr(new Date());
+                saveAll(); render();
+            }
+        }
+
+        function del(id) {
+            if(confirm("Löschen?")) {
+                data.tasks = data.tasks.filter(x => x.id !== id);
+                saveAll(); render();
+            }
+        }
+
+        function changeDate(d) {
+            curDate.setDate(curDate.getDate() + d);
+            render();
+        }
+
+        function saveAll() {
+            const key = getDateStr(curDate);
+            data.diary[key] = document.getElementById('diary-text').value;
+            localStorage.setItem('nexus_final', JSON.stringify(data));
+        }
+
+        function setColor(c) {
+            data.theme = c;
+            document.documentElement.style.setProperty('--primary', c);
+            saveAll();
+        }
+
+        // --- NEWS & AI ---
+        async function loadNews() {
+            const box = document.getElementById('news-feed');
+            try {
+                const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml');
+                const json = await res.json();
+                let h = "";
+                json.items.slice(0,3).forEach(i => {
+                    let t = i.pubDate.split(' ')[1].slice(0,5);
+                    h += `<div class="news-item"><span class="news-time">${t}</span><span class="news-title">${i.title}</span></div>`;
+                });
+                box.innerHTML = h;
+            } catch(e) { box.innerHTML = "<div style='padding:10px'>News Offline</div>"; }
+        }
+
+        function askAI() {
+            let inp = document.getElementById('ai-in');
+            let txt = inp.value; 
+            if(!txt) return;
+            
+            let h = document.getElementById('chat-hist');
+            h.innerHTML += `<div class="msg user">${txt}</div>`;
+            inp.value = "";
+            
+            setTimeout(() => {
+                let ans = "Ich habe das notiert.";
+                if(txt.toLowerCase().includes("finanz")) ans = "Der Markt ist stabil. Gold steigt.";
+                else if(txt.toLowerCase().includes("hallo")) ans = "Hallo! Alles klar bei dir?";
+                h.innerHTML += `<div class="msg ai">${ans}</div>`;
+                h.scrollTop = h.scrollHeight;
+            }, 500);
+        }
+
+        // --- CLOUD ---
+        async function upload() {
+            let k = API_KEY || prompt("Master Key:");
+            let b = BIN_ID || prompt("Bin ID:");
+            if(!k||!b) return;
+            try {
+                await fetch(`https://api.jsonbin.io/v3/b/${b}`, {method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':k}, body:JSON.stringify(data)});
+                alert("Gespeichert!");
+            } catch(e) { alert("Fehler!"); }
+        }
+
+        async function download() {
+            let k = API_KEY || prompt("Master Key:");
+            let b = BIN_ID || prompt("Bin ID:");
+            if(!k||!b) return;
+            try {
+                let r = await fetch(`https://api.jsonbin.io/v3/b/${b}/latest`, {headers:{'X-Master-Key':k}});
+                let j = await r.json();
+                data = j.record;
+                setColor(data.theme);
+                saveAll(); render(); alert("Geladen!");
+            } catch(e) { alert("Fehler!"); }
+        }
+
+    </script>
 </body>
 </html>
