@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS PRIME v31.5 | Stable Cloud</title>
+    <title>NEXUS PRIME v53 | Ultimate</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
             --card-bg: #141414;
-            --accent: #00d4ff;
+            --accent: #00d4ff;     /* Standard Cyan */
             --text-main: #ffffff;
             --text-dim: #888888;
             --border: #333;
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-family: 'Inter', -apple-system, sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,238 +26,255 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            padding-bottom: 90px; /* Platz für die untere Leiste */
+            transition: background 0.3s;
         }
 
         /* HEADER */
         header {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
+            width: 100%; max-width: 1000px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; border-bottom: 1px solid var(--border); margin-bottom: 20px;
         }
-
-        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
+        .logo { font-size: 1.5rem; font-weight: bold; letter-spacing: 2px; }
         .logo span { color: var(--accent); }
-        .status { font-size: 0.8rem; color: #555; }
+        .btn { background: #222; border: 1px solid #333; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
+        .btn:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* GRID LAYOUT (Das bewährte V31 Grid) */
-        .dashboard {
+        /* GRID SYSTEM (Classic) */
+        .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 20px;
-            width: 100%;
-            max-width: 1000px;
+            width: 100%; max-width: 1000px;
         }
 
+        /* TABS (Werden ein/ausgeblendet) */
+        .tab-section { display: none; width: 100%; max-width: 1000px; }
+        .tab-section.active { display: block; } /* Nur aktiver Tab sichtbar */
+        /* Home Tab braucht Grid, Finance & Journal brauchen Block */
+        #tab-home.active { display: grid; } 
+
+        /* CARDS */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
-            transition: transform 0.2s;
+            margin-bottom: 20px; /* Abstand im Block-Modus */
         }
-        .card:hover { transform: translateY(-2px); border-color: var(--accent); }
+        /* Im Grid Modus kein Margin nötig */
+        #tab-home .card { margin-bottom: 0; }
 
-        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 0.9rem; color: var(--text-dim); text-transform: uppercase; margin-bottom: 15px; }
 
         /* WIDGETS */
-        .time-display { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; }
+        .time-display { font-size: 2.5rem; font-weight: bold; text-align: center; }
         .date-display { text-align: center; color: var(--accent); margin-bottom: 10px; }
 
-        /* FINANCE CONTAINER */
-        .finance-container { height: 350px; }
+        /* INPUTS */
+        textarea {
+            width: 100%; background: #111; border: 1px solid #333; color: white;
+            padding: 15px; border-radius: 8px; min-height: 150px; resize: vertical; outline: none;
+        }
+        textarea:focus { border-color: var(--accent); }
 
-        /* AI CHAT */
-        #ai-response {
-            background: #000;
-            padding: 15px;
-            border-radius: 8px;
-            min-height: 60px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            border-left: 3px solid var(--accent);
+        /* BOTTOM NAV */
+        .nav-bar {
+            position: fixed; bottom: 20px;
+            background: rgba(20,20,20,0.95); backdrop-filter: blur(10px);
+            border: 1px solid #333; border-radius: 50px;
+            display: flex; gap: 30px; padding: 10px 30px;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .input-group { display: flex; gap: 10px; }
-        input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #222;
-            color: white;
-            outline: none;
-        }
-        button {
-            padding: 12px 20px;
-            background: var(--accent);
-            border: none;
-            border-radius: 8px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .nav-icon { font-size: 1.5rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }
+        .nav-icon:hover { opacity: 1; transform: scale(1.1); }
+        .nav-icon.active { opacity: 1; color: var(--accent); transform: scale(1.1); }
 
-        /* CLOUD TEXT AREA (Statt statischer Liste) */
-        textarea.cloud-notes {
-            width: 100%;
-            height: 200px;
-            background: #111;
-            border: 1px solid #333;
-            color: #ddd;
-            padding: 10px;
-            border-radius: 8px;
-            resize: none;
-            font-family: inherit;
+        /* COLOR MENU */
+        #color-picker {
+            display: none; position: absolute; top: 70px; right: 20px;
+            background: #222; padding: 10px; border-radius: 8px; border: 1px solid #444; z-index: 200;
         }
-        textarea.cloud-notes:focus { border-color: var(--accent); color: white; }
+        .dot { width: 25px; height: 25px; border-radius: 50%; display: inline-block; margin: 3px; cursor: pointer; border: 2px solid transparent; }
+        .dot:hover { border-color: white; transform: scale(1.1); }
 
-        /* NEWS TICKER */
-        .news-ticker {
-            width: 100%; max-width: 1000px;
-            background: #111; border-bottom: 1px solid #333; margin-bottom: 20px;
-            overflow: hidden; white-space: nowrap; padding: 10px 0;
-            color: var(--text-dim); font-size: 0.9rem;
-        }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">NEXUS <span>PRIME</span></div>
-        <div class="status" id="sync-status">Connecting...</div>
+        <div style="display:flex; align-items:center; gap:10px;">
+            <button class="btn" onclick="toggleColors()">🎨</button>
+            <span id="sync-status" style="font-size:0.7rem; color:#555;">Init...</span>
+        </div>
     </header>
 
-    <div class="news-ticker">
-        +++ NEXUS PRIME v31.5 +++ System Stable +++ Auto-Cloud Active +++ Markets Open +++
+    <!-- Color Picker -->
+    <div id="color-picker">
+        <div class="dot" style="background:#00d4ff" onclick="setTheme('#00d4ff')"></div> <!-- Cyan -->
+        <div class="dot" style="background:#ff0055" onclick="setTheme('#ff0055')"></div> <!-- Red -->
+        <div class="dot" style="background:#00ff88" onclick="setTheme('#00ff88')"></div> <!-- Green -->
+        <div class="dot" style="background:#ffcc00" onclick="setTheme('#ffcc00')"></div> <!-- Gold -->
+        <div class="dot" style="background:#bd00ff" onclick="setTheme('#bd00ff')"></div> <!-- Purple -->
     </div>
 
-    <div class="dashboard">
-        
-        <!-- 1. ZEIT -->
+    <!-- TAB 1: HOME (Grid Layout) -->
+    <div id="tab-home" class="tab-section active dashboard-grid">
+        <!-- Zeit -->
         <div class="card">
             <h2>Chronometer</h2>
             <div class="time-display" id="clock">00:00</div>
-            <div class="date-display" id="date">Lade...</div>
+            <div class="date-display" id="date">Datum</div>
         </div>
 
-        <!-- 2. AI -->
+        <!-- Quick Notes -->
         <div class="card">
-            <h2>Neural Core</h2>
-            <div id="ai-response">System bereit.</div>
-            <div class="input-group">
-                <input type="text" id="userInput" placeholder="Frage..." onkeypress="if(event.key==='Enter') askAI()">
-                <button onclick="askAI()">Go</button>
-            </div>
+            <h2>Quick Notes</h2>
+            <textarea id="in-quick" placeholder="Schnelle Notizen für heute..." oninput="triggerSave()"></textarea>
         </div>
 
-        <!-- 3. FINANZEN -->
-        <div class="card" style="grid-row: span 2;">
-            <h2>Market Data</h2>
-            <div class="finance-container">
-                <!-- TradingView Widget -->
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+        <!-- AI Chat (Platzhalter) -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <h2>AI Status</h2>
+            <div style="color: #666; font-size: 0.9rem;">System bereit. Tippe in die Notizen, um zu speichern.</div>
+        </div>
+    </div>
+
+    <!-- TAB 2: JOURNAL -->
+    <div id="tab-journal" class="tab-section">
+        <div class="card">
+            <h2>Persönliches Tagebuch</h2>
+            <textarea style="height: 400px;" id="in-journal" placeholder="Liebes Tagebuch..." oninput="triggerSave()"></textarea>
+        </div>
+    </div>
+
+    <!-- TAB 3: FINANCE -->
+    <div id="tab-finance" class="tab-section">
+        <div class="card" style="height: 550px;">
+            <h2>Markt Übersicht</h2>
+            <!-- TradingView Widget -->
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+                <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                {
+                "colorTheme": "dark",
+                "dateRange": "12M",
+                "showChart": true,
+                "locale": "de_DE",
+                "width": "100%",
+                "height": "100%",
+                "largeChartUrl": "",
+                "isTransparent": true,
+                "tabs": [
                     {
-                    "colorTheme": "dark",
-                    "dateRange": "12M",
-                    "showChart": true,
-                    "locale": "de_DE",
-                    "width": "100%",
-                    "height": "100%",
-                    "largeChartUrl": "",
-                    "isTransparent": true,
-                    "tabs": [
-                        {
-                        "title": "Portfolio",
-                        "symbols": [
-                            { "s": "XETR:IUSQ", "d": "MSCI World" },
-                            { "s": "TVC:GOLD", "d": "Gold" },
-                            { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" }
-                        ]
-                        }
+                    "title": "Portfolio",
+                    "symbols": [
+                        { "s": "XETR:IUSQ", "d": "MSCI World" },
+                        { "s": "TVC:GOLD", "d": "Gold" },
+                        { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" }
                     ]
                     }
-                    </script>
-                </div>
+                ]
+                }
+                </script>
             </div>
         </div>
+    </div>
 
-        <!-- 4. PROTOKOLL (CLOUD SYNCED) -->
-        <div class="card">
-            <h2>Daily Protocol (Cloud)</h2>
-            <textarea class="cloud-notes" id="dailyNotes" placeholder="Schreibe hier deinen Tagesplan..." oninput="triggerAutoSave()"></textarea>
-        </div>
-
+    <!-- BOTTOM NAV -->
+    <div class="nav-bar">
+        <div class="nav-icon active" onclick="switchTab('home', this)">🏠</div>
+        <div class="nav-icon" onclick="switchTab('journal', this)">📖</div>
+        <div class="nav-icon" onclick="switchTab('finance', this)">📈</div>
     </div>
 
     <script>
-        // ==========================================
-        // KONFIGURATION
-        // ==========================================
+        // ==========================
+        // CONFIG
+        // ==========================
         const API_KEY = $2a$10$bfQHPAKf8rHB5nCB1nxla.8UbbBLCu6uCSZjrrePZ2JvQv9Jw3XEK; 
         const BIN_ID  = 6983be0443b1c97be965d28c;
-        // ==========================================
+        // ==========================
 
         // STARTUP
         window.onload = function() {
             updateTime();
             setInterval(updateTime, 1000);
-            loadFromCloud();
+            loadData();
+            
+            // Gespeicherte Farbe laden
+            const savedColor = localStorage.getItem('nexus_color');
+            if(savedColor) document.documentElement.style.setProperty('--accent', savedColor);
         };
 
-        // ZEIT
+        // TIME
         function updateTime() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
             document.getElementById('date').innerText = now.toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'});
         }
 
-        // CLOUD LOGIC
-        let saveTimer;
+        // TABS
+        function switchTab(name, btn) {
+            // Alle Tabs ausblenden
+            document.querySelectorAll('.tab-section').forEach(el => el.classList.remove('active'));
+            // Gewählten Tab einblenden
+            const target = document.getElementById('tab-' + name);
+            target.classList.add('active');
 
-        async function loadFromCloud() {
-            const status = document.getElementById('sync-status');
-            status.innerText = "Syncing...";
-            
+            // Icons resetten
+            document.querySelectorAll('.nav-icon').forEach(el => el.classList.remove('active'));
+            // Geklicktes Icon aktivieren
+            btn.classList.add('active');
+        }
+
+        // COLORS
+        function toggleColors() {
+            const p = document.getElementById('color-picker');
+            p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        }
+        function setTheme(color) {
+            document.documentElement.style.setProperty('--accent', color);
+            localStorage.setItem('nexus_color', color);
+            toggleColors();
+        }
+
+        // CLOUD SYNC
+        let saveTimer;
+        
+        async function loadData() {
+            const st = document.getElementById('sync-status');
+            st.innerText = "Syncing...";
             try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { "X-Master-Key": API_KEY }
-                });
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {headers:{"X-Master-Key":API_KEY}});
+                let d = (await res.json()).record;
                 
-                if (res.ok) {
-                    let json = await res.json();
-                    if(json.record.notes) {
-                        document.getElementById('dailyNotes').value = json.record.notes;
-                    }
-                    status.innerText = "Online (v31.5)";
-                    status.style.color = "#00d4ff";
-                } else {
-                    status.innerText = "Sync Error (Check Key)";
-                }
-            } catch (e) {
-                status.innerText = "Offline Mode";
+                if(d.quick) document.getElementById('in-quick').value = d.quick;
+                if(d.journal) document.getElementById('in-journal').value = d.journal;
+                
+                st.innerText = "Online";
+                st.style.color = "var(--accent)";
+            } catch(e) {
+                st.innerText = "Offline";
             }
         }
 
-        function triggerAutoSave() {
+        function triggerSave() {
             clearTimeout(saveTimer);
             document.getElementById('sync-status').innerText = "Typing...";
-            saveTimer = setTimeout(saveToCloud, 2000);
+            saveTimer = setTimeout(saveData, 2000);
         }
 
-        async function saveToCloud() {
-            const status = document.getElementById('sync-status');
-            status.innerText = "Saving...";
+        async function saveData() {
+            const st = document.getElementById('sync-status');
+            st.innerText = "Saving...";
             
             let data = {
-                notes: document.getElementById('dailyNotes').value,
-                lastUpdate: new Date().toISOString()
+                quick: document.getElementById('in-quick').value,
+                journal: document.getElementById('in-journal').value
             };
 
             try {
@@ -266,25 +283,10 @@
                     headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
                     body: JSON.stringify(data)
                 });
-                status.innerText = "Saved";
-                setTimeout(() => status.innerText = "Online", 2000);
-            } catch (e) {
-                status.innerText = "Save Failed";
+                st.innerText = "Saved";
+            } catch(e) {
+                st.innerText = "Error";
             }
-        }
-
-        // AI LOGIC (Simple)
-        function askAI() {
-            const input = document.getElementById('userInput').value.toLowerCase();
-            const output = document.getElementById('ai-response');
-            let ans = "Verstanden.";
-
-            if(input.includes("hallo")) ans = "Systeme stabil.";
-            else if(input.includes("stress")) ans = "Mach eine Pause.";
-            else if(input.includes("börse")) ans = "Siehe Chart rechts.";
-            
-            output.innerText = ans;
-            document.getElementById('userInput').value = "";
         }
 
     </script>
