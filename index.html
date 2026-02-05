@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS PRIME v40 | Autopilot</title>
+    <title>NEXUS PRIME v41 | Classic Sync</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
             --card-bg: #141414;
-            --accent: #00d4ff;     /* Cyan Neon */
-            --accent-2: #ff0055;   /* Alert Red */
+            --accent: #00d4ff;
             --text-main: #ffffff;
             --text-dim: #888888;
             --border: #333;
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, monospace;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -38,48 +37,17 @@
             align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 20px;
-        }
-
-        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        .logo span { color: var(--accent); }
-        .status-badge { 
-            font-size: 0.75rem; 
-            background: #1a1a1a; 
-            padding: 5px 10px; 
-            border-radius: 4px; 
-            border: 1px solid #333;
-            color: var(--text-dim);
-            transition: all 0.3s ease;
-        }
-        .status-badge.saving { border-color: var(--accent); color: var(--accent); }
-        .status-badge.error { border-color: var(--accent-2); color: var(--accent-2); }
-
-        /* TICKER */
-        .news-container {
-            width: 100%;
-            max-width: 1000px;
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 4px;
             margin-bottom: 30px;
-            overflow: hidden;
-            white-space: nowrap;
         }
-        .news-ticker {
-            display: inline-block;
-            padding: 8px 0;
-            font-size: 0.85rem;
-            color: var(--text-dim);
-            padding-left: 100%;
-            animation: ticker 40s linear infinite;
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
-        /* GRID */
+        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
+        .logo span { color: var(--accent); }
+        .version { font-size: 0.8rem; color: var(--text-dim); }
+
+        /* GRID LAYOUT (Das alte Layout) */
         .dashboard {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
             width: 100%;
             max-width: 1000px;
@@ -89,122 +57,158 @@
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
+            padding: 20px;
+            transition: transform 0.2s;
         }
+        .card:hover { transform: translateY(-2px); border-color: var(--accent); }
 
-        h2 { font-size: 0.9rem; margin-bottom: 20px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; }
+        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 
         /* WIDGETS */
-        .time-display { font-size: 3.5rem; font-weight: 700; letter-spacing: -2px; line-height: 1; margin-bottom: 5px; }
-        .date-display { color: var(--accent); font-size: 1rem; margin-bottom: 20px; }
+        .time-display { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; }
+        .date-display { text-align: center; color: var(--accent); margin-bottom: 10px; }
+
+        /* FINANCE TICKER */
+        .finance-container { display: flex; flex-direction: column; gap: 10px; height: 300px; }
+        
+        /* STRESS SLIDER */
+        .slider-container { margin: 20px 0; text-align: center; }
+        input[type=range] {
+            width: 100%;
+            -webkit-appearance: none;
+            background: #333;
+            height: 6px;
+            border-radius: 5px;
+            outline: none;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .stress-label { font-size: 0.9rem; margin-top: 10px; display: block; }
 
         /* AI CHAT */
         #ai-response {
             background: #000;
-            border-left: 2px solid var(--accent);
             padding: 15px;
-            border-radius: 0 6px 6px 0;
+            border-radius: 8px;
+            min-height: 80px;
             margin-bottom: 15px;
             font-size: 0.95rem;
-            line-height: 1.6;
-            min-height: 60px;
+            line-height: 1.5;
+            border-left: 3px solid var(--accent);
         }
-        input[type="text"], textarea {
-            width: 100%;
-            background: #222;
-            border: 1px solid #333;
-            color: white;
+        .input-group { display: flex; gap: 10px; }
+        input[type="text"] {
+            flex: 1;
             padding: 12px;
-            border-radius: 6px;
-            font-family: inherit;
-            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #222;
+            color: white;
             outline: none;
         }
-        input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
-        
         button {
+            padding: 12px 20px;
             background: var(--accent);
-            color: #000;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
+            border-radius: 8px;
+            color: #000;
+            font-weight: bold;
             cursor: pointer;
-            width: 100%;
         }
-        button:hover { filter: brightness(1.1); }
+        button:hover { opacity: 0.9; }
 
-        /* TODO LIST (EDITABLE FOR CLOUD) */
-        .todo-area {
-            width: 100%;
-            height: 200px;
-            background: #0f0f0f;
-            resize: none;
+        /* NEWS TICKER */
+        .news-ticker {
             font-size: 0.9rem;
-            line-height: 1.7;
+            white-space: nowrap;
+            overflow: hidden;
+            box-sizing: border-box;
+            color: var(--text-dim);
+            padding: 10px 0;
+        }
+        .news-content {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker 30s linear infinite;
+        }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        /* EDITABLE TASK LIST (Neu für Cloud Sync) */
+        .task-list { list-style: none; }
+        .task-item { display: flex; align-items: center; margin-bottom: 8px; }
+        .task-checkbox { margin-right: 10px; accent-color: var(--accent); }
+        .task-input {
+            background: transparent;
+            border: none;
+            color: #aaa;
+            font-family: inherit;
+            font-size: 1rem;
+            width: 100%;
+            border-bottom: 1px solid transparent;
+        }
+        .task-input:focus { border-bottom: 1px solid var(--accent); color: white; }
+
+        /* SYNC STATUS */
+        #sync-status {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.7rem;
+            color: #444;
         }
 
-        /* STRESS SLIDER */
-        input[type=range] {
-            width: 100%;
-            background: #333;
-            height: 4px;
-            border-radius: 2px;
-            -webkit-appearance: none;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            margin-top: -6px; /* align center */
-        }
-        input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #333; }
-        
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">NEXUS <span>PRIME</span></div>
-        <div class="status-badge" id="cloudStatus">System Ready</div>
+        <div class="version" id="headerStatus">v41 | Cloud Active</div>
     </header>
 
-    <div class="news-container">
-        <div class="news-ticker" id="newsTicker">+++ NEXUS PRIME v40 Online +++ Automatische Synchronisation aktiv +++ Märkte beobachten +++ Fokus halten +++</div>
+    <!-- NEWS TICKER -->
+    <div style="width: 100%; max-width: 1000px; background: #111; border-bottom: 1px solid #333; margin-bottom: 20px;">
+        <div class="news-ticker">
+            <div class="news-content" id="news-feed">+++ NEXUS PRIME v41 +++ Auto-Sync aktiviert +++ Märkte beobachten +++ Fokus halten +++</div>
+        </div>
     </div>
 
     <div class="dashboard">
-
-        <!-- 1. TIME & DATE -->
+        
+        <!-- TIME & DATE -->
         <div class="card">
             <h2>Chronometer</h2>
             <div class="time-display" id="clock">00:00</div>
-            <div class="date-display" id="date">Lade...</div>
+            <div class="date-display" id="date">Lade Datum...</div>
+        </div>
+
+        <!-- AI ASSISTANT -->
+        <div class="card" style="grid-column: span 1;">
+            <h2>Neural Core (AI)</h2>
+            <div id="ai-response">Hallo Noah. Systeme sind synchronisiert.</div>
             
-            <div style="margin-top: auto;">
-                <label style="color: #666; font-size: 0.8rem; display:block; margin-bottom:10px;">Stress Level Monitor</label>
-                <input type="range" min="1" max="10" value="5" id="stressRange" oninput="updateStressDisplay(this.value)">
-                <div id="stressText" style="margin-top: 5px; font-size: 0.9rem; color: var(--text-main);">Normal (5/10)</div>
+            <div class="slider-container">
+                <label for="stressRange" style="color: #666; font-size: 0.8rem;">Stress Level Analysis</label>
+                <input type="range" min="1" max="10" value="5" id="stressRange" oninput="updateStressLabel(this.value); triggerAutoSave();">
+                <span class="stress-label" id="stressValue">Normal (5/10)</span>
+            </div>
+
+            <div class="input-group">
+                <input type="text" id="userInput" placeholder="Frage die KI..." onkeypress="handleEnter(event)">
+                <button onclick="askAI()">Send</button>
             </div>
         </div>
 
-        <!-- 2. AI NEURAL CORE -->
-        <div class="card">
-            <h2>Neural Core (AI)</h2>
-            <div id="ai-response">Bereit zur Analyse.</div>
-            <input type="text" id="userInput" placeholder="Befehl eingeben..." onkeypress="handleEnter(event)">
-            <button onclick="askAI()">Ausführen</button>
-        </div>
-
-        <!-- 3. FINANCE (TRADINGVIEW) -->
+        <!-- FINANCE WIDGETS -->
         <div class="card" style="grid-row: span 2;">
             <h2>Market Data</h2>
-            <div style="height: 100%; min-height: 400px;">
+            <div class="finance-container">
                 <!-- TradingView Widget BEGIN -->
                 <div class="tradingview-widget-container" style="height:100%;width:100%">
                     <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
@@ -214,18 +218,19 @@
                     "dateRange": "12M",
                     "showChart": true,
                     "locale": "de_DE",
-                    "width": "100%",
-                    "height": "100%",
                     "largeChartUrl": "",
                     "isTransparent": true,
                     "showSymbolLogo": true,
+                    "showFloatingTooltip": false,
+                    "width": "100%",
+                    "height": "100%",
                     "tabs": [
                         {
-                        "title": "Assets",
+                        "title": "Portfolio",
                         "symbols": [
-                            { "s": "XETR:IUSQ", "d": "MSCI ACWI" },
+                            { "s": "TVC:SILVER", "d": "Silber" },
                             { "s": "TVC:GOLD", "d": "Gold" },
-                            { "s": "TVC:SILVER", "d": "Silver" },
+                            { "s": "XETR:IUSQ", "d": "MSCI ACWI ETF" }, 
                             { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" }
                         ]
                         }
@@ -237,33 +242,41 @@
             </div>
         </div>
 
-        <!-- 4. DAILY PROTOCOL (CLOUD SYNCED) -->
+        <!-- TASKS / ROUTINES (Jetzt editierbar für Cloud!) -->
         <div class="card">
-            <h2>Daily Protocol & Notes</h2>
-            <textarea class="todo-area" id="dailyNotes" placeholder="Hier deinen Tagesplan oder Notizen reinschreiben. Speichert automatisch..."></textarea>
+            <h2>Daily Protocol</h2>
+            <ul class="task-list">
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task1" value="07:00 Aufstehen & Hydration" oninput="triggerAutoSave()"></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task2" value="08:00 School / Work Focus" oninput="triggerAutoSave()"></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task3" value="16:00 Gym / Sport" oninput="triggerAutoSave()"></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task4" value="22:00 Review & Plan Tomorrow" oninput="triggerAutoSave()"></li>
+                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task5" placeholder="+ Neuer Task..." oninput="triggerAutoSave()"></li>
+            </ul>
         </div>
 
     </div>
 
+    <div id="sync-status">Waiting for input...</div>
+
     <script>
         // ==========================================
-        // KONFIGURATION (HIER EINTAGEN!)
+        // ⚠️ HIER DEINE DATEN EINTRAGEN ⚠️
         // ==========================================
         const API_KEY = $2a$10$bfQHPAKf8rHB5nCB1nxla.8UbbBLCu6uCSZjrrePZ2JvQv9Jw3XEK; 
         const BIN_ID  = 6983be0443b1c97be965d28c;
         // ==========================================
 
-        // --- 1. CLOUD SYSTEM (AUTOPILOT) ---
-        
-        // Daten laden beim Start
+        // --- 1. CLOUD SYNC LOGIC ---
+
+        // Laden beim Start
         window.onload = function() {
-            loadFromCloud();
             updateTime();
+            loadFromCloud();
         };
 
         async function loadFromCloud() {
-            const status = document.getElementById('cloudStatus');
-            status.innerText = "Syncing...";
+            const status = document.getElementById('sync-status');
+            status.innerText = "Loading Cloud Data...";
             
             try {
                 let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
@@ -274,108 +287,98 @@
                     let json = await response.json();
                     let data = json.record;
                     
-                    // Daten in die Felder füllen
-                    if(data.notes) document.getElementById('dailyNotes').value = data.notes;
+                    // Daten einsetzen
                     if(data.stress) {
                         document.getElementById('stressRange').value = data.stress;
-                        updateStressDisplay(data.stress);
+                        updateStressLabel(data.stress);
                     }
-                    status.innerText = "Connected v40";
-                    status.style.color = "#00d4ff";
-                } else {
-                    status.innerText = "Sync Error";
-                    status.className = "status-badge error";
+                    if(data.t1) document.getElementById('task1').value = data.t1;
+                    if(data.t2) document.getElementById('task2').value = data.t2;
+                    if(data.t3) document.getElementById('task3').value = data.t3;
+                    if(data.t4) document.getElementById('task4').value = data.t4;
+                    if(data.t5) document.getElementById('task5').value = data.t5;
+
+                    status.innerText = "Synced.";
+                    document.getElementById('headerStatus').style.color = "#00d4ff";
                 }
-            } catch (error) {
-                console.error(error);
-                status.innerText = "Offline Mode";
+            } catch (e) {
+                console.log(e);
+                status.innerText = "Offline / Error loading";
             }
         }
 
         async function saveToCloud() {
-            const status = document.getElementById('cloudStatus');
-            status.innerText = "Auto-Saving...";
-            status.className = "status-badge saving";
+            const status = document.getElementById('sync-status');
+            status.innerText = "Saving...";
 
-            // Daten sammeln
             let dataToSave = {
-                notes: document.getElementById('dailyNotes').value,
                 stress: document.getElementById('stressRange').value,
-                lastUpdate: new Date().toISOString()
+                t1: document.getElementById('task1').value,
+                t2: document.getElementById('task2').value,
+                t3: document.getElementById('task3').value,
+                t4: document.getElementById('task4').value,
+                t5: document.getElementById('task5').value
             };
 
             try {
-                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-Master-Key": API_KEY
-                    },
+                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
                     body: JSON.stringify(dataToSave)
                 });
-
-                if (response.ok) {
-                    status.innerText = "Saved " + new Date().toLocaleTimeString();
-                    status.className = "status-badge";
-                    status.style.color = "#00d4ff";
-                } else {
-                    status.innerText = "Save Failed";
-                    status.className = "status-badge error";
-                }
+                status.innerText = "Saved: " + new Date().toLocaleTimeString();
             } catch (e) {
-                status.innerText = "Connection Lost";
+                status.innerText = "Save Error";
             }
         }
 
-        // --- 2. AUTOPILOT LOGIC (TRIGGERT SAVE) ---
-        let typingTimer;
-        const doneTypingInterval = 2000; // 2 Sekunden warten nach Tippen
-
-        // Überwache Textfeld und Slider
-        document.getElementById('dailyNotes').addEventListener('input', startAutoSaveTimer);
-        document.getElementById('stressRange').addEventListener('change', saveToCloud); // Slider speichert sofort beim Loslassen
-
-        function startAutoSaveTimer() {
-            clearTimeout(typingTimer);
-            document.getElementById('cloudStatus').innerText = "Typing...";
-            typingTimer = setTimeout(saveToCloud, doneTypingInterval);
+        // Auto-Save Timer (damit nicht bei jedem Buchstaben gespeichert wird)
+        let timer;
+        function triggerAutoSave() {
+            clearTimeout(timer);
+            document.getElementById('sync-status').innerText = "Typing...";
+            timer = setTimeout(saveToCloud, 2000); // Speichert 2 Sek nach dem Tippen
         }
 
-        // --- 3. BASIC FEATURES ---
+        // --- 2. STANDARD FEATURES (Aus Version 31) ---
 
         function updateTime() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('date').innerText = now.toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'});
+            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('date').innerText = now.toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
         }
         setInterval(updateTime, 1000);
 
-        function updateStressDisplay(val) {
+        function updateStressLabel(val) {
             let text = "Normal";
             if(val < 4) text = "Relaxed";
-            if(val > 7) text = "HIGH ALERT";
-            document.getElementById('stressText').innerText = `${text} (${val}/10)`;
+            if(val > 7) text = "High Alert";
+            document.getElementById('stressValue').innerText = text + " (" + val + "/10)";
         }
 
-        // --- 4. NEURAL CORE (AI LOGIC) ---
-        
-        function handleEnter(e) { if(e.key === 'Enter') askAI(); }
+        function handleEnter(e) {
+            if(e.key === 'Enter') askAI();
+        }
 
         function askAI() {
             const input = document.getElementById('userInput').value.toLowerCase();
             const output = document.getElementById('ai-response');
-            let response = "Verarbeite Daten...";
+            const stress = document.getElementById('stressRange').value;
+            
+            let response = "Analysiere...";
 
-            if(input.includes("hallo")) response = "NEXUS v40 Online. Systeme laufen stabil.";
-            else if(input.includes("stress")) response = "Stresslevel wird überwacht. Empfehlung: Atme tief durch.";
-            else if(input.includes("börse")) response = "Finanzdaten siehe unten. Markt ist volatil.";
-            else if(input.includes("lernen") || input.includes("schule")) response = "Fokus-Modus empfohlen. Handy weg, Timer auf 45min.";
-            else response = "Eingabe registriert. Ergänze deinen Tagesplan im Protokoll.";
+            if (input.includes("hallo")) response = "Willkommen zurück. Systeme laufen.";
+            else if (input.includes("optimiere")) {
+                if (stress > 7) response = "Warnung: Hohes Stresslevel. Fokus auf 1 Aufgabe, danach Pause.";
+                else response = "Stresslevel gut. Jetzt Deep Work Phase starten.";
+            }
+            else if (input.includes("müde")) response = "Regeneration erforderlich. Kurzer Spaziergang oder Wasser trinken.";
+            else if (input.includes("börse")) response = "Marktdaten siehe Chart rechts.";
+            else response = "Eingabe erfasst. Weiter im Plan.";
 
             output.innerText = response;
             document.getElementById('userInput').value = "";
         }
-
     </script>
 </body>
 </html>
