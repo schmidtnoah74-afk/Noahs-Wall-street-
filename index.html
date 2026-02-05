@@ -3,430 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS COMPLETE</title>
+    <title>NEXUS PRO</title>
+    
+    <!-- PWA MANIFEST -->
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk5leHVzIFBSTyIsCiAgInNob3J0X25hbWUiOiAiTmV4dXMiLAogICJzdGFydF91cmwiOiAiLiIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiIzEyMTIxMiIsCiAgInRoZW1lX2NvbG9yIjogIiNmZmQ3MDAiCn0=">
+    <meta name="theme-color" content="#ffd700">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <style>
         :root {
-            --primary: #ffd700; /* Standard Gold */
-            --bg: #121212;
-            --text: #ffffff;
-            --glass: rgba(30, 30, 30, 0.6);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
-            --blur: blur(12px);
+            --primary: #ffd700;
+            --shadow: 8px 8px 16px rgba(0,0,0,0.6), -8px -8px 16px rgba(255,255,255,0.05);
+            --glass: rgba(30,30,30,0.8);
+            --glass-light: rgba(255,255,255,0.9);
         }
+        body.light { --glass: var(--glass-light); --bg: linear-gradient(135deg, #f0f0f0, #e0e0e0); }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0; padding: 0;
-            height: 100vh;
-            display: flex; flex-direction: column;
+            background: linear-gradient(135deg, #121212 0%, var(--primary) 30%, #1a1a1a 70%);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0; height: 100vh; display: flex; flex-direction: column;
             overflow: hidden;
+            transition: all 0.3s;
         }
+        @keyframes gradientShift { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
 
-        /* --- HEADER --- */
+        /* HEADER */
         .header {
-            padding: 15px;
-            background: rgba(20, 20, 20, 0.95);
-            border-bottom: 1px solid #333;
-            text-align: center;
-            font-size: 18px; font-weight: 800; letter-spacing: 1px;
-            z-index: 100;
+            padding: 20px;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            box-shadow: var(--shadow);
+            border-radius: 0 0 20px 20px;
+            text-align: center; font-size: 20px; font-weight: 800;
+            position: relative; z-index: 100;
         }
 
-        /* --- CONTENT --- */
-        .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        /* CONTENT */
+        .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 120px; }
+        .view-section { display: none; animation: slideIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
 
-        /* --- NEWS & KI VIEW --- */
-        .ticker-box {
-            background: #000; padding: 8px; border-radius: 8px; margin-bottom: 15px;
-            white-space: nowrap; overflow: hidden; border: 1px solid #333; font-family: monospace; font-size: 12px;
+        /* NEUMORPHISMUS CARDS */
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(25px); box-shadow: var(--shadow);
+            border-radius: 20px; padding: 20px; margin-bottom: 20px;
+            position: relative; overflow: hidden;
         }
-        .ticker-text { display: inline-block; animation: scroll 25s linear infinite; }
-        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        .news-card {
-            background: var(--glass); backdrop-filter: var(--blur); -webkit-backdrop-filter: var(--blur);
-            border: var(--glass-border); border-radius: 12px; padding: 15px; margin-bottom: 15px;
+        /* FAB */
+        .fab {
+            position: fixed; bottom: 110px; right: 25px;
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--primary); color: #000;
+            box-shadow: var(--shadow), 0 0 20px rgba(255,215,0,0.3);
+            border: none; font-size: 24px; cursor: pointer;
+            z-index: 150; transition: all 0.3s;
         }
-        .news-item { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .news-time { font-size: 10px; color: var(--primary); font-weight: bold; }
-        .news-title { font-size: 14px; margin-top: 2px; display: block; }
+        .fab:active { transform: scale(0.95); box-shadow: inset 3px 3px 8px rgba(0,0,0,0.3); }
 
-        .chat-box {
-            background: var(--glass); border: var(--glass-border); border-radius: 12px;
-            height: 350px; display: flex; flex-direction: column; overflow: hidden;
+        /* TICKER */
+        .ticker { 
+            overflow: hidden; white-space: nowrap; font-family: monospace; font-size: 13px;
+            background: rgba(0,0,0,0.7); padding: 10px; border-radius: 15px;
         }
-        .chat-history { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px; }
-        .msg.ai { background: rgba(255,255,255,0.1); align-self: flex-start; }
-        .msg.user { background: var(--primary); color: #000; align-self: flex-end; }
-        .chat-input { display: flex; border-top: 1px solid #333; }
-        .chat-input input { flex: 1; background: transparent; border: none; color: white; padding: 15px; outline: none; }
-        .chat-input button { background: transparent; border: none; color: var(--primary); padding: 0 15px; font-size: 20px; }
+        .ticker span { display: inline-block; animation: ticker 25s linear infinite; }
 
-        /* --- PLANER VIEW --- */
-        .cal-nav {
-            display: flex; justify-content: space-between; align-items: center;
-            background: var(--glass); padding: 15px; border-radius: 12px; margin-bottom: 20px;
-            font-weight: bold; font-size: 16px; border: var(--glass-border);
-        }
-        .cal-btn { background: none; border: none; color: var(--primary); font-size: 20px; cursor: pointer; padding: 0 10px; }
-
-        .add-box {
-            background: rgba(40,40,40,0.5); padding: 15px; border-radius: 12px; margin-bottom: 20px;
-            border: 1px solid #333;
-        }
-        .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
-        input, select {
-            background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 8px; flex: 1; outline: none;
-        }
-        .daily-opt { font-size: 13px; color: #aaa; display: flex; align-items: center; gap: 8px; margin-top: 5px; }
-        
-        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        /* TASKS */
         .task-item {
-            display: flex; align-items: center; padding: 12px; border-radius: 10px;
-            background: rgba(50,50,50,0.4); backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.05); position: relative; overflow: hidden;
+            display: flex; align-items: center; padding: 15px; border-radius: 15px;
+            background: rgba(40,40,40,0.4); backdrop-filter: blur(15px);
+            margin-bottom: 12px; box-shadow: var(--shadow);
+            transition: transform 0.2s;
         }
-        /* Kategorie Farben (Leuchten) */
-        .c-finanzen { border-left: 3px solid #ffd700; box-shadow: inset 10px 0 20px -10px rgba(255,215,0,0.2); }
-        .c-schule { border-left: 3px solid #1e90ff; box-shadow: inset 10px 0 20px -10px rgba(30,144,255,0.2); }
-        .c-sport { border-left: 3px solid #ff1493; box-shadow: inset 10px 0 20px -10px rgba(255,20,147,0.2); }
-        .c-hausarbeit { border-left: 3px solid #ff4500; box-shadow: inset 10px 0 20px -10px rgba(255,69,0,0.2); }
-        .c-freizeit { border-left: 3px solid #32cd32; box-shadow: inset 10px 0 20px -10px rgba(50,205,50,0.2); }
-
-        .check-btn { width: 20px; height: 20px; border: 2px solid #777; border-radius: 50%; margin-right: 12px; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-        .check-btn.checked { background: var(--primary); border-color: var(--primary); color: black; }
-        .t-info { flex: 1; }
-        .t-title { font-size: 15px; }
-        .t-meta { font-size: 11px; color: #888; margin-top: 2px; }
-
-        /* --- TAGEBUCH VIEW --- */
-        #diary-text {
-            width: 100%; height: 60vh; background: transparent; border: none; 
-            color: #ddd; font-size: 16px; line-height: 1.6; resize: none; outline: none;
+        .task-item:hover { transform: translateY(-2px); }
+        .check-glow {
+            width: 24px; height: 24px; border-radius: 50%; border: 2px solid #666;
+            margin-right: 15px; cursor: pointer; position: relative;
         }
-
-        /* --- CLOUD / SETTINGS VIEW --- */
-        .cloud-panel {
-            background: var(--glass); border: var(--glass-border); padding: 20px; border-radius: 12px; text-align: center;
+        .check-glow.checked { 
+            background: var(--primary); border-color: var(--primary); 
+            box-shadow: 0 0 15px var(--primary);
         }
-        .cloud-btn {
-            background: #333; color: white; border: 1px solid #555; padding: 15px; width: 100%;
-            margin-bottom: 10px; border-radius: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .color-row { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
-        .c-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid #fff; }
+        .check-glow::after { content: '✔'; position: absolute; font-size: 12px; }
 
-        /* --- BOTTOM NAV --- */
+        /* NAV */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #0f0f0f; border-top: 1px solid #333;
-            display: flex; justify-content: space-around; padding: 10px 0 25px 0; z-index: 200;
+            background: var(--glass); backdrop-filter: blur(20px); box-shadow: var(--shadow);
+            display: flex; justify-content: space-around; padding: 15px 0 30px 0;
+            border-radius: 25px 25px 0 0; margin: 0 20px;
         }
         .nav-item {
-            background: none; border: none; color: #666; font-size: 10px;
-            display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer;
+            background: none; border: none; color: #888; 
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
+            font-size: 11px; cursor: pointer; padding: 10px;
+            border-radius: 15px; transition: all 0.3s;
         }
-        .nav-item.active { color: var(--primary); }
-        .nav-icon { font-size: 20px; }
+        .nav-item.active { 
+            color: var(--primary); background: rgba(255,255,255,0.1); 
+            transform: scale(1.05);
+        }
+
+        /* LIGHT MODE */
+        body.light .card { --shadow: 4px 4px 8px rgba(0,0,0,0.1), -4px -4px 8px rgba(255,255,255,0.8); }
+        body.light { color: #333; }
+
+        /* TRADINGVIEW */
+        #chart { height: 250px; border-radius: 15px; overflow: hidden; }
+
+        /* INPUTS */
+        input, select, textarea {
+            background: rgba(0,0,0,0.3); border: none; border-radius: 12px; 
+            padding: 12px; color: white; width: 100%; font-size: 15px;
+            backdrop-filter: blur(10px);
+        }
+        body.light input, body.light select { background: rgba(255,255,255,0.7); color: #333; }
 
     </style>
 </head>
 <body>
 
-    <div class="header">NEXUS</div>
-
-    <div class="content">
-        
-        <!-- 1. INFO (NEWS & KI) -->
-        <div id="view-info" class="view-section active">
-            <div class="ticker-box">
-                <div class="ticker-text">
-                    LIVE: DAX +0.5% • GOLD $2040 • SILBER $22.50 • BTC $95,000 • S&P500 +0.2% • EUR/USD 1.08 • PORSCHE CONSULTING NEWS •
-                </div>
-            </div>
-            
-            <h3 style="margin:0 0 10px 0; opacity:0.7; font-size:14px;">WELT NEWS (TAGESSCHAU)</h3>
-            <div class="news-card" id="news-feed">
-                <div style="padding:10px; text-align:center; color:#666;">Lade Nachrichten...</div>
-            </div>
-
-            <h3 style="margin:0 0 10px 0; opacity:0.7; font-size:14px;">KI ASSISTANT</h3>
-            <div class="chat-box">
-                <div class="chat-history" id="chat-hist">
-                    <div class="msg ai">Hallo! Wie kann ich dir heute helfen?</div>
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="ai-in" placeholder="Frage stellen...">
-                    <button onclick="askAI()">➤</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. PLANER (KALENDER + AUFGABEN) -->
-        <div id="view-planer" class="view-section">
-            <div class="cal-nav">
-                <button class="cal-btn" onclick="changeDate(-1)">◀</button>
-                <span id="date-display">Heute</span>
-                <button class="cal-btn" onclick="changeDate(1)">▶</button>
-            </div>
-
-            <div class="add-box">
-                <input type="text" id="t-title" placeholder="Aufgabe..." style="width:94%; margin-bottom:10px;">
-                <div class="input-row">
-                    <input type="time" id="t-time">
-                    <select id="t-cat">
-                        <option value="finanzen">Finanzen</option>
-                        <option value="schule">Schule</option>
-                        <option value="hausarbeit">Hausarbeit</option>
-                        <option value="freizeit">Freizeit</option>
-                        <option value="sport">Sport</option>
-                    </select>
-                </div>
-                <div class="daily-opt">
-                    <input type="checkbox" id="t-daily">
-                    <label for="t-daily">Täglich wiederholen ↻</label>
-                </div>
-                <button onclick="addTask()" style="width:100%; margin-top:10px; padding:10px; background:var(--primary); border:none; border-radius:8px; font-weight:bold;">Hinzufügen</button>
-            </div>
-
-            <div class="task-list" id="task-list"></div>
-        </div>
-
-        <!-- 3. TAGEBUCH -->
-        <div id="view-diary" class="view-section">
-            <h3 style="margin-top:0;">Tagebuch Eintrag</h3>
-            <textarea id="diary-text" placeholder="Wie war dein Tag?" oninput="saveAll()"></textarea>
-        </div>
-
-        <!-- 4. CLOUD & SETTINGS -->
-        <div id="view-cloud" class="view-section">
-            <h3 style="margin-top:0;">Cloud Sync (Manuell)</h3>
-            <div class="cloud-panel">
-                <button class="cloud-btn" onclick="upload()">⬆ Upload to Cloud</button>
-                <button class="cloud-btn" onclick="download()">⬇ Download from Cloud</button>
-                
-                <h4 style="margin-top:30px;">Design Farbe</h4>
-                <div class="color-row">
-                    <div class="c-dot" style="background:#ffd700" onclick="setColor('#ffd700')"></div>
-                    <div class="c-dot" style="background:#00bfff" onclick="setColor('#00bfff')"></div>
-                    <div class="c-dot" style="background:#ff1493" onclick="setColor('#ff1493')"></div>
-                    <div class="c-dot" style="background:#32cd32" onclick="setColor('#32cd32')"></div>
-                    <div class="c-dot" style="background:#8a2be2" onclick="setColor('#8a2be2')"></div>
-                </div>
-            </div>
-            <div style="text-align:center; margin-top:20px; color:#555; font-size:12px;">
-                Keine Keys im Code gespeichert. <br>Wird beim Sync abgefragt.
-            </div>
-        </div>
-
+    <!-- HEADER -->
+    <div class="header">
+        NEXUS PRO
+        <button onclick="toggleTheme()" style="position:absolute;right:20px;top:50%;transform:translateY(-50%);background:none;border:none;font-size:22px;">☀️</button>
     </div>
 
-    <!-- NAVIGATION BAR -->
+    <!-- FAB -->
+    <button class="fab" onclick="showQuickAdd()">➕</button>
+
+    <!-- CONTENT -->
+    <div class="content">
+        <!-- INFO VIEW -->
+        <div id="info" class="view-section active">
+            <div class="card">
+                <div class="ticker">
+                    <span>DAX +1.2% | GOLD $2045 | SILBER $22.8 | BTC $98K | EUR/USD 1.09 | PORSCHE +0.8% | LIVE</span>
+                </div>
+            </div>
+            <div class="card" id="chart-container">
+                <iframe src="https://s.tradingview.com/widgetembed/?symbol=DE%3ADAX&theme=dark&interval=D&hidesidetoolbar=0&symboledit=1&saveimage=1&toolbarbg=%23121215&studies=%5B%5D&hideideas=1&hidelegend=1&timezone=Europe%2FBerlin&studies_overrides=%7B%7D&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=de&utm_source=www.tagesschau.de&utm_campaign=chart&utm_medium=widget&theme=dark" frameborder="0" width="100%" height="100%"></iframe>
+            </div>
+        </div>
+
+        <!-- PLANNER VIEW -->
+        <div id="planner" class="view-section">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <button onclick="dateShift(-1)">◀</button>
+                    <h3 id="date-title">Heute</h3>
+                    <button onclick="dateShift(1)">▶</button>
+                </div>
+                <input id="quick-task" placeholder="Neue Aufgabe...">
+                <select id="quick-cat"><option>Finanzen</option><option>Schule</option></select>
+                <button onclick="addQuickTask()">Hinzufügen</button>
+                <div id="task-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
     <div class="nav-bar">
-        <button class="nav-item active" onclick="nav('info', this)">
-            <span class="nav-icon">📰</span> Info
+        <button class="nav-item active" onclick="switchView('info')">
+            <span>📊</span>Dashboard
         </button>
-        <button class="nav-item" onclick="nav('planer', this)">
-            <span class="nav-icon">📅</span> Planer
+        <button class="nav-item" onclick="switchView('planner')">
+            <span>📅</span>Planer
         </button>
-        <button class="nav-item" onclick="nav('diary', this)">
-            <span class="nav-icon">📖</span> Tagebuch
+        <button class="nav-item" onclick="switchView('diary')">
+            <span>📝</span>Diary
         </button>
-        <button class="nav-item" onclick="nav('cloud', this)">
-            <span class="nav-icon">☁️</span> Cloud
+        <button class="nav-item" onclick="switchView('cloud')">
+            <span>☁️</span>Sync
         </button>
     </div>
 
     <script>
-        // --- DATA & STATE ---
-        let data = { tasks: [], diary: {}, theme: '#ffd700' };
-        let curDate = new Date();
-        
-        // KEYS (Optional hier fest eintragen)
-        let API_KEY = ""; 
-        let BIN_ID = "";
+        // PWA Service Worker
+        if('serviceWorker' in navigator) navigator.serviceWorker.register('data:text/javascript;base64,...');
 
-        // --- INIT ---
-        window.onload = function() {
-            if(localStorage.getItem('nexus_final')) {
-                data = JSON.parse(localStorage.getItem('nexus_final'));
-                setColor(data.theme);
-            }
-            checkDaily();
-            render();
-            loadNews();
-            setInterval(loadNews, 600000); // 10 Min
-        };
+        // State
+        let currentView = 'info';
+        let tasks = [];
+        let isLight = false;
 
-        // --- NAVIGATION ---
-        function nav(view, btn) {
-            document.querySelectorAll('.view-section').forEach(e => e.classList.remove('active'));
-            document.getElementById('view-'+view).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
-            btn.classList.add('active');
+        // SWIPE GESTURES
+        let startX = 0;
+        document.addEventListener('touchstart', e => startX = e.touches[0].clientX);
+        document.addEventListener('touchend', e => {
+            let endX = e.changedTouches[0].clientX;
+            if(startX - endX > 80) nextView();
+            if(endX - startX > 80) prevView();
+        });
+
+        // CORE FUNCTIONS
+        function switchView(v) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById(v).classList.add('active');
+            currentView = v;
+            document.querySelectorAll('.nav-item')[['info','planner','diary','cloud'].indexOf(v)].classList.add('active');
         }
 
-        // --- CORE FUNCTIONS ---
-        function getDateStr(d) { return d.toISOString().split('T')[0]; }
+        function toggleTheme() {
+            isLight = !isLight;
+            document.body.classList.toggle('light');
+        }
 
-        function checkDaily() {
-            let today = getDateStr(new Date());
-            let changed = false;
-            data.tasks.forEach(t => {
-                if(t.daily && t.lastDone !== today) {
-                    t.done = false; // Reset daily tasks
-                    changed = true;
+        function showQuickAdd() {
+            // FAB opens quick task input
+            const fab = document.querySelector('.fab');
+            fab.innerHTML = '<input placeholder="Schnell..." style="width:40px;height:40px;border:none;background:transparent;color:white;text-align:center;">';
+        }
+
+        // NOTIFICATIONS
+        Notification.requestPermission().then(() => {
+            setInterval(() => {
+                if(tasks.filter(t => !t.done).length > 3) {
+                    new Notification('Nexus', {body: '3+ Aufgaben offen!'});
                 }
-            });
-            if(changed) saveAll();
-        }
+            }, 60000);
+        });
 
-        function render() {
-            // Date Display
-            document.getElementById('date-display').innerText = curDate.toLocaleDateString('de-DE', {weekday:'short', day:'numeric', month:'long'});
-            
-            // Render Tasks
-            const list = document.getElementById('task-list');
-            list.innerHTML = "";
-            const key = getDateStr(curDate);
-            
-            let showTasks = data.tasks.filter(t => t.date === key || t.daily);
-            showTasks.sort((a,b) => (a.time||"").localeCompare(b.time||""));
+        // PLACEHOLDER DATA
+        tasks = [
+            {id:1, title:'Mathe Hausaufgaben', cat:'schule', done:false},
+            {id:2, title:'Gym besuchen', cat:'sport', done:true},
+            {id:3, title:'Portfolio checken', cat:'finanzen', done:false}
+        ];
 
-            showTasks.forEach(t => {
-                const el = document.createElement('div');
-                el.className = `task-item c-${t.cat}`;
-                el.innerHTML = `
-                    <div class="check-btn ${t.done?'checked':''}" onclick="toggle(${t.id})">✔</div>
-                    <div class="t-info">
-                        <span class="t-title" style="text-decoration:${t.done?'line-through':'none'}">${t.title}</span>
-                        <div class="t-meta">${t.time||'--:--'} • ${t.cat.toUpperCase()} ${t.daily ? '• ↻ Täglich' : ''}</div>
-                    </div>
-                    <div onclick="del(${t.id})" style="padding:10px; color:#666;">✕</div>
-                `;
-                list.appendChild(el);
-            });
-
-            // Render Diary
-            document.getElementById('diary-text').value = data.diary[key] || "";
-        }
-
-        // --- ACTIONS ---
-        function addTask() {
-            let title = document.getElementById('t-title').value;
-            let time = document.getElementById('t-time').value;
-            let cat = document.getElementById('t-cat').value;
-            let daily = document.getElementById('t-daily').checked;
-
-            if(!title) return;
-
-            data.tasks.push({
-                id: Date.now(),
-                date: getDateStr(curDate),
-                title, time, cat, daily,
-                done: false, lastDone: null
-            });
-
-            document.getElementById('t-title').value = "";
-            saveAll(); render();
-        }
-
-        function toggle(id) {
-            let t = data.tasks.find(x => x.id === id);
-            if(t) {
-                t.done = !t.done;
-                if(t.daily && t.done) t.lastDone = getDateStr(new Date());
-                saveAll(); render();
-            }
-        }
-
-        function del(id) {
-            if(confirm("Löschen?")) {
-                data.tasks = data.tasks.filter(x => x.id !== id);
-                saveAll(); render();
-            }
-        }
-
-        function changeDate(d) {
-            curDate.setDate(curDate.getDate() + d);
-            render();
-        }
-
-        function saveAll() {
-            const key = getDateStr(curDate);
-            data.diary[key] = document.getElementById('diary-text').value;
-            localStorage.setItem('nexus_final', JSON.stringify(data));
-        }
-
-        function setColor(c) {
-            data.theme = c;
-            document.documentElement.style.setProperty('--primary', c);
-            saveAll();
-        }
-
-        // --- NEWS & AI ---
-        async function loadNews() {
-            const box = document.getElementById('news-feed');
-            try {
-                const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml');
-                const json = await res.json();
-                let h = "";
-                json.items.slice(0,3).forEach(i => {
-                    let t = i.pubDate.split(' ')[1].slice(0,5);
-                    h += `<div class="news-item"><span class="news-time">${t}</span><span class="news-title">${i.title}</span></div>`;
-                });
-                box.innerHTML = h;
-            } catch(e) { box.innerHTML = "<div style='padding:10px'>News Offline</div>"; }
-        }
-
-        function askAI() {
-            let inp = document.getElementById('ai-in');
-            let txt = inp.value; 
-            if(!txt) return;
-            
-            let h = document.getElementById('chat-hist');
-            h.innerHTML += `<div class="msg user">${txt}</div>`;
-            inp.value = "";
-            
-            setTimeout(() => {
-                let ans = "Ich habe das notiert.";
-                if(txt.toLowerCase().includes("finanz")) ans = "Der Markt ist stabil. Gold steigt.";
-                else if(txt.toLowerCase().includes("hallo")) ans = "Hallo! Alles klar bei dir?";
-                h.innerHTML += `<div class="msg ai">${ans}</div>`;
-                h.scrollTop = h.scrollHeight;
-            }, 500);
-        }
-
-        // --- CLOUD ---
-        async function upload() {
-            let k = API_KEY || prompt("Master Key:");
-            let b = BIN_ID || prompt("Bin ID:");
-            if(!k||!b) return;
-            try {
-                await fetch(`https://api.jsonbin.io/v3/b/${b}`, {method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':k}, body:JSON.stringify(data)});
-                alert("Gespeichert!");
-            } catch(e) { alert("Fehler!"); }
-        }
-
-        async function download() {
-            let k = API_KEY || prompt("Master Key:");
-            let b = BIN_ID || prompt("Bin ID:");
-            if(!k||!b) return;
-            try {
-                let r = await fetch(`https://api.jsonbin.io/v3/b/${b}/latest`, {headers:{'X-Master-Key':k}});
-                let j = await r.json();
-                data = j.record;
-                setColor(data.theme);
-                saveAll(); render(); alert("Geladen!");
-            } catch(e) { alert("Fehler!"); }
-        }
-
+        console.log('NEXUS PRO loaded! Install me on Home Screen 🏠');
     </script>
 </body>
 </html>
