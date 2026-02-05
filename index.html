@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS PRIME v51 | Hybrid Complete</title>
+    <title>NEXUS PRIME v51.1 | Fixed</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
             --card-bg: #141414;
-            --accent: #00d4ff;     /* Standard: Cyan */
+            --accent: #00d4ff;
             --text-main: #ffffff;
             --text-dim: #888888;
             --border: #333;
@@ -26,8 +26,7 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
-            padding-bottom: 90px; /* Platz für die untere Leiste */
-            transition: background 0.3s;
+            padding-bottom: 90px;
         }
 
         /* HEADER */
@@ -42,125 +41,55 @@
             margin-bottom: 20px;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        .logo span { color: var(--accent); transition: color 0.3s; }
-
-        .controls { display: flex; align-items: center; gap: 8px; }
-        .btn-control {
+        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
+        .logo span { color: var(--accent); }
+        
+        .controls { display: flex; gap: 10px; align-items: center; }
+        button {
             background: #222;
             border: 1px solid #333;
             color: white;
             padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.8rem;
-            transition: 0.2s;
         }
-        .btn-control:hover { border-color: var(--accent); color: var(--accent); }
-        
-        #status-badge { font-size: 0.7rem; color: #555; margin-left: 5px; }
+        button:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* LAYOUT CONTAINER */
-        .layout-container {
-            width: 100%;
-            max-width: 1000px;
-            display: none; /* Standard: Ausblenden */
-            animation: fadeIn 0.4s ease;
-        }
-        .layout-container.active { display: grid; gap: 20px; }
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* GRID STYLES */
-        #layout-classic { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
-        #layout-modern { grid-template-columns: 1fr; }
+        /* LAYOUTS */
+        /* WICHTIG: Display none/block wird per JS gesteuert */
+        #layout-classic { width: 100%; max-width: 1000px; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        #layout-modern { width: 100%; max-width: 1000px; display: none; grid-template-columns: 1fr; gap: 20px; }
 
         /* CARDS */
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-        h2 { font-size: 0.9rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+        h2 { font-size: 0.9rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; }
 
-        /* WIDGETS */
-        .time-display { font-size: 2.5rem; font-weight: 700; text-align: center; margin: 10px 0; }
-        .date-display { text-align: center; color: var(--accent); margin-bottom: 15px; }
-
-        /* INPUTS */
-        textarea {
-            width: 100%;
-            background: #1a1a1a;
-            border: 1px solid #333;
-            color: white;
-            padding: 15px;
-            border-radius: 8px;
-            font-family: inherit;
-            resize: vertical;
-            outline: none;
-            line-height: 1.6;
-            min-height: 150px;
-        }
+        /* TEXTAREAS */
+        textarea { width: 100%; background: #1a1a1a; border: 1px solid #333; color: white; padding: 15px; border-radius: 8px; min-height: 150px; resize: vertical; outline: none; }
         textarea:focus { border-color: var(--accent); }
 
-        /* NAVIGATION BAR (Bottom) */
-        .bottom-nav {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(20, 20, 20, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid #333;
-            border-radius: 50px;
-            display: flex;
-            padding: 10px 25px;
-            gap: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            z-index: 100;
-            transition: transform 0.3s;
-        }
-        /* Wenn Modern Mode aktiv ist, Nav ausblenden */
-        .bottom-nav.hidden { transform: translate(-50%, 200%); }
+        /* WIDGETS */
+        .time-display { font-size: 2.5rem; font-weight: 700; text-align: center; }
+        .date-display { text-align: center; color: var(--accent); margin-bottom: 10px; }
 
-        .nav-item {
-            font-size: 1.4rem;
-            cursor: pointer;
-            opacity: 0.5;
-            transition: 0.2s;
+        /* BOTTOM NAV */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(20,20,20,0.95); backdrop-filter: blur(10px);
+            border: 1px solid #333; border-radius: 50px;
+            display: flex; gap: 25px; padding: 10px 25px;
+            z-index: 100;
         }
-        .nav-item:hover { opacity: 1; transform: scale(1.1); }
+        .nav-item { font-size: 1.4rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }
         .nav-item.active { opacity: 1; color: var(--accent); transform: scale(1.1); }
 
-        /* TABS CONTENT (Innerhalb von Classic) */
-        .tab-content { display: none; width: 100%; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        /* TAB CONTENT (Classic) */
+        .tab-content { display: none; width: 100%; } /* Alle Tabs standardmäßig aus */
+        .tab-content.active { display: block; } /* Nur aktiver Tab an */
 
         /* COLOR MENU */
-        #color-menu {
-            display: none;
-            position: absolute;
-            top: 70px;
-            right: 20px;
-            background: #1a1a1a;
-            border: 1px solid #444;
-            padding: 10px;
-            border-radius: 8px;
-            z-index: 200;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        }
-        .color-dot {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            margin: 5px;
-            cursor: pointer;
-            border: 2px solid #333;
-        }
-        .color-dot:hover { transform: scale(1.1); border-color: white; }
+        #color-menu { display: none; position: absolute; top: 70px; right: 20px; background: #222; padding: 10px; border-radius: 8px; border: 1px solid #444; z-index: 200; }
+        .color-dot { width: 20px; height: 20px; border-radius: 50%; display: inline-block; margin: 5px; cursor: pointer; }
 
     </style>
 </head>
@@ -169,249 +98,170 @@
     <header>
         <div class="logo">NEXUS <span>PRIME</span></div>
         <div class="controls">
-            <button class="btn-control" onclick="toggleColorMenu()">🎨</button>
-            <button class="btn-control" onclick="switchLayout()">Mode: <span id="layout-label">Classic</span></button>
-            <div id="status-badge">Init...</div>
+            <button onclick="toggleColorMenu()">🎨</button>
+            <button onclick="switchLayoutMode()">Mode: <span id="layout-label">Classic</span></button>
+            <span id="status" style="font-size:0.7rem; color:#555;">Init...</span>
         </div>
     </header>
 
-    <!-- COLOR MENU -->
     <div id="color-menu">
-        <div class="color-dot" style="background: #00d4ff;" onclick="setAccent('#00d4ff')"></div> <!-- Cyan -->
-        <div class="color-dot" style="background: #ff0055;" onclick="setAccent('#ff0055')"></div> <!-- Red -->
-        <div class="color-dot" style="background: #00ff88;" onclick="setAccent('#00ff88')"></div> <!-- Green -->
-        <div class="color-dot" style="background: #ffcc00;" onclick="setAccent('#ffcc00')"></div> <!-- Gold -->
-        <div class="color-dot" style="background: #bd00ff;" onclick="setAccent('#bd00ff')"></div> <!-- Purple -->
+        <div class="color-dot" style="background:#00d4ff" onclick="setColor('#00d4ff')"></div>
+        <div class="color-dot" style="background:#ff0055" onclick="setColor('#ff0055')"></div>
+        <div class="color-dot" style="background:#00ff88" onclick="setColor('#00ff88')"></div>
     </div>
 
-
-    <!-- ========================================= -->
-    <!-- LAYOUT 1: CLASSIC (Mit Tabs & Navi)       -->
-    <!-- ========================================= -->
-    <div id="layout-classic" class="layout-container active">
+    <!-- === CLASSIC LAYOUT === -->
+    <div id="layout-classic">
         
-        <!-- TAB 1: HOME / DASHBOARD -->
+        <!-- Tab 1: Home -->
         <div id="tab-home" class="tab-content active">
             <div class="card">
-                <h2>Zeit & Datum</h2>
+                <h2>Zeit</h2>
                 <div class="time-display" id="clock-c">00:00</div>
-                <div class="date-display" id="date-c">Lade Datum...</div>
+                <div class="date-display" id="date-c">Datum</div>
             </div>
-            
-            <div class="card" style="margin-top: 20px;">
-                <h2>Schnell-Notizen (Daily)</h2>
-                <textarea id="quick-notes" placeholder="Was steht heute an? (Wird automatisch gespeichert)" oninput="autoSave()"></textarea>
+            <div class="card" style="margin-top:20px;">
+                <h2>Notizen</h2>
+                <textarea id="quick-notes" placeholder="Daily Notes..." oninput="autoSave()"></textarea>
             </div>
         </div>
 
-        <!-- TAB 2: JOURNAL / TAGEBUCH -->
+        <!-- Tab 2: Journal -->
         <div id="tab-journal" class="tab-content">
             <div class="card">
-                <h2>Persönliches Tagebuch</h2>
-                <textarea style="height: 400px;" id="journal-text" placeholder="Liebes Tagebuch..." oninput="autoSave()"></textarea>
+                <h2>Tagebuch</h2>
+                <textarea style="height:400px;" id="journal-text" placeholder="Mein Eintrag..." oninput="autoSave()"></textarea>
             </div>
         </div>
 
-        <!-- TAB 3: FINANCE -->
+        <!-- Tab 3: Finance -->
         <div id="tab-finance" class="tab-content">
-            <div class="card" style="height: 500px;">
-                <h2>Markt Daten</h2>
-                <!-- TradingView Widget -->
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-                    {
-                    "colorTheme": "dark",
-                    "dateRange": "12M",
-                    "showChart": true,
-                    "locale": "de_DE",
-                    "largeChartUrl": "",
-                    "isTransparent": true,
-                    "showSymbolLogo": true,
-                    "width": "100%",
-                    "height": "100%",
-                    "tabs": [
-                        {
-                        "title": "Portfolio",
-                        "symbols": [
-                            { "s": "XETR:IUSQ", "d": "MSCI World" },
-                            { "s": "TVC:GOLD", "d": "Gold" },
-                            { "s": "TVC:SILVER", "d": "Silber" },
-                            { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" }
-                        ]
-                        }
-                    ]
-                    }
-                    </script>
-                </div>
+            <div class="card" style="height:500px;">
+                <h2>Markt</h2>
+                <!-- TradingView -->
+                <div class="tradingview-widget-container" style="height:100%;width:100%"><div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>{"colorTheme": "dark","dateRange": "12M","showChart": true,"locale": "de_DE","width": "100%","height": "100%","isTransparent": true,"tabs": [{"title": "Portfolio","symbols": [{"s": "XETR:IUSQ"},{"s": "TVC:GOLD"}]}]}</script></div>
             </div>
         </div>
 
     </div>
 
-
-    <!-- ========================================= -->
-    <!-- LAYOUT 2: MODERN (Focus Mode)             -->
-    <!-- ========================================= -->
-    <div id="layout-modern" class="layout-container">
-        <div class="card" style="text-align: center; border:none; background: transparent;">
-            <div class="time-display" id="clock-m" style="font-size: 4rem; opacity: 0.5;">00:00</div>
+    <!-- === MODERN LAYOUT === -->
+    <div id="layout-modern">
+        <div class="card" style="text-align: center; border:none; background:transparent;">
+            <div class="time-display" id="clock-m" style="font-size:4rem; opacity:0.5;">00:00</div>
         </div>
-
         <div class="card">
-            <h2>Deep Focus Mode</h2>
-            <textarea style="height: 500px; font-size: 1.1rem;" id="focus-text" placeholder="Schreibe hier ohne Ablenkung..." oninput="autoSave()"></textarea>
+            <h2>Deep Focus</h2>
+            <textarea style="height:500px; font-size:1.2rem;" id="focus-text" placeholder="Focus Mode..." oninput="autoSave()"></textarea>
         </div>
     </div>
 
-
-    <!-- ========================================= -->
-    <!-- NAVIGATION BAR (Unten)                    -->
-    <!-- ========================================= -->
+    <!-- NAV BAR (Nur für Classic) -->
     <div class="bottom-nav" id="bottom-nav">
-        <div class="nav-item active" onclick="switchTab('home', this)">🏠</div> <!-- Home -->
-        <div class="nav-item" onclick="switchTab('journal', this)">📖</div> <!-- Journal -->
-        <div class="nav-item" onclick="switchTab('finance', this)">📈</div> <!-- Finance -->
-        <div class="nav-item" onclick="alert('Settings: Coming soon!')">⚙️</div> <!-- Settings -->
+        <div class="nav-item active" onclick="switchTab('home', this)">🏠</div>
+        <div class="nav-item" onclick="switchTab('journal', this)">📖</div>
+        <div class="nav-item" onclick="switchTab('finance', this)">📈</div>
     </div>
-
 
     <script>
-        // ==========================================
-        // ⚠️ DEINE CLOUD DATEN HIER EINTRAGEN ⚠️
-        // ==========================================
+        // CONFIG
         const API_KEY = $2a$10$bfQHPAKf8rHB5nCB1nxla.8UbbBLCu6uCSZjrrePZ2JvQv9Jw3XEK; 
         const BIN_ID  = 6983be0443b1c97be965d28c;
-        // ==========================================
 
-        let currentMode = 'classic';
-        let saveTimer;
-
-        // INIT
-        window.onload = function() {
-            updateTime();
-            loadFromCloud();
-            
-            // Lade gespeicherte Farbe
-            const savedColor = localStorage.getItem('nexus_color');
-            if(savedColor) document.documentElement.style.setProperty('--accent', savedColor);
-        };
-
-        // --- CLOUD FUNCTIONS ---
-
-        async function loadFromCloud() {
-            const badge = document.getElementById('status-badge');
-            badge.innerText = "Syncing...";
-            
-            try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: {"X-Master-Key": API_KEY} });
-                if(res.ok) {
-                    let json = await res.json();
-                    let d = json.record;
-
-                    // Felder füllen
-                    if(d.quick) document.getElementById('quick-notes').value = d.quick;
-                    if(d.journal) document.getElementById('journal-text').value = d.journal;
-                    if(d.focus) document.getElementById('focus-text').value = d.focus;
-
-                    badge.innerText = "Online";
-                    badge.style.color = "var(--accent)";
-                } else {
-                    badge.innerText = "Sync Error";
-                }
-            } catch(e) {
-                badge.innerText = "Offline";
-            }
-        }
-
-        function autoSave() {
-            clearTimeout(saveTimer);
-            document.getElementById('status-badge').innerText = "Typing...";
-            saveTimer = setTimeout(saveToCloud, 2000);
-        }
-
-        async function saveToCloud() {
-            const badge = document.getElementById('status-badge');
-            badge.innerText = "Saving...";
-
-            let data = {
-                quick: document.getElementById('quick-notes').value,
-                journal: document.getElementById('journal-text').value,
-                focus: document.getElementById('focus-text').value
-            };
-
-            try {
-                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-                    body: JSON.stringify(data)
-                });
-                badge.innerText = "Saved";
-                setTimeout(() => badge.innerText = "Online", 2000);
-            } catch(e) {
-                badge.innerText = "Save Failed";
-            }
-        }
-
-        // --- UI FUNCTIONS ---
-
+        // APP LOGIC
         function updateTime() {
             const now = new Date();
-            const timeStr = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
-            const dateStr = now.toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'});
-            
-            document.getElementById('clock-c').innerText = timeStr;
-            document.getElementById('clock-m').innerText = timeStr;
-            document.getElementById('date-c').innerText = dateStr;
+            const t = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+            const d = now.toLocaleDateString('de-DE');
+            document.getElementById('clock-c').innerText = t;
+            document.getElementById('clock-m').innerText = t;
+            document.getElementById('date-c').innerText = d;
         }
-        setInterval(updateTime, 1000);
+        setInterval(updateTime, 1000); updateTime();
 
-        // Layout Switch (Classic <-> Modern)
-        function switchLayout() {
-            const classicDiv = document.getElementById('layout-classic');
-            const modernDiv = document.getElementById('layout-modern');
-            const navBar = document.getElementById('bottom-nav');
+        // LAYOUT SWITCHER (FIXED)
+        function switchLayoutMode() {
+            const classic = document.getElementById('layout-classic');
+            const modern = document.getElementById('layout-modern');
+            const nav = document.getElementById('bottom-nav');
             const label = document.getElementById('layout-label');
 
-            if(currentMode === 'classic') {
+            // Prüfen, ob Classic gerade sichtbar ist (display != none)
+            if (classic.style.display !== 'none') {
                 // Zu Modern wechseln
-                classicDiv.classList.remove('active');
-                modernDiv.classList.add('active');
-                navBar.classList.add('hidden'); // Nav verstecken
-                currentMode = 'modern';
+                classic.style.display = 'none';
+                modern.style.display = 'grid';
+                nav.style.display = 'none'; // Nav weg
                 label.innerText = "Modern";
             } else {
                 // Zu Classic wechseln
-                modernDiv.classList.remove('active');
-                classicDiv.classList.add('active');
-                navBar.classList.remove('hidden'); // Nav zeigen
-                currentMode = 'classic';
+                modern.style.display = 'none';
+                classic.style.display = 'grid';
+                nav.style.display = 'flex'; // Nav wieder da
                 label.innerText = "Classic";
             }
         }
 
-        // Tab Switch (Innerhalb von Classic)
-        function switchTab(tabName, btnElement) {
-            // Alle Tabs ausblenden
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            // Gewählten Tab einblenden
-            document.getElementById('tab-' + tabName).classList.add('active');
-
-            // Buttons updaten
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            btnElement.classList.add('active');
+        // TAB SWITCHER
+        function switchTab(id, el) {
+            // Alle Tabs aus
+            document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+            // Gewählten Tab an
+            document.getElementById('tab-' + id).style.display = 'block';
+            
+            // Buttons reset
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        // Colors
+        // COLORS
         function toggleColorMenu() {
             const m = document.getElementById('color-menu');
-            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+            m.style.display = m.style.display === 'block' ? 'none' : 'block';
         }
-        function setAccent(color) {
-            document.documentElement.style.setProperty('--accent', color);
-            localStorage.setItem('nexus_color', color);
+        function setColor(c) {
+            document.documentElement.style.setProperty('--accent', c);
             toggleColorMenu();
         }
+
+        // CLOUD SYNC
+        let timer;
+        async function loadData() {
+            document.getElementById('status').innerText = "Syncing...";
+            try {
+                let r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {headers:{"X-Master-Key":API_KEY}});
+                let d = (await r.json()).record;
+                if(d.quick) document.getElementById('quick-notes').value = d.quick;
+                if(d.journal) document.getElementById('journal-text').value = d.journal;
+                if(d.focus) document.getElementById('focus-text').value = d.focus;
+                document.getElementById('status').innerText = "Online";
+                document.getElementById('status').style.color = "var(--accent)";
+            } catch(e) { document.getElementById('status').innerText = "Offline"; }
+        }
+        window.onload = loadData;
+
+        function autoSave() {
+            clearTimeout(timer);
+            document.getElementById('status').innerText = "Typing...";
+            timer = setTimeout(async () => {
+                document.getElementById('status').innerText = "Saving...";
+                let data = {
+                    quick: document.getElementById('quick-notes').value,
+                    journal: document.getElementById('journal-text').value,
+                    focus: document.getElementById('focus-text').value
+                };
+                await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method:"PUT", 
+                    headers:{"Content-Type":"application/json", "X-Master-Key":API_KEY},
+                    body:JSON.stringify(data)
+                });
+                document.getElementById('status').innerText = "Saved";
+            }, 2000);
+        }
+
+        // Initial Layout State setzen (damit JS weiß was Phase ist)
+        document.getElementById('layout-classic').style.display = 'grid';
+        document.getElementById('layout-modern').style.display = 'none';
 
     </script>
 </body>
