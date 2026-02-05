@@ -3,177 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEXUS MAGNUS</title>
+    <title>NEXUS MAGNUS FINAL</title>
     <style>
         :root {
-            --bg: #121212;
-            --card: #1e1e1e;
             --text: #ffffff;
-            --gold: #ffd700;   /* Finanzen */
-            --blue: #2196f3;   /* Schule */
-            --pink: #ff4081;   /* Sport */
-            --green: #00e676;  /* Freizeit */
-            --orange: #ff9100; /* Hausarbeit */
-            --glass: rgba(30, 30, 30, 0.95);
+            --gold-grad: linear-gradient(135deg, #ffd700, #ff8c00);
+            --blue-grad: linear-gradient(135deg, #00c6ff, #0072ff);
+            --pink-grad: linear-gradient(135deg, #ff758c, #ff7eb3);
+            --green-grad: linear-gradient(135deg, #11998e, #38ef7d);
+            --orange-grad: linear-gradient(135deg, #f12711, #f5af19);
+            --dark-glass: rgba(20, 20, 20, 0.7);
         }
 
         body {
-            background-color: var(--bg);
+            /* Lebendiger Deep-Space Hintergrund */
+            background: linear-gradient(-45deg, #0f0c29, #302b63, #24243e, #101010);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: var(--text);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             margin: 0; padding: 0;
             height: 100vh;
             display: flex; flex-direction: column;
             overflow: hidden;
         }
 
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
         /* --- HEADER --- */
         .header {
             padding: 15px;
-            background: rgba(20,20,20,0.95);
-            border-bottom: 1px solid #333;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             text-align: center;
-            font-size: 18px; font-weight: 900; letter-spacing: 2px;
-            color: var(--gold);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            font-size: 20px; font-weight: 900; letter-spacing: 3px;
+            /* Gradient Text */
+            background: -webkit-linear-gradient(#ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
             z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
         }
-        .header-btn { background:none; border:none; font-size:18px; cursor:pointer; }
 
         /* --- CONTENT AREA --- */
-        .content { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 100px; }
+        .view-section { display: none; animation: slideUp 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); }
         .view-section.active { display: block; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(5px);} to{opacity:1;transform:translateY(0);} }
+        @keyframes slideUp { from{opacity:0;transform:translateY(15px);} to{opacity:1;transform:translateY(0);} }
 
-        /* --- DASHBOARD VIEW --- */
-        .widget-container {
-            height: 150px; border-radius: 12px; overflow: hidden; margin-bottom: 20px;
-            border: 1px solid #333; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        /* --- WIDGETS & CARDS --- */
+        .widget-container, .input-box, .cloud-box {
+            background: linear-gradient(145deg, rgba(40,40,40,0.6), rgba(20,20,20,0.8));
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px; margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
-        .news-header { font-size: 14px; color: #888; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- DASHBOARD --- */
+        .news-header { font-size: 13px; color: #aaa; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1.5px; padding-left: 5px; }
         .news-item {
-            background: var(--card); border-left: 3px solid #fff;
-            padding: 15px; margin-bottom: 10px; border-radius: 0 8px 8px 0;
+            background: rgba(255,255,255,0.05);
+            padding: 15px; margin-bottom: 10px; border-radius: 12px;
+            border-left: 3px solid #ff8c00;
+            transition: transform 0.2s;
         }
-        .news-time { font-size: 11px; color: var(--gold); display: block; margin-bottom: 4px; }
-        .news-headline { font-size: 15px; font-weight: 500; }
+        .news-item:active { transform: scale(0.98); }
+        .news-time { font-size: 10px; color: #ff8c00; font-weight: bold; display: block; margin-bottom: 5px; }
+        .news-headline { font-size: 14px; font-weight: 500; line-height: 1.4; }
 
-        /* --- PLANER VIEW --- */
+        /* --- PLANER --- */
         .date-control {
             display: flex; justify-content: space-between; align-items: center;
-            background: var(--card); padding: 15px; border-radius: 12px; margin-bottom: 20px;
-            font-weight: bold; border: 1px solid #333;
+            background: rgba(255,255,255,0.05); padding: 10px 20px; border-radius: 50px; margin-bottom: 20px;
+            font-weight: bold; border: 1px solid rgba(255,255,255,0.1);
         }
-        .nav-arrow { background:rgba(255,255,255,0.1); border:none; color:white; width:30px; height:30px; border-radius:50%; cursor:pointer; }
+        .nav-arrow { background:none; border:none; color:white; font-size: 18px; cursor:pointer; padding: 5px 15px; }
 
-        /* KI BUTTON */
+        /* KI BUTTON (Ultra Gradient) */
         .ai-opt-btn {
-            width: 100%; padding: 15px; 
-            background: linear-gradient(135deg, var(--gold), #ff8c00);
-            border: none; border-radius: 12px; color: black; font-weight: bold; font-size: 16px;
-            margin-bottom: 20px; cursor: pointer;
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+            width: 100%; padding: 18px; 
+            background: linear-gradient(90deg, #FFD700, #FF8C00, #FF0080);
+            background-size: 200% 200%;
+            animation: gradientAnim 3s ease infinite;
+            border: none; border-radius: 16px; color: white; font-weight: 800; font-size: 15px;
+            margin-bottom: 25px; cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 140, 0, 0.4);
             display: flex; align-items: center; justify-content: center; gap: 10px;
+            text-transform: uppercase; letter-spacing: 1px;
         }
-        .ai-opt-btn:active { transform: scale(0.98); }
+        @keyframes gradientAnim { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
-        /* INPUT AREA */
-        .input-box {
-            background: #1a1a1a; padding: 15px; border-radius: 12px; margin-bottom: 20px;
-            border: 1px solid #333;
-        }
-        .row { display: flex; gap: 10px; margin-bottom: 10px; }
+        /* INPUTS */
+        .input-box { padding: 20px; }
+        .row { display: flex; gap: 10px; margin-bottom: 12px; }
         input, select {
-            background: #000; border: 1px solid #444; color: white; padding: 12px; border-radius: 8px;
-            width: 100%; outline: none; font-size: 14px;
+            background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: white; padding: 12px; border-radius: 10px;
+            width: 100%; outline: none; font-size: 14px; transition: 0.2s;
         }
-        .check-row { display: flex; align-items: center; gap: 10px; color: #aaa; font-size: 13px; }
+        input:focus, select:focus { border-color: #ffd700; background: rgba(0,0,0,0.5); }
+        
         .add-btn {
-            background: #333; color: white; width: 100%; padding: 12px; border: none; border-radius: 8px;
-            font-weight: bold; margin-top: 10px; cursor: pointer;
+            background: var(--text); color: black; width: 100%; padding: 14px; border: none; border-radius: 10px;
+            font-weight: bold; margin-top: 15px; cursor: pointer;
+            background: linear-gradient(135deg, #ffffff, #aaaaaa);
         }
 
-        /* TASKS */
-        .task-list { display: flex; flex-direction: column; gap: 10px; }
+        /* TASKS (Gradient Borders) */
+        .task-list { display: flex; flex-direction: column; gap: 12px; }
         .task-card {
-            display: flex; align-items: center; padding: 15px; border-radius: 10px;
-            background: var(--card); border: 1px solid #333; position: relative;
+            display: flex; align-items: center; padding: 16px; border-radius: 14px;
+            background: rgba(30,30,30,0.6); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.05); position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            overflow: hidden;
         }
-        /* Color Logic */
-        .c-finanzen { border-left: 4px solid var(--gold); box-shadow: inset 10px 0 20px -15px rgba(255, 215, 0, 0.4); }
-        .c-schule { border-left: 4px solid var(--blue); box-shadow: inset 10px 0 20px -15px rgba(33, 150, 243, 0.4); }
-        .c-sport { border-left: 4px solid var(--pink); box-shadow: inset 10px 0 20px -15px rgba(255, 64, 129, 0.4); }
-        .c-freizeit { border-left: 4px solid var(--green); box-shadow: inset 10px 0 20px -15px rgba(0, 230, 118, 0.4); }
-        .c-hausarbeit { border-left: 4px solid var(--orange); box-shadow: inset 10px 0 20px -15px rgba(255, 145, 0, 0.4); }
+        
+        /* Gradient Kategorien */
+        .c-finanzen { border-left: 4px solid #ffd700; background: linear-gradient(90deg, rgba(255, 215, 0, 0.1), transparent); }
+        .c-schule { border-left: 4px solid #00c6ff; background: linear-gradient(90deg, rgba(0, 198, 255, 0.1), transparent); }
+        .c-sport { border-left: 4px solid #ff758c; background: linear-gradient(90deg, rgba(255, 117, 140, 0.1), transparent); }
+        .c-freizeit { border-left: 4px solid #38ef7d; background: linear-gradient(90deg, rgba(56, 239, 125, 0.1), transparent); }
+        .c-hausarbeit { border-left: 4px solid #f12711; background: linear-gradient(90deg, rgba(241, 39, 17, 0.1), transparent); }
 
         .checkbox {
-            width: 24px; height: 24px; border: 2px solid #555; border-radius: 50%; margin-right: 15px;
+            width: 22px; height: 22px; border: 2px solid #666; border-radius: 50%; margin-right: 15px;
             display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;
+            transition: 0.2s;
         }
-        .checkbox.checked { background: var(--gold); border-color: var(--gold); color: black; }
+        .checkbox.checked { background: #ffd700; border-color: #ffd700; color: black; box-shadow: 0 0 10px #ffd700; }
+        
         .task-info { flex: 1; }
-        .task-title { font-size: 15px; margin-bottom: 3px; display: block; }
-        .task-meta { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+        .task-title { font-size: 15px; margin-bottom: 4px; display: block; font-weight: 500; }
+        .task-meta { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 5px; }
+        .tag { padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.1); }
 
-        /* --- TAGEBUCH VIEW --- */
+        /* --- TAGEBUCH --- */
         #diary-input {
-            width: 100%; height: 60vh; background: var(--card); border: 1px solid #333;
-            color: #ccc; padding: 20px; font-size: 16px; line-height: 1.6; border-radius: 12px;
-            resize: none; outline: none; box-sizing: border-box;
+            width: 100%; height: 60vh; background: transparent; border: none;
+            color: #ddd; padding: 10px; font-size: 16px; line-height: 1.6; resize: none; outline: none;
         }
 
-        /* --- CLOUD VIEW --- */
-        .cloud-box {
-            background: var(--card); padding: 20px; border-radius: 12px; border: 1px solid #333; text-align: center;
-        }
+        /* --- CLOUD --- */
         .cloud-btn {
-            width: 100%; padding: 15px; margin-top: 10px; border-radius: 8px; border: none; font-size: 16px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%; padding: 16px; margin-top: 12px; border-radius: 12px; border: none; font-size: 15px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 10px; color: white; font-weight: bold;
         }
-        .btn-up { background: #333; color: white; border: 1px solid #555; }
-        .btn-down { background: var(--gold); color: black; font-weight: bold; }
+        .btn-up { background: linear-gradient(135deg, #434343, #000000); border: 1px solid #333; }
+        .btn-down { background: var(--gold-grad); color: black; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2); }
 
         /* --- NAVIGATION --- */
         .navbar {
             position: fixed; bottom: 0; left: 0; width: 100%;
-            background: #0f0f0f; border-top: 1px solid #333;
-            display: flex; justify-content: space-around; padding: 12px 0 25px 0;
+            background: rgba(10,10,10,0.85); backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-around; padding: 10px 0 25px 0;
             z-index: 200;
         }
         .nav-item {
             background: none; border: none; color: #666; font-size: 10px;
-            display: flex; flex-direction: column; align-items: center; gap: 5px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer;
+            transition: 0.3s;
         }
-        .nav-item.active { color: var(--gold); }
-        .nav-icon { font-size: 20px; }
+        .nav-item.active { color: #ffd700; transform: translateY(-3px); }
+        .nav-item.active .nav-icon { text-shadow: 0 0 15px rgba(255, 215, 0, 0.6); }
+        .nav-icon { font-size: 22px; margin-bottom: 2px; }
 
     </style>
 </head>
 <body>
 
     <!-- HEADER -->
-    <div class="header">
-        <span>NEXUS MAGNUS</span>
-        <div style="font-size:12px; font-weight:normal; color:#666;">v.Final</div>
-    </div>
+    <div class="header">NEXUS MAGNUS</div>
 
     <!-- CONTENT -->
     <div class="content">
 
         <!-- 1. DASHBOARD -->
         <div id="view-dashboard" class="view-section active">
-            <!-- Funktionierendes TradingView Widget -->
-            <div class="widget-container">
-                <!-- TradingView Widget BEGIN -->
+            <!-- TRADING VIEW (Höher für bessere Sichtbarkeit) -->
+            <div class="widget-container" style="height: 180px;">
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
                     {
                     "symbols": [
                         { "proName": "FOREXCOM:SPXUSD", "title": "S&P 500" },
-                        { "proName": "FOREXCOM:NSXUSD", "title": "US 100" },
+                        { "proName": "FOREXCOM:NSXUSD", "title": "Nasdaq" },
                         { "proName": "FX_IDC:EURUSD", "title": "EUR/USD" },
                         { "proName": "BITSTAMP:BTCUSD", "title": "Bitcoin" },
                         { "description": "Gold", "proName": "TVC:GOLD" },
@@ -181,18 +203,17 @@
                     ],
                     "showSymbolLogo": true,
                     "colorTheme": "dark",
-                    "isTransparent": false,
+                    "isTransparent": true,
                     "displayMode": "adaptive",
                     "locale": "de_DE"
                     }
                     </script>
                 </div>
-                <!-- TradingView Widget END -->
             </div>
 
-            <h3 class="news-header">TAGESSCHAU LIVE TICKER</h3>
+            <h3 class="news-header">TAGESSCHAU FEED</h3>
             <div id="news-container">
-                <div style="padding:20px; text-align:center; color:#666;">Lade Nachrichten...</div>
+                <div style="padding:20px; text-align:center; color:#666;">Verbinde mit Welt-Server...</div>
             </div>
         </div>
 
@@ -204,12 +225,13 @@
                 <button class="nav-arrow" onclick="changeDate(1)">▶</button>
             </div>
 
+            <!-- DER KI BUTTON -->
             <button class="ai-opt-btn" onclick="optimizeDay()">
-                ⚡ KI: Tag optimieren & analysieren
+                ✨ KI: Tag Optimieren
             </button>
 
             <div class="input-box">
-                <input type="text" id="t-title" placeholder="Aufgabe eingeben..." style="margin-bottom:10px;">
+                <input type="text" id="t-title" placeholder="Neue Mission..." style="margin-bottom:15px;">
                 <div class="row">
                     <input type="time" id="t-time">
                     <select id="t-cat">
@@ -220,8 +242,8 @@
                         <option value="hausarbeit">Hausarbeit 🧹</option>
                     </select>
                 </div>
-                <div class="check-row">
-                    <input type="checkbox" id="t-daily" style="width:auto;"> 
+                <div style="display:flex; align-items:center; gap:10px; font-size:13px; color:#aaa; margin-left:5px;">
+                    <input type="checkbox" id="t-daily" style="width:16px; height:16px;"> 
                     <label for="t-daily">Täglich wiederholen</label>
                 </div>
                 <button class="add-btn" onclick="addTask()">Hinzufügen</button>
@@ -232,342 +254,215 @@
 
         <!-- 3. TAGEBUCH -->
         <div id="view-diary" class="view-section">
-            <h3 style="margin-top:0;">Tagebuch</h3>
-            <textarea id="diary-input" placeholder="Was hast du heute erlebt? (Wird automatisch gespeichert)" oninput="saveData()"></textarea>
+            <div class="widget-container" style="min-height: 70vh;">
+                <textarea id="diary-input" placeholder="Liebes Tagebuch..." oninput="saveData()"></textarea>
+            </div>
         </div>
 
         <!-- 4. CLOUD -->
         <div id="view-cloud" class="view-section">
-            <h3 style="margin-top:0;">Cloud Sync Center</h3>
-            <p style="color:#666; font-size:13px; margin-bottom:20px;">
-                Gib hier deine Zugangsdaten ein. Sie werden temporär für diese Sitzung gespeichert.
-            </p>
-            
             <div class="cloud-box">
-                <input type="password" id="api-key" placeholder="X-Master-Key eingeben..." style="margin-bottom:10px;">
-                <input type="text" id="bin-id" placeholder="Bin-ID eingeben..." style="margin-bottom:20px;">
+                <h3 style="margin-top:0; color:#ffd700;">Sync Center</h3>
+                <input type="password" id="api-key" placeholder="X-Master-Key" style="margin-bottom:10px;">
+                <input type="text" id="bin-id" placeholder="Bin-ID" style="margin-bottom:20px;">
                 
-                <button class="cloud-btn btn-up" onclick="uploadCloud()">
-                    ☁️ Upload (Senden)
-                </button>
-                <button class="cloud-btn btn-down" onclick="downloadCloud()">
-                    ⬇ Download (Laden)
-                </button>
+                <button class="cloud-btn btn-up" onclick="uploadCloud()">☁️ Upload Data</button>
+                <button class="cloud-btn btn-down" onclick="downloadCloud()">⬇ Download Data</button>
             </div>
-            
-            <div style="margin-top:30px; border-top:1px solid #333; padding-top:20px;">
-                <h4 style="margin:0 0 10px 0;">KI Status</h4>
-                <div style="background:#222; padding:10px; border-radius:8px; font-size:12px; color:#00e676;">
-                    ● Optimierungs-Algorithmus aktiv<br>
-                    ● Datenanalyse bereit
-                </div>
+            <div style="text-align:center; margin-top:20px; font-size:12px; opacity:0.5;">
+                Nexus Neural Engine v9.0 • Secure Connection
             </div>
         </div>
 
     </div>
 
-    <!-- BOTTOM NAVBAR -->
+    <!-- NAVBAR -->
     <div class="navbar">
         <button class="nav-item active" onclick="nav('dashboard', this)">
-            <span class="nav-icon">📊</span> Dashboard
+            <span class="nav-icon">📊</span>
         </button>
         <button class="nav-item" onclick="nav('planer', this)">
-            <span class="nav-icon">📅</span> Planer
+            <span class="nav-icon">📅</span>
         </button>
         <button class="nav-item" onclick="nav('diary', this)">
-            <span class="nav-icon">📖</span> Tagebuch
+            <span class="nav-icon">📖</span>
         </button>
         <button class="nav-item" onclick="nav('cloud', this)">
-            <span class="nav-icon">☁️</span> Cloud
+            <span class="nav-icon">☁️</span>
         </button>
     </div>
 
     <script>
-        // --- DATA STATE ---
-        let appData = {
-            tasks: [],
-            diary: {}
-        };
+        // --- DATA & CORE ---
+        let appData = { tasks: [], diary: {} };
         let currentDate = new Date();
-        
-        // --- INIT ---
+
         window.onload = function() {
-            // Load local backup
-            if(localStorage.getItem('nexus_magnus')) {
-                appData = JSON.parse(localStorage.getItem('nexus_magnus'));
+            if(localStorage.getItem('nexus_final_v2')) {
+                appData = JSON.parse(localStorage.getItem('nexus_final_v2'));
             }
-            
-            // Check recurring tasks
             checkDailyResets();
-            
-            // Render UI
             updateDateDisplay();
-            renderTasks();
             loadNews();
-            
-            // Auto News Refresh
             setInterval(loadNews, 600000);
         };
 
-        // --- NAVIGATION & DATE ---
-        function nav(viewId, btn) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-' + viewId).classList.add('active');
-            
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        // --- NAVIGATION ---
+        function nav(view, btn) {
+            document.querySelectorAll('.view-section').forEach(e => e.classList.remove('active'));
+            document.getElementById('view-' + view).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(e => e.classList.remove('active'));
             btn.classList.add('active');
-            
-            // Refresh content if needed
-            if(viewId === 'diary') loadDiary();
+            if(view==='diary') loadDiary();
         }
 
-        function getDateKey(d) {
-            return d.toISOString().split('T')[0];
-        }
+        function getDateKey(d) { return d.toISOString().split('T')[0]; }
 
         function updateDateDisplay() {
-            const options = { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' };
-            document.getElementById('date-display').innerText = currentDate.toLocaleDateString('de-DE', options);
-            renderTasks();
-            loadDiary();
+            const opts = { weekday: 'short', day: 'numeric', month: 'long' };
+            document.getElementById('date-display').innerText = currentDate.toLocaleDateString('de-DE', opts);
+            renderTasks(); loadDiary();
         }
+        function changeDate(d) { currentDate.setDate(currentDate.getDate() + d); updateDateDisplay(); }
 
-        function changeDate(delta) {
-            currentDate.setDate(currentDate.getDate() + delta);
-            updateDateDisplay();
-        }
-
-        // --- TASKS LOGIC ---
+        // --- TASKS ---
         function addTask() {
-            const title = document.getElementById('t-title').value;
-            const time = document.getElementById('t-time').value;
-            const cat = document.getElementById('t-cat').value;
-            const daily = document.getElementById('t-daily').checked;
-
-            if(!title) return alert("Bitte Aufgabe eingeben!");
-
+            const t = document.getElementById('t-title').value;
+            if(!t) return;
             appData.tasks.push({
-                id: Date.now(),
-                date: getDateKey(currentDate),
-                title: title,
-                time: time,
-                cat: cat,
-                daily: daily,
-                done: false,
-                lastDone: null
+                id: Date.now(), date: getDateKey(currentDate),
+                title: t, time: document.getElementById('t-time').value,
+                cat: document.getElementById('t-cat').value,
+                daily: document.getElementById('t-daily').checked,
+                done: false, lastDone: null
             });
-
-            // Reset Input
             document.getElementById('t-title').value = "";
-            saveData();
-            renderTasks();
+            saveData(); renderTasks();
         }
 
         function toggleTask(id) {
-            const task = appData.tasks.find(t => t.id === id);
-            if(task) {
-                task.done = !task.done;
-                if(task.daily && task.done) {
-                    task.lastDone = getDateKey(new Date());
-                }
-                saveData();
-                renderTasks();
+            const t = appData.tasks.find(x => x.id === id);
+            if(t) {
+                t.done = !t.done;
+                if(t.daily && t.done) t.lastDone = getDateKey(new Date());
+                saveData(); renderTasks();
             }
         }
 
         function deleteTask(id) {
-            if(confirm("Aufgabe wirklich löschen?")) {
+            if(confirm("Löschen?")) {
                 appData.tasks = appData.tasks.filter(t => t.id !== id);
-                saveData();
-                renderTasks();
+                saveData(); renderTasks();
             }
-        }
-
-        function checkDailyResets() {
-            const today = getDateKey(new Date());
-            let changed = false;
-            appData.tasks.forEach(t => {
-                if(t.daily && t.lastDone !== today) {
-                    t.done = false; // Reset daily task for today
-                    changed = true;
-                }
-            });
-            if(changed) saveData();
         }
 
         function renderTasks() {
             const list = document.getElementById('task-list');
             list.innerHTML = "";
             const key = getDateKey(currentDate);
+            let show = appData.tasks.filter(t => t.date === key || t.daily);
+            show.sort((a,b) => (a.time||"23:59").localeCompare(b.time||"23:59"));
 
-            // Filter tasks: Current Date OR Daily tasks
-            let tasksToShow = appData.tasks.filter(t => t.date === key || t.daily);
-            
-            // Sort by time
-            tasksToShow.sort((a, b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
+            if(show.length === 0) list.innerHTML = "<div style='text-align:center; opacity:0.5; margin-top:20px;'>Nichts geplant.</div>";
 
-            if(tasksToShow.length === 0) {
-                list.innerHTML = "<div style='text-align:center; color:#444; margin-top:20px;'>Keine Aufgaben für diesen Tag.</div>";
-                return;
-            }
-
-            tasksToShow.forEach(t => {
+            show.forEach(t => {
                 const el = document.createElement('div');
-                el.className = `task-card c-${t.cat}`; // Apply color class
+                el.className = `task-card c-${t.cat}`;
                 if(t.done) el.style.opacity = "0.5";
-
                 el.innerHTML = `
-                    <div class="checkbox ${t.done ? 'checked' : ''}" onclick="toggleTask(${t.id})">
-                        ${t.done ? '✔' : ''}
-                    </div>
+                    <div class="checkbox ${t.done?'checked':''}" onclick="toggleTask(${t.id})">${t.done?'✔':''}</div>
                     <div class="task-info">
-                        <span class="task-title" style="text-decoration: ${t.done ? 'line-through' : 'none'}">${t.title}</span>
+                        <span class="task-title" style="text-decoration:${t.done?'line-through':'none'}">${t.title}</span>
                         <div class="task-meta">
-                            ${t.time || '--:--'} • ${t.cat.toUpperCase()} ${t.daily ? '• ↻ TÄGLICH' : ''}
+                            <span class="tag">${t.time || '--:--'}</span>
+                            <span class="tag">${t.cat}</span>
+                            ${t.daily ? '<span class="tag" style="background:#ffd700; color:black;">↻</span>' : ''}
                         </div>
                     </div>
-                    <button onclick="deleteTask(${t.id})" style="background:none; border:none; color:#666; font-size:18px; padding:10px;">×</button>
+                    <button onclick="deleteTask(${t.id})" style="background:none; border:none; color:#666; font-size:18px;">✕</button>
                 `;
                 list.appendChild(el);
             });
         }
 
-        // --- KI OPTIMIZATION LOGIC (THE BRAIN) ---
+        function checkDailyResets() {
+            const today = getDateKey(new Date());
+            let ch = false;
+            appData.tasks.forEach(t => {
+                if(t.daily && t.lastDone !== today) { t.done = false; ch = true; }
+            });
+            if(ch) saveData();
+        }
+
+        // --- KI OPTIMIZER ---
         function optimizeDay() {
             const key = getDateKey(currentDate);
-            let dayTasks = appData.tasks.filter(t => t.date === key || t.daily);
+            let tasks = appData.tasks.filter(t => t.date === key || t.daily);
+            if(tasks.length === 0) return alert("KI: Dein Tag ist leer!");
             
-            if(dayTasks.length === 0) return alert("KI: Dein Tag ist leer. Füge erst Aufgaben hinzu!");
+            let cats = tasks.map(t => t.cat);
+            let msg = "KI ANALYSE:\n";
+            let add = [];
 
-            // 1. Sortieren
-            dayTasks.sort((a, b) => (a.time || "23:59").localeCompare(b.time || "23:59"));
-            
-            let report = "KI ANALYSE BERICHT:\n------------------\n";
-            let suggestions = [];
-            
-            // 2. Analyse
-            let balance = { schule: 0, freizeit: 0, sport: 0 };
-            dayTasks.forEach(t => {
-                if(t.cat === 'schule') balance.schule++;
-                if(t.cat === 'freizeit') balance.freizeit++;
-                if(t.cat === 'sport') balance.sport++;
-            });
-
-            // 3. Logic Rules
-            if(balance.schule > 2 && balance.freizeit === 0) {
-                report += "⚠ WARNUNG: Hohe Schulbelastung ohne Ausgleich.\n➡ VORSCHLAG: Pause um 16:00 eingefügt.\n";
-                suggestions.push({ title: "KI: Aktive Pause", time: "16:00", cat: "freizeit", msg: "Lüften & Trinken" });
+            if(!cats.includes('sport')) {
+                msg += "⚠ Kein Sport! Füge Workout hinzu.\n";
+                add.push({title:"KI: 20min Workout", time:"18:00", cat:"sport"});
             }
-            if(balance.sport === 0) {
-                report += "⚠ HINWEIS: Kein Sport erkannt.\n➡ VORSCHLAG: Kurzes Workout am Abend.\n";
-                suggestions.push({ title: "KI: 15min Workout", time: "19:00", cat: "sport", msg: "Bewegung tut gut" });
+            if(cats.filter(c => c==='schule').length > 3 && !cats.includes('freizeit')) {
+                msg += "⚠ Viel Schule, keine Pause! Füge Pause hinzu.\n";
+                add.push({title:"KI: Regenerations-Pause", time:"16:00", cat:"freizeit"});
             }
-            if(dayTasks.length < 3) {
-                report += "ℹ INFO: Der Tag ist sehr ruhig.\n➡ Nutze die Zeit für Finanzen/Orga.\n";
-                suggestions.push({ title: "KI: Portfolio Check", time: "18:00", cat: "finanzen", msg: "Aktien prüfen" });
+            if(tasks.length < 3) {
+                msg += "ℹ Wenig zu tun. Zeit für Finanzen?\n";
+                add.push({title:"KI: Marktanalyse", time:"19:00", cat:"finanzen"});
             }
 
-            // 4. Execute
-            alert(report + "\nIch füge die Vorschläge jetzt in deinen Plan ein.");
-            
-            suggestions.forEach(s => {
-                appData.tasks.push({
-                    id: Date.now() + Math.random(),
-                    date: key,
-                    title: s.title,
-                    time: s.time,
-                    cat: s.cat,
-                    daily: false,
-                    done: false,
-                    isAI: true
-                });
-            });
-
-            saveData();
-            renderTasks();
+            alert(msg + "\nOptimiere Plan...");
+            add.forEach(a => appData.tasks.push({
+                id: Date.now()+Math.random(), date: key, title: a.title, time: a.time, cat: a.cat, daily:false, done:false
+            }));
+            saveData(); renderTasks();
         }
 
-        // --- DIARY LOGIC ---
-        function loadDiary() {
-            const key = getDateKey(currentDate);
-            document.getElementById('diary-input').value = appData.diary[key] || "";
-        }
+        // --- SYSTEM ---
+        function loadDiary() { document.getElementById('diary-input').value = appData.diary[getDateKey(currentDate)] || ""; }
         function saveData() {
-            const key = getDateKey(currentDate);
-            const diaryText = document.getElementById('diary-input').value;
-            if(diaryText) appData.diary[key] = diaryText;
-            
-            localStorage.setItem('nexus_magnus', JSON.stringify(appData));
+            appData.diary[getDateKey(currentDate)] = document.getElementById('diary-input').value;
+            localStorage.setItem('nexus_final_v2', JSON.stringify(appData));
         }
 
-        // --- NEWS LOGIC ---
         async function loadNews() {
-            const box = document.getElementById('news-container');
             try {
-                // Fetch Tagesschau RSS via Proxy to JSON
-                const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml');
-                const data = await res.json();
-                
-                let html = "";
-                data.items.slice(0, 5).forEach(item => {
-                    let time = item.pubDate.split(' ')[1].substring(0,5);
-                    html += `
-                        <div class="news-item" onclick="window.open('${item.link}', '_blank')">
-                            <span class="news-time">${time} • TAGESSCHAU</span>
-                            <span class="news-headline">${item.title}</span>
-                        </div>
-                    `;
+                const r = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.tagesschau.de/infoservices/alle-meldungen-100~rss2.xml');
+                const d = await r.json();
+                let h = "";
+                d.items.slice(0,5).forEach(i => {
+                    let t = i.pubDate.split(' ')[1].slice(0,5);
+                    h += `<div class="news-item" onclick="window.open('${i.link}')"><span class="news-time">${t} • WELT</span><div class="news-headline">${i.title}</div></div>`;
                 });
-                box.innerHTML = html;
-            } catch(e) {
-                console.log(e);
-                box.innerHTML = "<div style='padding:20px; text-align:center;'>News offline. Checke Internet.</div>";
-            }
+                document.getElementById('news-container').innerHTML = h;
+            } catch(e) { document.getElementById('news-container').innerHTML = "News Offline"; }
         }
 
-        // --- CLOUD SYNC (MANUAL) ---
         async function uploadCloud() {
-            const key = document.getElementById('api-key').value;
-            const bin = document.getElementById('bin-id').value;
-            
-            if(!key || !bin) return alert("❌ Fehler: Bitte Key & Bin-ID eingeben!");
-            
+            const k = document.getElementById('api-key').value;
+            const b = document.getElementById('bin-id').value;
+            if(!k||!b) return alert("Key fehlt!");
             try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${bin}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': key
-                    },
-                    body: JSON.stringify(appData)
-                });
-                if(res.ok) alert("✅ Erfolgreich hochgeladen!");
-                else alert("❌ Upload fehlgeschlagen. Key prüfen.");
-            } catch(e) { alert("Netzwerkfehler: " + e); }
+                await fetch(`https://api.jsonbin.io/v3/b/${b}`, {method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':k}, body:JSON.stringify(appData)});
+                alert("✅ Saved!");
+            } catch(e) { alert("Error!"); }
         }
 
         async function downloadCloud() {
-            const key = document.getElementById('api-key').value;
-            const bin = document.getElementById('bin-id').value;
-            
-            if(!key || !bin) return alert("❌ Fehler: Bitte Key & Bin-ID eingeben!");
-            
+            const k = document.getElementById('api-key').value;
+            const b = document.getElementById('bin-id').value;
+            if(!k||!b) return alert("Key fehlt!");
             try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${bin}/latest`, {
-                    method: 'GET',
-                    headers: { 'X-Master-Key': key }
-                });
-                const json = await res.json();
-                
-                if(json.record) {
-                    appData = json.record;
-                    saveData();
-                    updateDateDisplay();
-                    alert("✅ Daten erfolgreich geladen!");
-                } else {
-                    alert("❌ Leere Daten oder falscher Key.");
-                }
-            } catch(e) { alert("Netzwerkfehler: " + e); }
+                let r = await fetch(`https://api.jsonbin.io/v3/b/${b}/latest`, {headers:{'X-Master-Key':k}});
+                let j = await r.json();
+                appData = j.record; saveData(); updateDateDisplay(); alert("✅ Loaded!");
+            } catch(e) { alert("Error!"); }
         }
 
     </script>
