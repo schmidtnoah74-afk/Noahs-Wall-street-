@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS PRIME v41 | Classic Sync</title>
+    <title>NEXUS PRIME v51 | Hybrid Complete</title>
     <style>
         :root {
             --bg-color: #0a0a0a;
             --card-bg: #141414;
-            --accent: #00d4ff;
+            --accent: #00d4ff;     /* Standard: Cyan */
             --text-main: #ffffff;
             --text-dim: #888888;
             --border: #333;
@@ -26,6 +26,8 @@
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            padding-bottom: 90px; /* Platz für die untere Leiste */
+            transition: background 0.3s;
         }
 
         /* HEADER */
@@ -37,131 +39,128 @@
             align-items: center;
             padding: 20px 0;
             border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
-        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; }
-        .logo span { color: var(--accent); }
-        .version { font-size: 0.8rem; color: var(--text-dim); }
+        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
+        .logo span { color: var(--accent); transition: color 0.3s; }
 
-        /* GRID LAYOUT (Das alte Layout) */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
+        .controls { display: flex; align-items: center; gap: 8px; }
+        .btn-control {
+            background: #222;
+            border: 1px solid #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .btn-control:hover { border-color: var(--accent); color: var(--accent); }
+        
+        #status-badge { font-size: 0.7rem; color: #555; margin-left: 5px; }
+
+        /* LAYOUT CONTAINER */
+        .layout-container {
             width: 100%;
             max-width: 1000px;
+            display: none; /* Standard: Ausblenden */
+            animation: fadeIn 0.4s ease;
         }
+        .layout-container.active { display: grid; gap: 20px; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* GRID STYLES */
+        #layout-classic { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        #layout-modern { grid-template-columns: 1fr; }
+
+        /* CARDS */
         .card {
             background: var(--card-bg);
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
-            transition: transform 0.2s;
         }
-        .card:hover { transform: translateY(-2px); border-color: var(--accent); }
-
-        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        h2 { font-size: 0.9rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 
         /* WIDGETS */
-        .time-display { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; }
-        .date-display { text-align: center; color: var(--accent); margin-bottom: 10px; }
+        .time-display { font-size: 2.5rem; font-weight: 700; text-align: center; margin: 10px 0; }
+        .date-display { text-align: center; color: var(--accent); margin-bottom: 15px; }
 
-        /* FINANCE TICKER */
-        .finance-container { display: flex; flex-direction: column; gap: 10px; height: 300px; }
-        
-        /* STRESS SLIDER */
-        .slider-container { margin: 20px 0; text-align: center; }
-        input[type=range] {
+        /* INPUTS */
+        textarea {
             width: 100%;
-            -webkit-appearance: none;
-            background: #333;
-            height: 6px;
-            border-radius: 5px;
-            outline: none;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-        }
-        .stress-label { font-size: 0.9rem; margin-top: 10px; display: block; }
-
-        /* AI CHAT */
-        #ai-response {
-            background: #000;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: white;
             padding: 15px;
             border-radius: 8px;
-            min-height: 80px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            border-left: 3px solid var(--accent);
-        }
-        .input-group { display: flex; gap: 10px; }
-        input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #222;
-            color: white;
-            outline: none;
-        }
-        button {
-            padding: 12px 20px;
-            background: var(--accent);
-            border: none;
-            border-radius: 8px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        button:hover { opacity: 0.9; }
-
-        /* NEWS TICKER */
-        .news-ticker {
-            font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            box-sizing: border-box;
-            color: var(--text-dim);
-            padding: 10px 0;
-        }
-        .news-content {
-            display: inline-block;
-            padding-left: 100%;
-            animation: ticker 30s linear infinite;
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-
-        /* EDITABLE TASK LIST (Neu für Cloud Sync) */
-        .task-list { list-style: none; }
-        .task-item { display: flex; align-items: center; margin-bottom: 8px; }
-        .task-checkbox { margin-right: 10px; accent-color: var(--accent); }
-        .task-input {
-            background: transparent;
-            border: none;
-            color: #aaa;
             font-family: inherit;
-            font-size: 1rem;
-            width: 100%;
-            border-bottom: 1px solid transparent;
+            resize: vertical;
+            outline: none;
+            line-height: 1.6;
+            min-height: 150px;
         }
-        .task-input:focus { border-bottom: 1px solid var(--accent); color: white; }
+        textarea:focus { border-color: var(--accent); }
 
-        /* SYNC STATUS */
-        #sync-status {
+        /* NAVIGATION BAR (Bottom) */
+        .bottom-nav {
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            font-size: 0.7rem;
-            color: #444;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid #333;
+            border-radius: 50px;
+            display: flex;
+            padding: 10px 25px;
+            gap: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 100;
+            transition: transform 0.3s;
         }
+        /* Wenn Modern Mode aktiv ist, Nav ausblenden */
+        .bottom-nav.hidden { transform: translate(-50%, 200%); }
+
+        .nav-item {
+            font-size: 1.4rem;
+            cursor: pointer;
+            opacity: 0.5;
+            transition: 0.2s;
+        }
+        .nav-item:hover { opacity: 1; transform: scale(1.1); }
+        .nav-item.active { opacity: 1; color: var(--accent); transform: scale(1.1); }
+
+        /* TABS CONTENT (Innerhalb von Classic) */
+        .tab-content { display: none; width: 100%; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+
+        /* COLOR MENU */
+        #color-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 8px;
+            z-index: 200;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .color-dot {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            margin: 5px;
+            cursor: pointer;
+            border: 2px solid #333;
+        }
+        .color-dot:hover { transform: scale(1.1); border-color: white; }
 
     </style>
 </head>
@@ -169,49 +168,57 @@
 
     <header>
         <div class="logo">NEXUS <span>PRIME</span></div>
-        <div class="version" id="headerStatus">v41 | Cloud Active</div>
+        <div class="controls">
+            <button class="btn-control" onclick="toggleColorMenu()">🎨</button>
+            <button class="btn-control" onclick="switchLayout()">Mode: <span id="layout-label">Classic</span></button>
+            <div id="status-badge">Init...</div>
+        </div>
     </header>
 
-    <!-- NEWS TICKER -->
-    <div style="width: 100%; max-width: 1000px; background: #111; border-bottom: 1px solid #333; margin-bottom: 20px;">
-        <div class="news-ticker">
-            <div class="news-content" id="news-feed">+++ NEXUS PRIME v41 +++ Auto-Sync aktiviert +++ Märkte beobachten +++ Fokus halten +++</div>
-        </div>
+    <!-- COLOR MENU -->
+    <div id="color-menu">
+        <div class="color-dot" style="background: #00d4ff;" onclick="setAccent('#00d4ff')"></div> <!-- Cyan -->
+        <div class="color-dot" style="background: #ff0055;" onclick="setAccent('#ff0055')"></div> <!-- Red -->
+        <div class="color-dot" style="background: #00ff88;" onclick="setAccent('#00ff88')"></div> <!-- Green -->
+        <div class="color-dot" style="background: #ffcc00;" onclick="setAccent('#ffcc00')"></div> <!-- Gold -->
+        <div class="color-dot" style="background: #bd00ff;" onclick="setAccent('#bd00ff')"></div> <!-- Purple -->
     </div>
 
-    <div class="dashboard">
+
+    <!-- ========================================= -->
+    <!-- LAYOUT 1: CLASSIC (Mit Tabs & Navi)       -->
+    <!-- ========================================= -->
+    <div id="layout-classic" class="layout-container active">
         
-        <!-- TIME & DATE -->
-        <div class="card">
-            <h2>Chronometer</h2>
-            <div class="time-display" id="clock">00:00</div>
-            <div class="date-display" id="date">Lade Datum...</div>
-        </div>
-
-        <!-- AI ASSISTANT -->
-        <div class="card" style="grid-column: span 1;">
-            <h2>Neural Core (AI)</h2>
-            <div id="ai-response">Hallo Noah. Systeme sind synchronisiert.</div>
+        <!-- TAB 1: HOME / DASHBOARD -->
+        <div id="tab-home" class="tab-content active">
+            <div class="card">
+                <h2>Zeit & Datum</h2>
+                <div class="time-display" id="clock-c">00:00</div>
+                <div class="date-display" id="date-c">Lade Datum...</div>
+            </div>
             
-            <div class="slider-container">
-                <label for="stressRange" style="color: #666; font-size: 0.8rem;">Stress Level Analysis</label>
-                <input type="range" min="1" max="10" value="5" id="stressRange" oninput="updateStressLabel(this.value); triggerAutoSave();">
-                <span class="stress-label" id="stressValue">Normal (5/10)</span>
-            </div>
-
-            <div class="input-group">
-                <input type="text" id="userInput" placeholder="Frage die KI..." onkeypress="handleEnter(event)">
-                <button onclick="askAI()">Send</button>
+            <div class="card" style="margin-top: 20px;">
+                <h2>Schnell-Notizen (Daily)</h2>
+                <textarea id="quick-notes" placeholder="Was steht heute an? (Wird automatisch gespeichert)" oninput="autoSave()"></textarea>
             </div>
         </div>
 
-        <!-- FINANCE WIDGETS -->
-        <div class="card" style="grid-row: span 2;">
-            <h2>Market Data</h2>
-            <div class="finance-container">
-                <!-- TradingView Widget BEGIN -->
+        <!-- TAB 2: JOURNAL / TAGEBUCH -->
+        <div id="tab-journal" class="tab-content">
+            <div class="card">
+                <h2>Persönliches Tagebuch</h2>
+                <textarea style="height: 400px;" id="journal-text" placeholder="Liebes Tagebuch..." oninput="autoSave()"></textarea>
+            </div>
+        </div>
+
+        <!-- TAB 3: FINANCE -->
+        <div id="tab-finance" class="tab-content">
+            <div class="card" style="height: 500px;">
+                <h2>Markt Daten</h2>
+                <!-- TradingView Widget -->
                 <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+                    <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
                     {
                     "colorTheme": "dark",
@@ -221,16 +228,15 @@
                     "largeChartUrl": "",
                     "isTransparent": true,
                     "showSymbolLogo": true,
-                    "showFloatingTooltip": false,
                     "width": "100%",
                     "height": "100%",
                     "tabs": [
                         {
                         "title": "Portfolio",
                         "symbols": [
-                            { "s": "TVC:SILVER", "d": "Silber" },
+                            { "s": "XETR:IUSQ", "d": "MSCI World" },
                             { "s": "TVC:GOLD", "d": "Gold" },
-                            { "s": "XETR:IUSQ", "d": "MSCI ACWI ETF" }, 
+                            { "s": "TVC:SILVER", "d": "Silber" },
                             { "s": "BITSTAMP:BTCUSD", "d": "Bitcoin" }
                         ]
                         }
@@ -238,147 +244,175 @@
                     }
                     </script>
                 </div>
-                <!-- TradingView Widget END -->
             </div>
-        </div>
-
-        <!-- TASKS / ROUTINES (Jetzt editierbar für Cloud!) -->
-        <div class="card">
-            <h2>Daily Protocol</h2>
-            <ul class="task-list">
-                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task1" value="07:00 Aufstehen & Hydration" oninput="triggerAutoSave()"></li>
-                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task2" value="08:00 School / Work Focus" oninput="triggerAutoSave()"></li>
-                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task3" value="16:00 Gym / Sport" oninput="triggerAutoSave()"></li>
-                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task4" value="22:00 Review & Plan Tomorrow" oninput="triggerAutoSave()"></li>
-                <li class="task-item"><input type="checkbox" class="task-checkbox"><input type="text" class="task-input" id="task5" placeholder="+ Neuer Task..." oninput="triggerAutoSave()"></li>
-            </ul>
         </div>
 
     </div>
 
-    <div id="sync-status">Waiting for input...</div>
+
+    <!-- ========================================= -->
+    <!-- LAYOUT 2: MODERN (Focus Mode)             -->
+    <!-- ========================================= -->
+    <div id="layout-modern" class="layout-container">
+        <div class="card" style="text-align: center; border:none; background: transparent;">
+            <div class="time-display" id="clock-m" style="font-size: 4rem; opacity: 0.5;">00:00</div>
+        </div>
+
+        <div class="card">
+            <h2>Deep Focus Mode</h2>
+            <textarea style="height: 500px; font-size: 1.1rem;" id="focus-text" placeholder="Schreibe hier ohne Ablenkung..." oninput="autoSave()"></textarea>
+        </div>
+    </div>
+
+
+    <!-- ========================================= -->
+    <!-- NAVIGATION BAR (Unten)                    -->
+    <!-- ========================================= -->
+    <div class="bottom-nav" id="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('home', this)">🏠</div> <!-- Home -->
+        <div class="nav-item" onclick="switchTab('journal', this)">📖</div> <!-- Journal -->
+        <div class="nav-item" onclick="switchTab('finance', this)">📈</div> <!-- Finance -->
+        <div class="nav-item" onclick="alert('Settings: Coming soon!')">⚙️</div> <!-- Settings -->
+    </div>
+
 
     <script>
         // ==========================================
-        // ⚠️ HIER DEINE DATEN EINTRAGEN ⚠️
+        // ⚠️ DEINE CLOUD DATEN HIER EINTRAGEN ⚠️
         // ==========================================
         const API_KEY = $2a$10$bfQHPAKf8rHB5nCB1nxla.8UbbBLCu6uCSZjrrePZ2JvQv9Jw3XEK; 
         const BIN_ID  = 6983be0443b1c97be965d28c;
         // ==========================================
 
-        // --- 1. CLOUD SYNC LOGIC ---
+        let currentMode = 'classic';
+        let saveTimer;
 
-        // Laden beim Start
+        // INIT
         window.onload = function() {
             updateTime();
             loadFromCloud();
+            
+            // Lade gespeicherte Farbe
+            const savedColor = localStorage.getItem('nexus_color');
+            if(savedColor) document.documentElement.style.setProperty('--accent', savedColor);
         };
 
+        // --- CLOUD FUNCTIONS ---
+
         async function loadFromCloud() {
-            const status = document.getElementById('sync-status');
-            status.innerText = "Loading Cloud Data...";
+            const badge = document.getElementById('status-badge');
+            badge.innerText = "Syncing...";
             
             try {
-                let response = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {
-                    headers: { "X-Master-Key": API_KEY }
-                });
-                
-                if (response.ok) {
-                    let json = await response.json();
-                    let data = json.record;
-                    
-                    // Daten einsetzen
-                    if(data.stress) {
-                        document.getElementById('stressRange').value = data.stress;
-                        updateStressLabel(data.stress);
-                    }
-                    if(data.t1) document.getElementById('task1').value = data.t1;
-                    if(data.t2) document.getElementById('task2').value = data.t2;
-                    if(data.t3) document.getElementById('task3').value = data.t3;
-                    if(data.t4) document.getElementById('task4').value = data.t4;
-                    if(data.t5) document.getElementById('task5').value = data.t5;
+                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, { headers: {"X-Master-Key": API_KEY} });
+                if(res.ok) {
+                    let json = await res.json();
+                    let d = json.record;
 
-                    status.innerText = "Synced.";
-                    document.getElementById('headerStatus').style.color = "#00d4ff";
+                    // Felder füllen
+                    if(d.quick) document.getElementById('quick-notes').value = d.quick;
+                    if(d.journal) document.getElementById('journal-text').value = d.journal;
+                    if(d.focus) document.getElementById('focus-text').value = d.focus;
+
+                    badge.innerText = "Online";
+                    badge.style.color = "var(--accent)";
+                } else {
+                    badge.innerText = "Sync Error";
                 }
-            } catch (e) {
-                console.log(e);
-                status.innerText = "Offline / Error loading";
+            } catch(e) {
+                badge.innerText = "Offline";
             }
         }
 
-        async function saveToCloud() {
-            const status = document.getElementById('sync-status');
-            status.innerText = "Saving...";
+        function autoSave() {
+            clearTimeout(saveTimer);
+            document.getElementById('status-badge').innerText = "Typing...";
+            saveTimer = setTimeout(saveToCloud, 2000);
+        }
 
-            let dataToSave = {
-                stress: document.getElementById('stressRange').value,
-                t1: document.getElementById('task1').value,
-                t2: document.getElementById('task2').value,
-                t3: document.getElementById('task3').value,
-                t4: document.getElementById('task4').value,
-                t5: document.getElementById('task5').value
+        async function saveToCloud() {
+            const badge = document.getElementById('status-badge');
+            badge.innerText = "Saving...";
+
+            let data = {
+                quick: document.getElementById('quick-notes').value,
+                journal: document.getElementById('journal-text').value,
+                focus: document.getElementById('focus-text').value
             };
 
             try {
                 await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-                    body: JSON.stringify(dataToSave)
+                    body: JSON.stringify(data)
                 });
-                status.innerText = "Saved: " + new Date().toLocaleTimeString();
-            } catch (e) {
-                status.innerText = "Save Error";
+                badge.innerText = "Saved";
+                setTimeout(() => badge.innerText = "Online", 2000);
+            } catch(e) {
+                badge.innerText = "Save Failed";
             }
         }
 
-        // Auto-Save Timer (damit nicht bei jedem Buchstaben gespeichert wird)
-        let timer;
-        function triggerAutoSave() {
-            clearTimeout(timer);
-            document.getElementById('sync-status').innerText = "Typing...";
-            timer = setTimeout(saveToCloud, 2000); // Speichert 2 Sek nach dem Tippen
-        }
-
-        // --- 2. STANDARD FEATURES (Aus Version 31) ---
+        // --- UI FUNCTIONS ---
 
         function updateTime() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('date').innerText = now.toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+            const timeStr = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+            const dateStr = now.toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'});
+            
+            document.getElementById('clock-c').innerText = timeStr;
+            document.getElementById('clock-m').innerText = timeStr;
+            document.getElementById('date-c').innerText = dateStr;
         }
         setInterval(updateTime, 1000);
 
-        function updateStressLabel(val) {
-            let text = "Normal";
-            if(val < 4) text = "Relaxed";
-            if(val > 7) text = "High Alert";
-            document.getElementById('stressValue').innerText = text + " (" + val + "/10)";
-        }
+        // Layout Switch (Classic <-> Modern)
+        function switchLayout() {
+            const classicDiv = document.getElementById('layout-classic');
+            const modernDiv = document.getElementById('layout-modern');
+            const navBar = document.getElementById('bottom-nav');
+            const label = document.getElementById('layout-label');
 
-        function handleEnter(e) {
-            if(e.key === 'Enter') askAI();
-        }
-
-        function askAI() {
-            const input = document.getElementById('userInput').value.toLowerCase();
-            const output = document.getElementById('ai-response');
-            const stress = document.getElementById('stressRange').value;
-            
-            let response = "Analysiere...";
-
-            if (input.includes("hallo")) response = "Willkommen zurück. Systeme laufen.";
-            else if (input.includes("optimiere")) {
-                if (stress > 7) response = "Warnung: Hohes Stresslevel. Fokus auf 1 Aufgabe, danach Pause.";
-                else response = "Stresslevel gut. Jetzt Deep Work Phase starten.";
+            if(currentMode === 'classic') {
+                // Zu Modern wechseln
+                classicDiv.classList.remove('active');
+                modernDiv.classList.add('active');
+                navBar.classList.add('hidden'); // Nav verstecken
+                currentMode = 'modern';
+                label.innerText = "Modern";
+            } else {
+                // Zu Classic wechseln
+                modernDiv.classList.remove('active');
+                classicDiv.classList.add('active');
+                navBar.classList.remove('hidden'); // Nav zeigen
+                currentMode = 'classic';
+                label.innerText = "Classic";
             }
-            else if (input.includes("müde")) response = "Regeneration erforderlich. Kurzer Spaziergang oder Wasser trinken.";
-            else if (input.includes("börse")) response = "Marktdaten siehe Chart rechts.";
-            else response = "Eingabe erfasst. Weiter im Plan.";
-
-            output.innerText = response;
-            document.getElementById('userInput').value = "";
         }
+
+        // Tab Switch (Innerhalb von Classic)
+        function switchTab(tabName, btnElement) {
+            // Alle Tabs ausblenden
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Gewählten Tab einblenden
+            document.getElementById('tab-' + tabName).classList.add('active');
+
+            // Buttons updaten
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            btnElement.classList.add('active');
+        }
+
+        // Colors
+        function toggleColorMenu() {
+            const m = document.getElementById('color-menu');
+            m.style.display = (m.style.display === 'block') ? 'none' : 'block';
+        }
+        function setAccent(color) {
+            document.documentElement.style.setProperty('--accent', color);
+            localStorage.setItem('nexus_color', color);
+            toggleColorMenu();
+        }
+
     </script>
 </body>
 </html>
