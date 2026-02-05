@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Noah PRO v21 - SAFETY</title>
+    <title>NEXUS PRIME v30</title>
     
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -13,73 +13,159 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        :root { --bg-body: #050510; --card-bg: #1a1a2e; --primary: #00f2ff; --nav-bg: #141420; }
+        :root {
+            --bg-body: #050510;
+            --card-bg: #1a1a2e;
+            --primary: #00f2ff; /* Standard, wird vom User überschrieben */
+            --nav-bg: #141420;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; background-color: var(--bg-body); font-family: 'Inter', sans-serif; color: white; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        body {
+            margin: 0;
+            background-color: var(--bg-body);
+            font-family: 'Inter', sans-serif;
+            color: white;
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            transition: background 0.3s;
+        }
 
         /* HEADER */
-        header { padding: 15px 20px; background: rgba(20, 20, 40, 0.95); border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; height: 70px; flex-shrink: 0; z-index: 100; }
-        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); }
-        .header-icons { display: flex; gap: 20px; align-items: center; }
-        .icon-btn { background: none; border: none; color: white; font-size: 1.2rem; position: relative; cursor: pointer; }
-        .bell-badge { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; background: red; border-radius: 50%; display: none; }
-        
-        /* CLOUD STATUS */
-        #cloudStatus { font-size: 0.5rem; position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; color: var(--primary); display:none; }
+        header {
+            padding: 15px 20px;
+            background: rgba(20, 20, 40, 0.95);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            height: 70px; flex-shrink: 0; z-index: 100;
+        }
+        .logo { font-weight: 900; font-size: 1.2rem; color: var(--primary); letter-spacing: 1px; text-transform: uppercase; text-shadow: 0 0 10px var(--primary); }
+        .header-right { text-align: right; }
+        .live-time { font-family: monospace; font-size: 1.1rem; font-weight: bold; color: var(--primary); }
+        .live-date { font-size: 0.7rem; opacity: 0.7; }
+        .cloud-btn { background: none; border: none; color: white; margin-right: 10px; font-size: 1.2rem; }
 
         /* SWIPER */
-        .swiper-container { flex: 1; display: flex; overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scroll-behavior: smooth; }
-        .page { min-width: 100%; height: 100%; scroll-snap-align: start; overflow-y: auto; padding: 20px; padding-bottom: 90px; }
-        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); }
+        .swiper-container {
+            flex: 1; display: flex; overflow-x: auto; overflow-y: hidden;
+            scroll-snap-type: x mandatory; scroll-behavior: smooth;
+        }
+        .page {
+            min-width: 100%; height: 100%; scroll-snap-align: start;
+            overflow-y: auto; padding: 20px; padding-bottom: 90px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px; padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+        }
         h2 { font-size: 0.9rem; text-transform: uppercase; color: #888; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
 
         /* TASKS */
         @keyframes slideIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
-        .task-item { padding: 15px; border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 12px; color: white; border: 1px solid rgba(255,255,255,0.1); transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1); animation: slideIn 0.4s ease-out; position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .task-finanzen { background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%); color: black; }
+        .task-item {
+            padding: 15px; border-radius: 16px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 12px;
+            color: white; border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            animation: slideIn 0.4s ease-out;
+            position: relative; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Categories */
+        .task-finanzen { background: linear-gradient(135deg, #FFD700 0%, #B8860B 100%); color: black; }
         .task-schule   { background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); }
         .task-sport    { background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); }
         .task-haus     { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color:black; }
         .task-freizeit { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); color:black; }
-        .task-item.done { background: rgba(255, 255, 255, 0.05) !important; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.5); transform: scale(0.98); box-shadow: none; }
-        .check-box { width: 26px; height: 26px; min-width: 26px; border: 2px solid rgba(255,255,255,0.4); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.3s; background: rgba(0,0,0,0.1); }
+
+        .task-item.done {
+            background: var(--glass) !important;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.5);
+            transform: scale(0.98); box-shadow: none;
+        }
+
+        .check-box {
+            width: 26px; height: 26px; min-width: 26px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.3s;
+            background: rgba(0,0,0,0.1);
+        }
         .check-box i { display: none; font-size: 0.9rem; color: white; }
-        .task-item.done .check-box { background: #00ff88; border-color: #00ff88; box-shadow: 0 0 10px #00ff88; }
+        
+        .task-item.done .check-box { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 10px var(--primary); }
         .task-item.done .check-box i { display: block; color: black; }
         .task-item.done .task-title { text-decoration: line-through; }
+
         .task-time { font-weight: 800; font-size: 1.1rem; width: 50px; }
         .task-content { flex: 1; }
         .task-cat { font-size: 0.65rem; text-transform: uppercase; font-weight: bold; opacity: 0.8; letter-spacing: 1px; }
         .task-title { font-size: 1.05rem; font-weight: 600; }
 
-        /* STRESS & CHAT */
-        .stress-container { margin-top: 15px; padding: 15px; background: rgba(0,0,0,0.2); border-radius: 12px; }
-        .stress-label { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 10px; font-weight: bold; }
-        input[type=range] { -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px; background: #333; outline: none; padding: 0; border: none; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--primary); cursor: pointer; border: 2px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .chat-box { height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
-        .msg { padding: 10px 14px; border-radius: 10px; max-width: 85%; font-size: 0.9rem; animation: pop 0.3s ease; line-height: 1.4; }
-        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.1); border-left: 3px solid var(--primary); }
-        .msg-user { align-self: flex-end; background: var(--primary); color: black; font-weight: bold; }
-        .chat-input-area { display: flex; gap: 8px; }
-        .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: none; background: rgba(255,255,255,0.1); color: white; }
+        /* CUSTOMIZE & STRESS */
+        .controls-container { display: flex; flex-direction: column; gap: 15px; }
+        .control-row { display: flex; align-items: center; justify-content: space-between; background: rgba(0,0,0,0.3); padding: 10px; border-radius: 10px; }
+        .color-picker { -webkit-appearance: none; border: none; width: 40px; height: 40px; border-radius: 50%; background: none; cursor: pointer; padding: 0; overflow: hidden; }
+        .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+        .color-picker::-webkit-color-swatch { border: none; border-radius: 50%; border: 2px solid white; }
 
-        /* NAV & MISC */
-        .nav-bar { position: fixed; bottom: 0; left: 0; width: 100%; height: 70px; background: var(--nav-bg); border-top: 1px solid #333; display: flex; justify-content: space-around; align-items: center; z-index: 200; }
-        .nav-btn { background: none; border: none; color: #666; font-size: 1.4rem; display: flex; flex-direction: column; align-items: center; }
-        .nav-btn.active { color: var(--primary); transform: translateY(-3px); }
-        .nav-label { font-size: 0.6rem; margin-top: 4px; }
-        .diary-area { width: 100%; height: 300px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 15px; font-family: 'Inter', sans-serif; font-size: 1rem; resize: none; line-height: 1.5; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; color: white; border-radius: 8px; }
-        .add-btn { width: 100%; background: var(--primary); padding: 15px; border: none; border-radius: 8px; font-weight: bold; color: black; text-transform: uppercase; }
-        .tradingview-widget-container { height: 350px !important; width: 100% !important; border-radius: 12px; overflow: hidden; }
-        #notify { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); background: var(--primary); color: black; padding: 10px 20px; border-radius: 20px; font-weight: bold; display: none; z-index: 999; }
+        input[type=range] { flex: 1; margin-left: 10px; -webkit-appearance: none; height: 6px; background: #444; border-radius: 5px; outline: none; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; background: var(--primary); border-radius: 50%; border: 2px solid white; box-shadow: 0 0 10px var(--primary); }
+
+        /* CHAT */
+        .chat-box { height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 10px; padding-right: 5px; }
+        .msg { padding: 10px 14px; border-radius: 12px; max-width: 85%; font-size: 0.9rem; line-height: 1.4; animation: pop 0.3s ease; }
+        @keyframes pop { from{transform:scale(0.8); opacity:0;} to{transform:scale(1); opacity:1;} }
+        .msg-ai { align-self: flex-start; background: rgba(255,255,255,0.08); border-left: 3px solid var(--primary); }
+        .msg-user { align-self: flex-end; background: var(--primary); color: black; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
         
-        /* CLOUD MODAL & CONTROLS */
-        #cloudModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; align-items: center; justify-content: center; }
-        .modal-card { background: var(--card-bg); padding: 25px; border-radius: 15px; width: 90%; max-width: 400px; border: 1px solid var(--primary); }
-        .spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .chat-input-area { display: flex; gap: 8px; }
+        .chat-input { flex: 1; padding: 12px; border-radius: 20px; border: none; background: rgba(255,255,255,0.1); color: white; font-family: inherit; }
+        .chat-input:focus { outline: 1px solid var(--primary); background: rgba(0,0,0,0.5); }
+
+        /* NAV BAR */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 70px;
+            background: var(--nav-bg); border-top: 1px solid #333;
+            display: flex; justify-content: space-around; align-items: center; z-index: 200;
+        }
+        .nav-btn { background: none; border: none; color: #666; font-size: 1.4rem; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
+        .nav-btn.active { color: var(--primary); transform: translateY(-3px); text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .nav-label { font-size: 0.6rem; margin-top: 4px; font-weight: 600; }
+
+        /* INPUTS & DIARY */
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: rgba(255,255,255,0.1); border: 1px solid #444; color: white; border-radius: 8px; font-family: inherit; }
+        .add-btn { width: 100%; background: var(--primary); padding: 15px; border: none; border-radius: 8px; font-weight: bold; color: black; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .add-btn:active { transform: scale(0.98); }
+        
+        .diary-area { width: 100%; height: 300px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: white; padding: 15px; font-family: 'Inter', sans-serif; font-size: 1rem; resize: none; line-height: 1.6; }
+        .diary-area:focus { outline: 1px solid var(--primary); }
+
+        /* CLOUD MODAL */
+        #cloudModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-card { background: var(--card-bg); padding: 25px; border-radius: 20px; width: 90%; max-width: 400px; border: 1px solid var(--primary); box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+
+        #notify { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: black; padding: 10px 25px; border-radius: 30px; font-weight: bold; display: none; z-index: 9999; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        
+        /* NEWS */
+        .news-item { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .news-title { font-weight: 600; font-size: 0.9rem; margin-bottom: 5px; color: #ddd; }
+        .news-meta { font-size: 0.7rem; color: var(--primary); opacity: 0.8; }
+        
+        /* ROUTINE CHECKBOX */
+        .routine-wrapper { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; }
+        .routine-check { width: 20px; height: 20px; margin: 0; }
     </style>
 </head>
 <body>
@@ -89,75 +175,69 @@
     <!-- CLOUD MODAL -->
     <div id="cloudModal">
         <div class="modal-card">
-            <h2 style="color:var(--primary); text-align:center;">Cloud Setup</h2>
-            <p style="font-size:0.8rem; text-align:center; opacity:0.8; margin-bottom:20px;">
-                Gib deine JSONBin.io Daten ein.
-            </p>
-            <input type="text" id="binId" placeholder="Bin ID (z.B. 65b7...)">
-            <input type="password" id="apiKey" placeholder="Master Key ($2a$10...)">
+            <h2 style="color:var(--primary); text-align:center; margin-bottom:20px;">NEXUS CLOUD</h2>
+            <input type="text" id="binId" placeholder="Bin ID (JSONBin.io)">
+            <input type="password" id="apiKey" placeholder="Master Key">
             <button class="add-btn" onclick="saveCloudSettings()">Verbinden</button>
-            <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%; padding:10px; margin-top:10px; background:none; border:none; color:white;">Abbrechen</button>
+            <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%; padding:10px; margin-top:10px; background:none; border:none; color:white; opacity:0.6;">Abbrechen</button>
         </div>
     </div>
 
     <header>
-        <div class="logo">NOAH<span style="color:white">PRO</span> v21</div>
-        <div class="header-icons">
-            <button class="icon-btn" onclick="toggleCloudMenu()">
-                <i class="fas fa-cloud" id="cloudIcon"></i>
-                <div id="cloudStatus">SYNC</div>
-            </button>
-            <button class="icon-btn" onclick="requestPush()">
-                <i class="fas fa-bell"></i>
-                <div class="bell-badge" id="badge"></div>
-            </button>
+        <div class="logo">NEXUS<span style="font-weight:300; opacity:0.8;">PRIME</span></div>
+        <div style="display:flex; align-items:center;">
+             <button class="cloud-btn" onclick="toggleCloudMenu()"><i class="fas fa-cloud" id="cloudIcon"></i></button>
+             <div class="header-right">
+                <div id="clock" class="live-time">00:00</div>
+                <div id="headerDate" class="live-date">...</div>
+            </div>
         </div>
     </header>
 
     <div class="swiper-container" id="swiper">
         
-        <!-- PAGE 1: COACH -->
+        <!-- PAGE 1: COACH & SETTINGS -->
         <div class="page">
-            <div id="cloudControls" class="card" style="display:none; background: #112; border:1px solid var(--primary);">
-                <h2 style="color:var(--primary);">☁️ Sync Steuerung</h2>
-                <div style="display:flex; gap:10px;">
-                    <button id="btnUp" class="add-btn" style="background:#444; color:white;" onclick="uploadData()">
-                        <i class="fas fa-upload"></i> Upload
-                    </button>
-                    <button id="btnDown" class="add-btn" onclick="downloadData()">
-                        <i class="fas fa-download"></i> Download
-                    </button>
+            <!-- CLOUD PANEL -->
+            <div id="cloudControls" class="card" style="display:none; border:1px solid var(--primary);">
+                <h2 style="color:var(--primary);">☁️ Sync Center</h2>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <button id="btnUp" class="add-btn" style="background:#222; border:1px solid #444; color:white;" onclick="uploadData()"><i class="fas fa-upload"></i> Upload</button>
+                    <button id="btnDown" class="add-btn" onclick="downloadData()"><i class="fas fa-download"></i> Download</button>
                 </div>
-                <!-- NEUER RESET BUTTON -->
-                <button onclick="resetCloud()" style="width:100%; margin-top:10px; padding:8px; border:1px solid red; background:transparent; color:red; border-radius:5px;">
-                    <i class="fas fa-plug"></i> Trennen / Neu verbinden
-                </button>
-                <div id="syncMsg" style="text-align:center; font-size:0.7rem; margin-top:10px; opacity:0.6; min-height:15px;">Bereit</div>
+                <button onclick="resetCloud()" style="width:100%; margin-top:10px; padding:8px; border:none; background:transparent; color:red; font-size:0.8rem; opacity:0.6;">Verbindung trennen</button>
+                <div id="syncMsg" style="text-align:center; font-size:0.7rem; margin-top:5px;">Bereit</div>
             </div>
 
-            <div class="card" style="background: linear-gradient(135deg, #1e3c72, #2a5298); min-height:550px;">
-                <h2 style="color:white;"><i class="fas fa-robot"></i> Smart Coach & Stress-Level</h2>
+            <div class="card" style="min-height:500px; display:flex; flex-direction:column;">
+                <h2><i class="fas fa-microchip"></i> Prime Intelligence</h2>
                 
-                <div class="stress-container">
-                    <div class="stress-label"><span>Stress-Level</span><span id="stressValue">50%</span></div>
-                    <input type="range" min="0" max="100" value="50" id="stressInput" oninput="updateStressDisplay(this.value)" onchange="saveStress(this.value)">
+                <!-- CUSTOMIZATION PANEL -->
+                <div class="controls-container">
+                    <div class="control-row">
+                        <span>Stress-Level</span>
+                        <input type="range" min="0" max="100" value="50" id="stressInput" oninput="updateStressDisplay(this.value)" onchange="saveStress(this.value)">
+                        <span id="stressValue" style="width:40px; text-align:right; font-weight:bold; color:var(--primary);">50%</span>
+                    </div>
+                    <div class="control-row">
+                        <span>System Farbe</span>
+                        <input type="color" class="color-picker" id="colorInput" onchange="updateColor(this.value)" value="#00f2ff">
+                    </div>
                 </div>
 
-                <div id="chatHistory" class="chat-box" style="margin-top:15px;">
-                    <div class="msg msg-ai">Moin! Alles neu, alles sauber. Verbinde dich jetzt mit der Cloud! ☁️</div>
+                <div id="chatHistory" class="chat-box" style="flex:1; margin-top:20px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                    <div class="msg msg-ai">Willkommen bei NEXUS PRIME. Ich bin bereit. Dein Stresslevel und Design sind konfiguriert. Was ist der Plan?</div>
                 </div>
+                
                 <div class="chat-input-area">
-                    <input type="text" id="chatIn" class="chat-input" placeholder="Nachricht..." onkeypress="if(event.key==='Enter') sendMsg()">
-                    <button onclick="sendMsg()" style="width:40px; height:40px; border-radius:50%; border:none; background:var(--primary);"><i class="fas fa-paper-plane"></i></button>
+                    <input type="text" id="chatIn" class="chat-input" placeholder="Befehl oder Frage..." onkeypress="if(event.key==='Enter') sendMsg()">
+                    <button onclick="sendMsg()" style="width:45px; height:45px; border-radius:50%; border:none; background:var(--primary); color:black; font-size:1.1rem;"><i class="fas fa-arrow-up"></i></button>
                 </div>
             </div>
-            
+
             <div class="card">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <h2><i class="fas fa-globe"></i> Welt News</h2>
-                    <span style="font-size:0.6rem; border:1px solid #555; padding:2px 5px; border-radius:4px;" id="news-status">LIVE</span>
-                </div>
-                <div id="news-feed-container">Lade Nachrichten...</div>
+                <h2><i class="fas fa-globe"></i> Global News</h2>
+                <div id="news-feed-container">Lade Daten...</div>
             </div>
         </div>
 
@@ -165,21 +245,21 @@
         <div class="page">
             <div class="card">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <button onclick="addDay(-1)" style="background:none; border:none; color:white; font-size:1.5rem;"><i class="fas fa-chevron-left"></i></button>
+                    <button onclick="addDay(-1)" style="font-size:1.5rem; color:var(--primary); background:none; border:none;"><i class="fas fa-chevron-left"></i></button>
                     <div style="text-align:center;">
-                        <div id="dayDisplay" style="font-weight:bold; font-size:1.1rem;">Heute</div>
+                        <div id="dayDisplay" style="font-weight:800; font-size:1.2rem; letter-spacing:1px;">HEUTE</div>
                         <div id="dateDisplay" style="font-size:0.8rem; opacity:0.6;">...</div>
                     </div>
-                    <button onclick="addDay(1)" style="background:none; border:none; color:white; font-size:1.5rem;"><i class="fas fa-chevron-right"></i></button>
+                    <button onclick="addDay(1)" style="font-size:1.5rem; color:var(--primary); background:none; border:none;"><i class="fas fa-chevron-right"></i></button>
                 </div>
-                <input type="date" id="datePicker" onchange="setDate(this.value)" style="background:var(--primary); color:black; text-align:center; font-weight:bold; margin-top:10px; border:none;">
+                <input type="date" id="datePicker" onchange="setDate(this.value)" style="margin-top:15px; text-align:center; font-weight:bold;">
             </div>
 
             <div id="taskList"></div>
 
             <div class="card">
-                <h2>Neuer Eintrag</h2>
-                <input type="text" id="tTitle" placeholder="Titel...">
+                <h2><i class="fas fa-plus-circle"></i> Neuer Task</h2>
+                <input type="text" id="tTitle" placeholder="Was steht an?">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                     <input type="time" id="tTime">
                     <select id="tCat">
@@ -190,17 +270,23 @@
                         <option value="freizeit">Freizeit</option>
                     </select>
                 </div>
-                <button class="add-btn" onclick="add()">Speichern & Optimieren</button>
+                <!-- ROUTINE FEATURE -->
+                <div class="routine-wrapper">
+                    <input type="checkbox" id="tRoutine" class="routine-check">
+                    <label for="tRoutine" style="font-size:0.9rem;">Als Routine (nächste 7 Tage)</label>
+                </div>
+
+                <button class="add-btn" onclick="add()">Eintragen</button>
             </div>
         </div>
 
-        <!-- PAGE 3: TAGEBUCH -->
+        <!-- PAGE 3: JOURNAL -->
         <div class="page">
             <div class="card">
-                <h2><i class="fas fa-book"></i> Mein Tagebuch</h2>
-                <p style="font-size:0.8rem; opacity:0.7; margin-bottom:10px;">Eintrag für: <span id="journalDateDisplay">...</span></p>
-                <textarea id="diaryInput" class="diary-area" placeholder="Hier ist Platz für deine Gedanken..."></textarea>
-                <button class="add-btn" style="margin-top:10px; background:#a18cd1;" onclick="saveDiary()">Speichern</button>
+                <h2><i class="fas fa-book-open"></i> Journal</h2>
+                <p style="font-size:0.8rem; opacity:0.6; margin-bottom:15px;">Gedanken zum <span id="journalDateDisplay">...</span></p>
+                <textarea id="diaryInput" class="diary-area" placeholder="Erfolge, Ideen, Learnings..."></textarea>
+                <button class="add-btn" style="margin-top:15px; background:rgba(255,255,255,0.1); border:1px solid var(--primary); color:var(--primary);" onclick="saveDiary()">Eintrag sichern</button>
             </div>
         </div>
 
@@ -215,7 +301,7 @@
                 </div>
             </div>
             <div class="card">
-                <h2><i class="fas fa-chart-line"></i> Märkte</h2>
+                <h2><i class="fas fa-chart-line"></i> Global Markets</h2>
                 <div class="tradingview-widget-container">
                     <div class="tradingview-widget-container__widget"></div>
                     <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
@@ -227,23 +313,32 @@
     </div>
 
     <nav class="nav-bar">
-        <button class="nav-btn active" onclick="goto(0)"><i class="fas fa-brain"></i><span class="nav-label">Coach</span></button>
-        <button class="nav-btn" onclick="goto(1)"><i class="fas fa-list-check"></i><span class="nav-label">Planer</span></button>
-        <button class="nav-btn" onclick="goto(2)"><i class="fas fa-book"></i><span class="nav-label">Tagebuch</span></button>
+        <button class="nav-btn active" onclick="goto(0)"><i class="fas fa-brain"></i><span class="nav-label">Prime</span></button>
+        <button class="nav-btn" onclick="goto(1)"><i class="fas fa-calendar-check"></i><span class="nav-label">Planer</span></button>
+        <button class="nav-btn" onclick="goto(2)"><i class="fas fa-book"></i><span class="nav-label">Journal</span></button>
         <button class="nav-btn" onclick="goto(3)"><i class="fas fa-chart-pie"></i><span class="nav-label">Märkte</span></button>
     </nav>
 
     <script>
-        // --- CONFIG (v21 - FRESH START) ---
+        // --- NEXUS PRIME CORE (v30) ---
         let viewDate = new Date();
-        let tasks = JSON.parse(localStorage.getItem('noahProV21_Tasks')) || {};
-        let diary = JSON.parse(localStorage.getItem('noahProV21_Diary')) || {};
-        let stressData = JSON.parse(localStorage.getItem('noahProV21_Stress')) || {};
-        let cloudConfig = JSON.parse(localStorage.getItem('noahProV21_Cloud')) || { binId: '', apiKey: '' };
+        
+        // Data Stores
+        let tasks = JSON.parse(localStorage.getItem('nexusPrimeV30_Tasks')) || {};
+        let diary = JSON.parse(localStorage.getItem('nexusPrimeV30_Diary')) || {};
+        let settings = JSON.parse(localStorage.getItem('nexusPrimeV30_Settings')) || { stress: 50, color: '#00f2ff' };
+        let cloudConfig = JSON.parse(localStorage.getItem('nexusPrimeV30_Cloud')) || { binId: '', apiKey: '' };
 
+        // Helper
         function getKey(d) { return d.toISOString().split('T')[0]; }
+        
+        // INIT SETTINGS
+        document.documentElement.style.setProperty('--primary', settings.color);
+        document.getElementById('colorInput').value = settings.color;
+        document.getElementById('stressInput').value = settings.stress;
+        document.getElementById('stressValue').innerText = settings.stress + "%";
 
-        // --- CLOUD LOGIC ---
+        // --- CLOUD SYNC ENGINE ---
         function toggleCloudMenu() {
             if(!cloudConfig.binId || !cloudConfig.apiKey) {
                 document.getElementById('cloudModal').style.display = 'flex';
@@ -252,111 +347,68 @@
                 el.style.display = el.style.display === 'none' ? 'block' : 'none';
             }
         }
-
         function saveCloudSettings() {
             const bin = document.getElementById('binId').value.trim();
             const key = document.getElementById('apiKey').value.trim();
-            if(!bin || !key) return alert("Fehlt was!");
+            if(!bin || !key) return alert("Daten fehlen!");
             cloudConfig = { binId: bin, apiKey: key };
-            localStorage.setItem('noahProV21_Cloud', JSON.stringify(cloudConfig));
+            localStorage.setItem('nexusPrimeV30_Cloud', JSON.stringify(cloudConfig));
             document.getElementById('cloudModal').style.display = 'none';
-            showNotify("Cloud verbunden!");
-            document.getElementById('cloudStatus').style.display = 'block';
-            document.getElementById('cloudControls').style.display = 'block'; // Direkt Menü zeigen
+            showNotify("Cloud System verbunden");
         }
-
-        // --- NEUER RESET FUNCTION ---
         function resetCloud() {
-            if(confirm("Cloud-Verbindung wirklich löschen?")) {
-                localStorage.removeItem('noahProV21_Cloud');
-                location.reload(); // Seite neu laden
+            if(confirm("Verbindung wirklich löschen?")) {
+                localStorage.removeItem('nexusPrimeV30_Cloud');
+                location.reload();
             }
         }
-
-        function setSyncState(loading, msg) {
-            const txt = document.getElementById('syncMsg');
-            const icon = document.getElementById('cloudIcon');
-            txt.innerText = msg;
-            if(loading) icon.classList.add('spin'); else icon.classList.remove('spin');
-        }
-
         async function uploadData() {
-            setSyncState(true, "Lade hoch...");
-            const btn = document.getElementById('btnUp');
-            btn.disabled = true; 
-
-            const payload = { tasks, diary, stressData, updated: new Date().toISOString() };
-            
+            const txt = document.getElementById('syncMsg'); txt.innerText = "Sende Daten...";
+            const payload = { tasks, diary, settings, updated: new Date().toISOString() };
             try {
                 const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': cloudConfig.apiKey },
-                    body: JSON.stringify(payload)
+                    method: 'PUT', headers: { 'Content-Type': 'application/json', 'X-Master-Key': cloudConfig.apiKey }, body: JSON.stringify(payload)
                 });
-                
-                if(res.ok) {
-                    setSyncState(false, "✅ Upload fertig!");
-                    setTimeout(() => setSyncState(false, "Bereit"), 3000);
-                } else {
-                    throw new Error("Fehler");
-                }
-            } catch(e) { 
-                setSyncState(false, "❌ Fehler beim Upload");
-                alert("Upload fehlgeschlagen. Prüfe Bin ID / Key.");
-            }
-            btn.disabled = false;
+                if(res.ok) { txt.innerText = "✅ Upload erfolgreich"; setTimeout(()=>txt.innerText="Bereit", 2000); }
+                else throw new Error();
+            } catch(e) { txt.innerText = "❌ Fehler"; alert("Upload fehlgeschlagen."); }
         }
-
         async function downloadData() {
-            setSyncState(true, "Lade herunter...");
-            const btn = document.getElementById('btnDown');
-            btn.disabled = true;
-
+            const txt = document.getElementById('syncMsg'); txt.innerText = "Empfange Daten...";
             try {
-                const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}/latest`, {
-                    headers: { 'X-Master-Key': cloudConfig.apiKey, 'X-Bin-Meta': 'false' }
-                });
-                
-                if(!res.ok) throw new Error("Netzwerkfehler");
-                
+                const res = await fetch(`https://api.jsonbin.io/v3/b/${cloudConfig.binId}/latest`, { headers: { 'X-Master-Key': cloudConfig.apiKey, 'X-Bin-Meta': 'false' } });
                 const data = await res.json();
                 if(data) {
-                    tasks = data.tasks || {};
-                    diary = data.diary || {};
-                    stressData = data.stressData || {};
-                    localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks));
-                    localStorage.setItem('noahProV21_Diary', JSON.stringify(diary));
-                    localStorage.setItem('noahProV21_Stress', JSON.stringify(stressData));
-                    render(); 
-                    setSyncState(false, "✅ Daten empfangen!");
+                    tasks = data.tasks || {}; diary = data.diary || {}; settings = data.settings || settings;
+                    localStorage.setItem('nexusPrimeV30_Tasks', JSON.stringify(tasks));
+                    localStorage.setItem('nexusPrimeV30_Diary', JSON.stringify(diary));
+                    localStorage.setItem('nexusPrimeV30_Settings', JSON.stringify(settings));
+                    // Apply loaded settings
+                    document.documentElement.style.setProperty('--primary', settings.color);
+                    document.getElementById('colorInput').value = settings.color;
+                    render(); txt.innerText = "✅ Synchronisiert"; setTimeout(()=>txt.innerText="Bereit", 2000);
                 }
-            } catch(e) {
-                console.log(e);
-                setSyncState(false, "❌ Download Fehler (ID falsch?)");
-            }
-            btn.disabled = false;
+            } catch(e) { txt.innerText = "❌ Fehler"; }
         }
 
-        // --- RENDER ---
+        // --- RENDER & LOGIC ---
         function render() {
             const key = getKey(viewDate);
             const list = document.getElementById('taskList');
             
-            document.getElementById('dayDisplay').innerText = (key === getKey(new Date())) ? "HEUTE" : viewDate.toLocaleDateString('de-DE', {weekday:'long'});
+            // Header Info
+            const todayKey = getKey(new Date());
+            document.getElementById('dayDisplay').innerText = (key === todayKey) ? "HEUTE" : viewDate.toLocaleDateString('de-DE', {weekday:'long'}).toUpperCase();
             document.getElementById('dateDisplay').innerText = viewDate.toLocaleDateString('de-DE');
             document.getElementById('datePicker').value = key;
             document.getElementById('journalDateDisplay').innerText = viewDate.toLocaleDateString('de-DE');
             document.getElementById('diaryInput').value = diary[key] || "";
 
-            const savedStress = stressData[key] || 50;
-            document.getElementById('stressInput').value = savedStress;
-            updateStressDisplay(savedStress);
-
             list.innerHTML = '';
             const dayTasks = tasks[key] || [];
             dayTasks.sort((a,b) => a.time.localeCompare(b.time));
 
-            if(dayTasks.length === 0) list.innerHTML = '<div style="text-align:center; padding:30px; opacity:0.5;">Keine Einträge.</div>';
+            if(dayTasks.length === 0) list.innerHTML = '<div style="text-align:center; padding:40px; opacity:0.3; font-style:italic;">Keine Missionen für diesen Tag.</div>';
             else dayTasks.forEach((t, i) => {
                 list.innerHTML += `
                 <div class="task-item task-${t.cat} ${t.done ? 'done' : ''}">
@@ -371,40 +423,75 @@
             });
         }
 
+        // --- CUSTOMIZATION ---
+        function updateColor(val) {
+            document.documentElement.style.setProperty('--primary', val);
+            settings.color = val;
+            localStorage.setItem('nexusPrimeV30_Settings', JSON.stringify(settings));
+        }
         function updateStressDisplay(val) {
-            const el = document.getElementById('stressValue');
-            const slider = document.getElementById('stressInput');
-            el.innerText = val + "%";
-            let color = "#00ff88"; if(val > 40) color = "#f1c40f"; if(val > 75) color = "#e74c3c"; 
-            el.style.color = color;
-            slider.style.setProperty('--primary', color);
+            document.getElementById('stressValue').innerText = val + "%";
+            settings.stress = val;
+            localStorage.setItem('nexusPrimeV30_Settings', JSON.stringify(settings));
         }
+        function saveStress(val) { showNotify("Stresslevel gesichert"); }
 
-        function saveStress(val) {
-            stressData[getKey(viewDate)] = val;
-            localStorage.setItem('noahProV21_Stress', JSON.stringify(stressData));
-            showNotify("Stresslevel aktualisiert");
-        }
-
-        function saveDiary() {
-            diary[getKey(viewDate)] = document.getElementById('diaryInput').value;
-            localStorage.setItem('noahProV21_Diary', JSON.stringify(diary));
-            showNotify("Tagebuch gespeichert");
-        }
-
+        // --- ADD & ROUTINES ---
         function add() {
             const title = document.getElementById('tTitle').value;
             const time = document.getElementById('tTime').value;
             const cat = document.getElementById('tCat').value;
-            if(!title || !time) return alert("Fehlt was!");
-            const key = getKey(viewDate);
-            if(!tasks[key]) tasks[key] = [];
-            tasks[key].push({title, time, cat, done:false});
-            localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks));
+            const isRoutine = document.getElementById('tRoutine').checked;
+
+            if(!title || !time) return alert("Daten fehlen!");
+
+            if(isRoutine) {
+                // Routine: Add for next 7 days
+                let tempDate = new Date(viewDate);
+                for(let i=0; i<7; i++) {
+                    const k = getKey(tempDate);
+                    if(!tasks[k]) tasks[k] = [];
+                    tasks[k].push({title, time, cat, done:false});
+                    tempDate.setDate(tempDate.getDate() + 1);
+                }
+                showNotify("Routine für 7 Tage angelegt!");
+            } else {
+                // Single Task
+                const key = getKey(viewDate);
+                if(!tasks[key]) tasks[key] = [];
+                tasks[key].push({title, time, cat, done:false});
+                showNotify("Eintrag gespeichert");
+            }
+
+            localStorage.setItem('nexusPrimeV30_Tasks', JSON.stringify(tasks));
             render();
             document.getElementById('tTitle').value = '';
-            showNotify("Gespeichert");
+            document.getElementById('tRoutine').checked = false;
+            
+            // Trigger AI
+            setTimeout(() => analyzeDay(getKey(viewDate)), 800);
         }
+
+        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('nexusPrimeV30_Tasks', JSON.stringify(tasks)); render(); }
+        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('nexusPrimeV30_Tasks', JSON.stringify(tasks)); render(); } }
+        function saveDiary() { diary[getKey(viewDate)] = document.getElementById('diaryInput').value; localStorage.setItem('nexusPrimeV30_Diary', JSON.stringify(diary)); showNotify("Journal aktualisiert"); }
+        
+        // --- BIG BRAIN AI ---
+        const aiBrain = {
+            "schlaf": "Schlaf ist Fundament. Unter 7h sinkt dein IQ temporär. Priorisiere das!",
+            "zins": "Zinseszins ist das 8. Weltwunder. Fang früh an zu investieren.",
+            "etf": "Breit gestreut, nie bereut. MSCI ACWI ist ein guter Standard.",
+            "mathe": "Mathe ist Logiktraining. Zerlege das Problem in kleine Schritte.",
+            "vokabeln": "Nutz Anki oder Karteikarten. Spaced Repetition ist der Schlüssel.",
+            "protein": "Muskeln brauchen Bausteine. 1.5g bis 2g Protein pro kg Körpergewicht.",
+            "wasser": "Dein Gehirn besteht zu 75% aus Wasser. Trink jetzt ein Glas.",
+            "stress": "Cortisol blockiert das Denken. Mach 3 tiefe Atemzüge. Jetzt.",
+            "pause": "Pomodoro-Technik: 25min Fokus, 5min Pause. Kein Handy in der Pause!",
+            "hallo": "System Online. Bereit zur Optimierung.",
+            "reich": "Reichtum ist das Ergebnis von Problemlösung x Skalierung.",
+            "sport": "Keine Ausreden. Dein Körper ist dein einziges echtes Zuhause.",
+            "motivation": "Motivation ist für Amateure. Disziplin ist für Profis."
+        };
 
         function sendMsg() {
             const inp = document.getElementById('chatIn');
@@ -412,34 +499,63 @@
             if(!txt) return;
             addBubble(inp.value, 'user');
             inp.value = '';
+
             setTimeout(() => {
-                let reply = "Frag mich nach deinem Plan oder Stresslevel.";
-                if(txt.includes("hallo")) reply = "Moin! Cloud ist bereit. Synchronisiere deine Geräte!";
-                else reply = "Notiert. Bleib dran.";
+                let reply = "Interessant. Trag es in den Plan ein oder frag spezifischer.";
+                for(let k in aiBrain) { if(txt.includes(k)) { reply = aiBrain[k]; break; } }
+                
+                // Smart Context Check
+                if(txt.includes("plan") || txt.includes("heute")) {
+                    const c = (tasks[getKey(viewDate)]||[]).length;
+                    reply = `Du hast heute ${c} Missionen. Fokus!`;
+                }
+
                 addBubble(reply, 'ai');
             }, 600);
         }
 
-        function addBubble(t, type) {
-            const d = document.createElement('div');
-            d.className = 'msg msg-'+type;
-            d.innerText = t;
-            const c = document.getElementById('chatHistory');
-            c.appendChild(d);
-            c.scrollTop = c.scrollHeight;
+        function analyzeDay(key) {
+            const list = tasks[key] || [];
+            if(list.length === 0) return;
+            list.sort((a,b) => a.time.localeCompare(b.time));
+
+            const stress = parseInt(settings.stress);
+            const work = list.filter(t => t.cat === 'schule' || t.cat === 'finanzen').length;
+            const chill = list.filter(t => t.cat === 'freizeit' || t.cat === 'sport').length;
+            
+            let advice = "";
+
+            if(stress > 80 && work > 3) advice = "🛑 WARNUNG: Hohes Stresslevel erkannt! Reduziere die Arbeitslast sofort. Gesundheit > alles.";
+            else if(stress < 30 && work < 3) advice = "⚡ Energielevel hoch. Du könntest noch eine Lerneinheit einschieben. Beast Mode an?";
+            else if(work > 4 && chill === 0) advice = "⚠️ Ungleichgewicht: Viel Arbeit, keine Erholung. Trag eine Pause ein!";
+            else {
+                 // Check Lücken
+                 for(let i=0; i<list.length-1; i++) {
+                     const h1 = parseInt(list[i].time.split(':')[0]);
+                     const h2 = parseInt(list[i+1].time.split(':')[0]);
+                     if(h2 - h1 > 3) advice = `🕒 Lücke zwischen ${list[i].time} und ${list[i+1].time}. Nutz die Zeit sinnvoll!`;
+                 }
+            }
+
+            if(advice) { addBubble(advice, 'ai'); showNotify("KI Optimizer"); }
         }
 
-        function toggle(i) { tasks[getKey(viewDate)][i].done = !tasks[getKey(viewDate)][i].done; localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks)); render(); }
-        function del(i) { if(confirm("Löschen?")) { tasks[getKey(viewDate)].splice(i, 1); localStorage.setItem('noahProV21_Tasks', JSON.stringify(tasks)); render(); } }
-        function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
-        function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
+        function addBubble(t, type) {
+            const d = document.createElement('div'); d.className = 'msg msg-'+type; d.innerText = t;
+            const c = document.getElementById('chatHistory'); c.appendChild(d); c.scrollTop = c.scrollHeight;
+        }
 
-        // --- CORE & RSS ---
+        // --- NAVIGATION & UTILS ---
         const swiper = document.getElementById('swiper');
         const navBtns = document.querySelectorAll('.nav-btn');
         function goto(idx) { swiper.scrollTo({left: idx * swiper.offsetWidth, behavior:'smooth'}); updateNav(idx); }
         swiper.addEventListener('scroll', () => { if(swiper.offsetWidth>0) updateNav(Math.round(swiper.scrollLeft / swiper.offsetWidth)); });
         function updateNav(idx) { navBtns.forEach(b => b.classList.remove('active')); if(navBtns[idx]) navBtns[idx].classList.add('active'); }
+        function addDay(n) { viewDate.setDate(viewDate.getDate()+n); render(); }
+        function setDate(v) { if(v) { viewDate = new Date(v); render(); } }
+        function showNotify(m) { const n=document.getElementById('notify'); n.innerText=m; n.style.display='block'; setTimeout(()=>n.style.display='none', 2000); }
+
+        // --- CLOCK & NEWS ---
         setInterval(() => {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE');
@@ -452,17 +568,10 @@
                 const data = await res.json();
                 if(data.status === 'ok') {
                     document.getElementById('news-feed-container').innerHTML = data.items.slice(0,5).map(i => `<div class="news-item"><div class="news-title" onclick="window.open('${i.link}')">${i.title}</div><div class="news-meta">Tagesschau • ${new Date(i.pubDate).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</div></div>`).join('');
-                    document.getElementById('news-status').style.color="#00ff88"; document.getElementById('news-status').innerText="LIVE";
                 }
-            } catch(e) { document.getElementById('news-status').style.color="orange"; document.getElementById('news-status').innerText="OFFLINE"; }
+            } catch(e) {}
         }
-        function requestPush() { if(!("Notification" in window)) return; Notification.requestPermission().then(p => { if(p==='granted') document.getElementById('badge').style.display='none'; }); }
-        function showNotify(m) { const n=document.getElementById('notify'); n.innerText=m; n.style.display='block'; setTimeout(()=>n.style.display='none', 2000); }
-
-        render();
-        fetchNews();
-        if(Notification.permission !== 'granted') document.getElementById('badge').style.display='block';
-        if(cloudConfig.binId) document.getElementById('cloudStatus').style.display = 'block';
+        fetchNews(); render();
 
     </script>
 </body>
