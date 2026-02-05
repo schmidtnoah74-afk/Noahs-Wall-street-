@@ -2,422 +2,255 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS PRIME v30.1 | Cloud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Noah Dashboard v60 | Colorful</title>
     <style>
         :root {
-            --bg-color: #0a0a0a;
-            --card-bg: #141414;
-            --accent: #00d4ff;     /* Standard: Cyan */
-            --text-main: #ffffff;
-            --text-dim: #888888;
-            --border: #333;
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-finance: #00d4ff; /* Blau */
+            --accent-school: #bd00ff;  /* Lila */
+            --accent-home: #ff0055;    /* Rot */
+            --accent-sport: #00ff88;   /* Grün */
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-family);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 20px;
+            padding-bottom: 90px; /* Platz für Menü unten */
         }
 
         /* HEADER */
-        header {
-            width: 100%;
-            max-width: 1000px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            margin-bottom: 30px;
+        .header {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
         }
-
-        .logo { font-size: 1.5rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; }
-        .logo span { color: var(--accent); transition: color 0.3s; }
+        .header h1 { font-size: 1.5rem; margin: 0; background: linear-gradient(45deg, #00d4ff, #bd00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        /* HEADER BUTTONS (NEU) */
-        .header-controls { display: flex; gap: 10px; align-items: center; }
-        .btn-header {
-            background: #222; border: 1px solid #333; color: white; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: bold;
+        /* CLOUD BUTTONS */
+        .sync-btn {
+            background: #333; border: 1px solid #444; color: white; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer;
         }
-        .btn-header:hover { border-color: var(--accent); color: var(--accent); }
-        .btn-sync { background: #1a1a1a; border-color: #444; }
+        .sync-btn:hover { border-color: white; }
 
-        /* GRID LAYOUT */
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1000px;
+        /* UHRZEIT WIDGET */
+        .time-widget {
+            text-align: center; margin-bottom: 30px;
         }
+        .time-widget h2 { font-size: 3.5rem; margin: 0; font-weight: 200; }
+        .time-widget p { color: #888; margin-top: 5px; }
 
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-            transition: transform 0.2s;
-            display: flex;
-            flex-direction: column;
+        /* BUNTE AUFGABEN KARTEN */
+        .task-grid {
+            display: grid; grid-template-columns: 1fr; gap: 15px;
         }
-        .card:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .task-card {
+            background: var(--card-bg); padding: 20px; border-radius: 15px; position: relative; overflow: hidden;
+        }
+        .task-card::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px;
+        }
+        .card-finance::before { background: var(--accent-finance); }
+        .card-school::before { background: var(--accent-school); }
+        .card-home::before { background: var(--accent-home); }
+        .card-sport::before { background: var(--accent-sport); }
 
-        h2 { font-size: 1.1rem; margin-bottom: 15px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .task-card h3 { margin-top: 0; font-size: 1.1rem; }
+        .task-input {
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid #444; color: white; padding: 8px 0; margin-top: 5px; font-size: 0.95rem;
+        }
+        .task-input:focus { outline: none; border-bottom-color: white; }
 
-        /* WIDGETS */
-        .time-display { font-size: 3rem; font-weight: 700; text-align: center; margin: 10px 0; }
-        .date-display { text-align: center; color: var(--accent); margin-bottom: 10px; }
+        /* TABS (Inhalt) */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        /* FINANCE TICKER */
-        .finance-container { display: flex; flex-direction: column; gap: 10px; height: 300px; }
-        
-        /* STRESS SLIDER */
-        .slider-container { margin: 20px 0; text-align: center; }
-        input[type=range] {
-            width: 100%;
-            -webkit-appearance: none;
-            background: #333;
-            height: 6px;
-            border-radius: 5px;
-            outline: none;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 20px;
-            height: 20px;
-            background: var(--accent);
-            border-radius: 50%;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        .stress-label { font-size: 0.9rem; margin-top: 10px; display: block; }
-
-        /* AI CHAT */
-        #ai-response {
-            background: #000;
-            padding: 15px;
-            border-radius: 8px;
-            min-height: 80px;
-            margin-bottom: 15px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            border-left: 3px solid var(--accent);
-        }
-        .input-group { display: flex; gap: 10px; }
-        input[type="text"] {
-            flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: #222;
-            color: white;
-            outline: none;
-        }
-        button {
-            padding: 12px 20px;
-            background: var(--accent);
-            border: none;
-            border-radius: 8px;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        button:hover { opacity: 0.9; }
-
-        /* COLOR PICKER (Hidden by default) */
-        .color-picker {
-            display: none;
-            margin-bottom: 20px;
-            background: #111;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            text-align: center;
-            width: 100%;
-            max-width: 1000px;
-        }
-        .color-option {
-            width: 30px; height: 30px; border-radius: 50%; display: inline-block; margin: 0 10px; cursor: pointer; border: 2px solid transparent;
-        }
-        .color-option:hover { transform: scale(1.1); border-color: white; }
-
-        /* NEWS TICKER */
-        .news-ticker {
-            font-size: 0.9rem;
-            white-space: nowrap;
-            overflow: hidden;
-            box-sizing: border-box;
-            color: var(--text-dim);
-            padding: 10px 0;
-        }
-        .news-content {
-            display: inline-block;
-            padding-left: 100%;
-            animation: ticker 30s linear infinite;
-        }
-        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
-
-        /* ROUTINE CHECKLIST */
-        .routine-item {
-            display: flex; align-items: center; background: #1a1a1a; padding: 10px; border-radius: 6px; margin-bottom: 8px; cursor: pointer; transition: 0.2s;
-        }
-        .routine-item:hover { background: #222; }
-        .routine-item.done { opacity: 0.5; text-decoration: line-through; }
-        .routine-checkbox {
-            width: 18px; height: 18px; border: 2px solid var(--accent); border-radius: 4px; margin-right: 12px; display: flex; align-items: center; justify-content: center;
-        }
-        .routine-item.done .routine-checkbox { background: var(--accent); }
-
-        /* STATUS POPUP */
-        #status-msg {
-            position: fixed; bottom: 20px; right: 20px; 
-            background: #222; border: 1px solid #333; padding: 10px 20px; 
-            border-radius: 8px; display: none; z-index: 100;
+        /* TAGEBUCH */
+        textarea.journal {
+            width: 100%; height: 400px; background: #1e1e1e; border: 1px solid #333; color: white; padding: 15px; border-radius: 12px; resize: none; font-size: 1rem; line-height: 1.6;
         }
 
+        /* NAVIGATION UNTEN */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(30,30,30,0.95); backdrop-filter: blur(10px);
+            border-radius: 50px; padding: 15px 30px; display: flex; gap: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #333; z-index: 100;
+        }
+        .nav-icon { font-size: 1.5rem; cursor: pointer; opacity: 0.5; transition: 0.2s; }
+        .nav-icon.active { opacity: 1; transform: scale(1.2); color: #00d4ff; }
+
+        /* STATUS MELDUNG */
+        #status-toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: #333; padding: 10px 20px; border-radius: 20px;
+            font-size: 0.9rem; display: none; z-index: 200; border: 1px solid #555;
+        }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo">NEXUS <span>PRIME</span></div>
-        <div class="header-controls">
-            <button class="btn-header" onclick="toggleColorPicker()">🎨</button>
-            <button class="btn-header btn-sync" onclick="loadData()">⬇ Load</button>
-            <button class="btn-header btn-sync" onclick="saveData()">⬆ Save</button>
-        </div>
-    </header>
-
-    <!-- COLOR PICKER -->
-    <div class="color-picker" id="colorPicker">
-        <span style="color: #666; font-size: 0.9rem; margin-right: 10px;">Wähle Akzentfarbe:</span>
-        <div class="color-option" style="background: #00d4ff;" onclick="setTheme('#00d4ff')"></div>
-        <div class="color-option" style="background: #ff0055;" onclick="setTheme('#ff0055')"></div>
-        <div class="color-option" style="background: #00ff88;" onclick="setTheme('#00ff88')"></div>
-        <div class="color-option" style="background: #ffcc00;" onclick="setTheme('#ffcc00')"></div>
-        <div class="color-option" style="background: #bd00ff;" onclick="setTheme('#bd00ff')"></div>
-    </div>
-
-    <!-- NEWS TICKER -->
-    <div style="width: 100%; max-width: 1000px; background: #111; border-bottom: 1px solid #333; margin-bottom: 20px;">
-        <div class="news-ticker">
-            <div class="news-content" id="news-feed">+++ NEXUS PRIME v30.1 +++ Cloud Sync Ready +++ System Stable +++ Focus Mode Active +++</div>
+    <div class="header">
+        <h1>NOAH DASHBOARD</h1>
+        <div style="display:flex; gap:10px;">
+            <button class="sync-btn" onclick="loadData()">⬇ Load</button>
+            <button class="sync-btn" onclick="saveData()">⬆ Save</button>
         </div>
     </div>
 
-    <div class="dashboard">
-        
-        <!-- TIME & DATE -->
-        <div class="card">
-            <h2>Chronometer</h2>
-            <div class="time-display" id="clock">00:00</div>
-            <div class="date-display" id="date">Lade Datum...</div>
+    <!-- TAB 1: DASHBOARD -->
+    <div id="tab-home" class="tab-content active">
+        <div class="time-widget">
+            <h2 id="clock">00:00</h2>
+            <p id="date">Datum</p>
         </div>
 
-        <!-- AI ASSISTANT -->
-        <div class="card" style="grid-column: span 1;">
-            <h2>Neural Core (AI)</h2>
-            <div id="ai-response">Hallo Noah. Systeme sind bereit.</div>
-            
-            <div class="slider-container">
-                <label for="stressRange" style="color: #666; font-size: 0.8rem;">Stress Level Analysis</label>
-                <input type="range" min="1" max="10" value="5" id="stressRange" oninput="updateStressLabel(this.value)">
-                <span class="stress-label" id="stressValue">Normal (5/10)</span>
+        <div class="task-grid">
+            <!-- Finanzen (Blau) -->
+            <div class="task-card card-finance">
+                <h3 style="color: var(--accent-finance)">💰 Finanzen & Business</h3>
+                <input type="text" class="task-input" id="todo-finance-1" placeholder="• Aktien checken">
+                <input type="text" class="task-input" id="todo-finance-2" placeholder="• ETF Sparplan">
             </div>
 
-            <div class="input-group">
-                <input type="text" id="userInput" placeholder="Frage die KI..." onkeypress="handleEnter(event)">
-                <button onclick="askAI()">Send</button>
+            <!-- Schule (Lila) -->
+            <div class="task-card card-school">
+                <h3 style="color: var(--accent-school)">📚 Schule & Lernen</h3>
+                <input type="text" class="task-input" id="todo-school-1" placeholder="• Hausaufgaben">
+                <input type="text" class="task-input" id="todo-school-2" placeholder="• Vokabeln lernen">
             </div>
-        </div>
 
-        <!-- FINANCE WIDGETS -->
-        <div class="card" style="grid-row: span 2;">
-            <h2>Market Data</h2>
-            <div class="finance-container">
-                <!-- TradingView Widget BEGIN -->
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
-                    {
-                    "colorTheme": "dark", "dateRange": "12M", "showChart": true, "locale": "de_DE", "width": "100%", "height": "100%", "isTransparent": true,
-                    "tabs": [ { "title": "Portfolio", "symbols": [ { "s": "TVC:SILVER" }, { "s": "TVC:GOLD" }, { "s": "XETR:IUSQ" }, { "s": "BITSTAMP:BTCUSD" } ] } ]
-                    }
-                    </script>
-                </div>
-                <!-- TradingView Widget END -->
+            <!-- Zuhause (Rot) -->
+            <div class="task-card card-home">
+                <h3 style="color: var(--accent-home)">🏠 Zuhause & Routine</h3>
+                <input type="text" class="task-input" id="todo-home-1" placeholder="• Zimmer aufräumen">
+                <input type="text" class="task-input" id="todo-home-2" placeholder="• Müll rausbringen">
+            </div>
+
+            <!-- Sport (Grün) -->
+            <div class="task-card card-sport">
+                <h3 style="color: var(--accent-sport)">💪 Sport & Freizeit</h3>
+                <input type="text" class="task-input" id="todo-sport-1" placeholder="• Gym">
+                <input type="text" class="task-input" id="todo-sport-2" placeholder="• Fußball">
             </div>
         </div>
-
-        <!-- ROUTINE MANAGER -->
-        <div class="card">
-            <h2>Daily Routine Protocol</h2>
-            <div id="routine-list"></div>
-            <div style="margin-top: 15px; display: flex; gap: 10px;">
-                <input type="text" id="newRoutineInput" placeholder="+ Neue Routine..." style="padding: 8px; font-size: 0.8rem;">
-                <button onclick="addRoutine()" style="padding: 8px 15px;">Add</button>
-            </div>
-        </div>
-
     </div>
 
-    <div id="status-msg">Info</div>
+    <!-- TAB 2: TAGEBUCH -->
+    <div id="tab-journal" class="tab-content">
+        <h2 style="margin-bottom: 20px;">Mein Tagebuch 📖</h2>
+        <textarea class="journal" id="journal-text" placeholder="Wie war dein Tag heute, Noah?"></textarea>
+    </div>
+
+    <!-- TAB 3: FINANZEN (Chart) -->
+    <div id="tab-finance" class="tab-content">
+        <h2 style="margin-bottom: 20px;">Markt & Portfolio 📈</h2>
+        <div style="height: 500px; background: #1e1e1e; border-radius: 15px; padding: 10px;">
+            <!-- TradingView Widget -->
+            <div class="tradingview-widget-container" style="height:100%;width:100%">
+                <div class="tradingview-widget-container__widget" style="height:100%;width:100%"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+                { "colorTheme": "dark", "dateRange": "12M", "showChart": true, "locale": "de_DE", "width": "100%", "height": "100%", "isTransparent": true, "tabs": [{"title": "Portfolio", "symbols": [{"s": "XETR:IUSQ"}, {"s": "TVC:GOLD"}]}] }
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 4: SETTINGS (Platzhalter) -->
+    <div id="tab-settings" class="tab-content">
+        <h2>Einstellungen ⚙️</h2>
+        <p style="color:#888;">Hier könnten später deine Account-Daten stehen.</p>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+        <div class="nav-icon active" onclick="switchTab('home', this)">🏠</div>
+        <div class="nav-icon" onclick="switchTab('journal', this)">📖</div>
+        <div class="nav-icon" onclick="switchTab('finance', this)">📈</div>
+        <div class="nav-icon" onclick="switchTab('settings', this)">⚙️</div>
+    </div>
+
+    <div id="status-toast">Nachricht</div>
 
     <script>
-        // ==========================================
-        // ⚠️ DEINE CLOUD DATEN ⚠️
-        // ==========================================
-        const API_KEY = $2a$10$bfQHPAKf8rHB5nCB1nxla.8UbbBLCu6uCSZjrrePZ2JvQv9Jw3XEK; 
-        const BIN_ID  = 6983be0443b1c97be965d28c;
-        // ==========================================
+        // ========================
+        // KEYS HIER EINTRAGEN
+        // ========================
+        const API_KEY = "HIER_DEIN_MASTER_KEY_EINFÜGEN"; 
+        const BIN_ID  = "HIER_DEINE_BIN_ID_EINFÜGEN";
+        // ========================
 
-        // UHRZEIT
-        function updateTime() {
+        // 1. UHRZEIT
+        function updateClock() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('date').innerText = now.toLocaleDateString('de-DE', {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'});
+            document.getElementById('clock').innerText = now.toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('date').innerText = now.toLocaleDateString('de-DE', {weekday:'long', day:'numeric', month:'long'});
         }
-        setInterval(updateTime, 1000);
-        updateTime();
+        setInterval(updateClock, 1000); updateClock();
 
-        // THEME ENGINE
-        function toggleColorPicker() {
-            const picker = document.getElementById('colorPicker');
-            picker.style.display = picker.style.display === 'block' ? 'none' : 'block';
-        }
-        function setTheme(color) {
-            document.documentElement.style.setProperty('--accent', color);
-            localStorage.setItem('nexus_theme', color);
-            toggleColorPicker();
-        }
-        const savedTheme = localStorage.getItem('nexus_theme');
-        if (savedTheme) document.documentElement.style.setProperty('--accent', savedTheme);
-
-        // STRESS SLIDER
-        function updateStressLabel(val) {
-            let text = "Normal";
-            if(val < 4) text = "Relaxed";
-            if(val > 7) text = "High Alert";
-            document.getElementById('stressValue').innerText = text + " (" + val + "/10)";
-        }
-
-        // AI LOGIC
-        function handleEnter(e) { if(e.key === 'Enter') askAI(); }
-        function askAI() {
-            const input = document.getElementById('userInput').value.toLowerCase();
-            const output = document.getElementById('ai-response');
-            const stress = document.getElementById('stressRange').value;
+        // 2. TAB NAVIGATION
+        function switchTab(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
             
-            let response = "Ich analysiere deine Anfrage... ";
-            if (input.includes("optimiere")) {
-                if (stress > 7) response = "Warnung: Hohes Stresslevel. Fokus auf 1 Aufgabe. 10 Min Pause.";
-                else response = "Stresslevel optimal. Deep Work Phase starten.";
-            } else if (input.includes("hallo")) {
-                response = "Willkommen zurück, Commander.";
-            } else {
-                response = "Eingabe notiert. Bleib fokussiert.";
-            }
-            output.innerText = response;
-            document.getElementById('userInput').value = "";
+            document.querySelectorAll('.nav-icon').forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
         }
 
-        // ROUTINE SYSTEM
-        let routines = [
-            { text: "07:00 Aufstehen", done: false },
-            { text: "08:00 Fokus", done: false },
-            { text: "16:00 Sport", done: false },
-            { text: "22:00 Planen", done: false }
-        ];
-
-        function renderRoutines() {
-            const list = document.getElementById('routine-list');
-            list.innerHTML = "";
-            routines.forEach((r, index) => {
-                const item = document.createElement('div');
-                item.className = `routine-item ${r.done ? 'done' : ''}`;
-                item.onclick = () => toggleRoutine(index);
-                item.innerHTML = `<div class="routine-checkbox">${r.done ? '✓' : ''}</div><span>${r.text}</span>`;
-                list.appendChild(item);
-            });
-        }
-
-        function toggleRoutine(index) {
-            routines[index].done = !routines[index].done;
-            renderRoutines();
-        }
-
-        function addRoutine() {
-            const input = document.getElementById('newRoutineInput');
-            if (input.value.trim() !== "") {
-                routines.push({ text: input.value, done: false });
-                input.value = "";
-                renderRoutines();
-            }
-        }
-        
-        // Initial einmal rendern
-        renderRoutines();
-
-        // CLOUD FUNCTIONS (MANUELL)
-        function showMsg(msg, color) {
-            const el = document.getElementById('status-msg');
-            el.innerText = msg;
-            el.style.borderColor = color;
-            el.style.color = color;
-            el.style.display = 'block';
-            setTimeout(() => el.style.display='none', 3000);
+        // 3. CLOUD SYNC (MANUELL)
+        function showStatus(msg, color="#fff") {
+            const t = document.getElementById('status-toast');
+            t.innerText = msg;
+            t.style.color = color;
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
         }
 
         async function loadData() {
-            showMsg("Loading...", "white");
+            showStatus("Lade Daten...");
             try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {headers:{"X-Master-Key":API_KEY}});
-                if(res.ok) {
-                    let json = await res.json();
-                    let data = json.record;
+                let r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}/latest`, {headers:{"X-Master-Key":API_KEY}});
+                if(r.ok) {
+                    let d = (await r.json()).record;
+                    // Aufgaben laden
+                    if(d.tf1) document.getElementById('todo-finance-1').value = d.tf1;
+                    if(d.tf2) document.getElementById('todo-finance-2').value = d.tf2;
+                    if(d.ts1) document.getElementById('todo-school-1').value = d.ts1;
+                    if(d.ts2) document.getElementById('todo-school-2').value = d.ts2;
+                    if(d.th1) document.getElementById('todo-home-1').value = d.th1;
+                    if(d.th2) document.getElementById('todo-home-2').value = d.th2;
+                    if(d.tsp1) document.getElementById('todo-sport-1').value = d.tsp1;
+                    if(d.tsp2) document.getElementById('todo-sport-2').value = d.tsp2;
+                    // Tagebuch laden
+                    if(d.journal) document.getElementById('journal-text').value = d.journal;
                     
-                    // Daten übernehmen
-                    if(data.stress) {
-                        document.getElementById('stressRange').value = data.stress;
-                        updateStressLabel(data.stress);
-                    }
-                    if(data.routines) {
-                        routines = data.routines;
-                        renderRoutines();
-                    }
-                    showMsg("Daten geladen!", "#00d4ff");
-                } else {
-                    showMsg("Fehler beim Laden", "red");
-                }
-            } catch(e) { showMsg("Offline / Error", "red"); }
+                    showStatus("Erfolgreich geladen!", "#00ff88");
+                } else { showStatus("Fehler: API Key prüfen", "#ff5555"); }
+            } catch(e) { showStatus("Verbindungsfehler", "#ff5555"); }
         }
 
         async function saveData() {
-            showMsg("Saving...", "white");
+            showStatus("Speichere...");
             let data = {
-                stress: document.getElementById('stressRange').value,
-                routines: routines,
-                timestamp: new Date().toISOString()
+                tf1: document.getElementById('todo-finance-1').value,
+                tf2: document.getElementById('todo-finance-2').value,
+                ts1: document.getElementById('todo-school-1').value,
+                ts2: document.getElementById('todo-school-2').value,
+                th1: document.getElementById('todo-home-1').value,
+                th2: document.getElementById('todo-home-2').value,
+                tsp1: document.getElementById('todo-sport-1').value,
+                tsp2: document.getElementById('todo-sport-2').value,
+                journal: document.getElementById('journal-text').value
             };
             try {
-                let res = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json", "X-Master-Key": API_KEY },
-                    body: JSON.stringify(data)
+                let r = await fetch(`https://api.jsonbin.io/v3/b/${BIN_ID}`, {
+                    method:"PUT", headers:{"Content-Type":"application/json", "X-Master-Key":API_KEY}, body:JSON.stringify(data)
                 });
-                if(res.ok) showMsg("Gespeichert!", "#00ff88");
-                else showMsg("Fehler beim Speichern", "red");
-            } catch(e) { showMsg("Offline / Error", "red"); }
+                if(r.ok) showStatus("Gespeichert!", "#00ff88");
+                else showStatus("Speicherfehler", "#ff5555");
+            } catch(e) { showStatus("Verbindungsfehler", "#ff5555"); }
         }
 
     </script>
